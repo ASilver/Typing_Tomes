@@ -1,5 +1,5 @@
 # Typing Tomes
-Typing Tomes is a single page HTML app to practice typing books. You create a profile, and then upload a book (an ePub) and you are good to go. It is designed to be as easy as possible to use and install.
+Typing Tomes is a single-page HTML app to practice typing on books. You create a profile, and then upload a book (an ePub) and you are good to go. It is designed to be as easy as possible to use and install.
 
 # How to install
 Just download the HTML file and open it in the browser of your choice. 
@@ -7,7 +7,7 @@ Just download the HTML file and open it in the browser of your choice.
 # Creating a profile and adding books
 It is really pretty self-explanatory. When you first start it, you are asked to create a profile. Just enter a name and press *Save and Start*. 
 You will start in the *My Library* area. Press *Add Book* and it will open a dialogue to let you add an ePub, which you can select from the folder on your computer or just drag and drop on the space. 
-Once you do this it will open your ePub and a dialogue for you to choose what you want to practice typing on or not. Books will have all manner of extras like an Introduction, an Author's Note, Table of Contents, and so on. Select the ones you want and when done, press *Save Book to Library*. Note that this also works well for short story collections.
+Once you do this it will open your ePub and a dialogue for you to choose what you want to practice typing on or not. Books will have all manner of extras like an *Introduction*, an *Author's Note*, *Table of Contents*, and so on. Select the ones you want and when done, press *Save Book to Library*. Note that this also works well for short story collections.
 
 <img width="812" height="790" alt="select_chapters2" src="https://github.com/user-attachments/assets/f3b15e7e-33e7-4d80-b216-1c5241beb7f7" />
 
