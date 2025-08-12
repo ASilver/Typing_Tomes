@@ -36,4 +36,4 @@ Cheers!
 
 # Where to find ePub ebooks
 
-There are plenty of sources, but the most famous is without a doubt [Project Gutenberg](https://www.gutenberg.org/). They have over 75000 ebooks from all languages and offer them in many formats including epub.
+There are plenty of sources, but the most famous is without a doubt [Project Gutenberg](https://www.gutenberg.org/). They have over 75000 ebooks from all languages and offer them in many formats including ePub.
