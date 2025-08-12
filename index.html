@@ -1453,7 +1453,7 @@
             }
         });
 
-        saveChaptersBtn.addEventListener('click', () => {
+        const handleSaveChapters = () => {
             const choices = [];
             chapterListContainer.querySelectorAll('.flex.space-x-2').forEach(group => {
                 const index = group.dataset.index;
@@ -1478,15 +1478,27 @@
             tempBookData = {};
             chapterSelectionModal.classList.add('hidden');
             showLibraryView();
-            renderLibrary();
-        });
-        
-        cancelAddBookBtn.addEventListener('click', () => {
+           renderLibrary();
+        };
+
+        const handleCancelAddBook = () => {
             tempBookData = {};
             chapterSelectionModal.classList.add('hidden');
             showFileLoaderView();
+        };
+
+        saveChaptersBtn.addEventListener('click', handleSaveChapters);
+        saveChaptersBtn.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            handleSaveChapters();
         });
 
+        cancelAddBookBtn.addEventListener('click', handleCancelAddBook);
+        cancelAddBookBtn.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            handleCancelAddBook();
+        });
+		
         settingsBtn.addEventListener('click', () => {
             populateSettingsModal();
             settingsModal.classList.remove('hidden');
