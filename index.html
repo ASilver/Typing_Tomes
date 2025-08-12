@@ -17,6 +17,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Merriweather:wght@400;700&family=Source+Sans+Pro:wght@400;700&display=swap" rel="stylesheet">
+	<link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#111827"/>
 	<style>
         /* Custom styles for the new UI */
         body {
@@ -1495,7 +1497,16 @@
         closeSettingsBtn.addEventListener('click', () => {
             settingsModal.classList.add('hidden');
         });
-
+        // Add the new service worker code right here at the end
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js').then(registration => {
+                    console.log('ServiceWorker registration successful with scope: ', registration.scope);
+                }, err => {
+                    console.log('ServiceWorker registration failed: ', err);
+                });
+            });
+        }
     </script>
 	<footer class="text-center py-8 text-sm text-gray-500">
         <a href="https://asilver.github.io/Typing_Tomes/" target="_blank" rel="noopener noreferrer" 
@@ -1507,5 +1518,6 @@
         Released under the <a href="https://github.com/asilver/Typing_Tomes/blob/main/LICENSE" target="_blank" rel="noopener noreferrer" class="underline hover:text-indigo-400 transition-colors">MIT License</a>.
         </span>
     </footer>
+</script>
 </body>
 </html>
