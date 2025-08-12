@@ -1,0 +1,1502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Typing Tomes</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.5/jszip.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/epubjs/dist/epub.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@700&family=Noto+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Merriweather:wght@400;700&family=Source+Sans+Pro:wght@400;700&display=swap" rel="stylesheet">
+	<style>
+        /* Custom styles for the new UI */
+        body {
+            font-family: 'Noto Sans', sans-serif; /* UI Font */
+        }
+        /* More specific heading rules */
+        h1, h3, .chapter-heading {
+            font-family: 'Cormorant Garamond', serif; /* Decorative Font */
+        }
+        #book-title {
+            font-family: 'Cormorant Garamond', serif;
+            color: #818cf8; /* Tailwind's "indigo-400" color */
+		}
+        /* Font Options */
+        .font-roboto-mono { font-family: 'Roboto Mono', monospace; }
+        .font-lato { font-family: 'Lato', sans-serif; }
+        .font-merriweather { font-family: 'Merriweather', serif; }
+        .font-noto-sans { font-family: 'Noto Sans', sans-serif; }
+
+        /* === FINAL CALIBRATED FONT SIZES === */
+        /* V. Small */
+        .font-merriweather.font-size-vs { font-size: 1.0rem; line-height: 1.8rem; }
+        .font-lato.font-size-vs, .font-noto-sans.font-size-vs { font-size: 1.15rem; line-height: 2.0rem; }
+        .font-roboto-mono.font-size-vs { font-size: 1.2rem; line-height: 2.1rem; }
+
+        /* Small */
+       .font-merriweather.font-size-sm { font-size: 1.25rem; line-height: 2.2rem; }
+       .font-lato.font-size-sm, .font-noto-sans.font-size-sm { font-size: 1.4rem; line-height: 2.4rem; }
+       .font-roboto-mono.font-size-sm { font-size: 1.5rem; line-height: 2.5rem; }
+
+       /* Medium (New default) */
+       .font-merriweather.font-size-md { font-size: 1.5rem; line-height: 2.5rem; }
+       .font-lato.font-size-md, .font-noto-sans.font-size-md { font-size: 1.65rem; line-height: 2.7rem; }
+       .font-roboto-mono.font-size-md { font-size: 1.8rem; line-height: 2.9rem; }
+
+        /* Large */
+        .font-merriweather.font-size-lg { font-size: 1.8rem; line-height: 2.9rem; }
+        .font-lato.font-size-lg, .font-noto-sans.font-size-lg { font-size: 2.0rem; line-height: 3.1rem; }
+        .font-roboto-mono.font-size-lg { font-size: 2.1rem; line-height: 3.2rem; }
+
+        /* X-Large */
+        .font-merriweather.font-size-xl { font-size: 2.2rem; line-height: 3.4rem; }
+        .font-lato.font-size-xl, .font-noto-sans.font-size-xl { font-size: 2.4rem; line-height: 3.6rem; }
+        .font-roboto-mono.font-size-xl { font-size: 2.5rem; line-height: 3.7rem; }
+		/* Ensure UI headings use the correct font */
+        h2 {
+            font-family: 'Noto Sans', sans-serif;
+        }
+        /* Underline cursor effect */
+        .cursor {
+            border-bottom: 3px solid #f59e0b; /* amber-500 */
+            animation: underline-pulse 1.s ease-in-out infinite;
+        }
+        @keyframes underline-pulse {
+            0%, 100% { border-color: #f59e0b; } /* amber-500 */
+            50% { border-color: #fcd34d; } /* amber-300 */
+        }
+        /* Character styling */
+        .char-span {
+            transition: color 0.2s ease-in-out, background-color 0.2s ease-in-out, border-color 0.2s ease-in-out;
+            border-radius: 2px;
+            padding-bottom: 2px; /* Add padding for the underline */
+            border-bottom: 2px solid transparent; /* Placeholder for underline */
+        }
+        .correct { color: #f3f4f6; } /* gray-100 */
+        .incorrect-char {
+            color: #f87171; /* red-400 text */
+            border-bottom-color: #ef4444; /* red-500 underline */
+        }
+        .untyped { color: #9ca3af; } /* gray-400 */
+        .skipped { color: #f3f4f6; } /* gray-100, for skipped paragraphs */
+        /* Paragraph styling */
+        .paragraph-block {
+            margin-bottom: 2rem;
+            overflow-wrap: break-word; /* Fix for word wrapping issue */
+            hyphens: auto;
+        }
+        .chapter-heading {
+            border-bottom: 2px solid #374151; /* gray-700 */
+            padding-bottom: 0.5rem;
+            margin-bottom: 2rem;
+            margin-top: 3rem;
+        }
+        .ui-subheading {
+            font-family: 'Noto Sans', sans-serif;
+        }
+		/* Modal styles */
+        .modal-backdrop {
+            background-color: rgba(0,0,0,0.7);
+        }
+        /* Chapter selection button styles */
+        .choice-btn {
+            transition: background-color 0.2s;
+        }
+        .choice-btn-active {
+            transform: scale(1.05);
+            box-shadow: 0 0 15px rgba(99, 102, 241, 0.5);
+        }
+        /* Library book card style */
+        .library-book-card {
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .library-book-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.4);
+        }
+        .library-book-card img {
+            object-fit: cover;
+            aspect-ratio: 2 / 3;
+            background-color: #374151; /* gray-700 for placeholder */
+        }
+        /* Drag-and-drop visual feedback */
+        .drag-over {
+            border-color: #f59e0b; /* amber-500 */
+            background-color: rgba(245, 158, 11, 0.1);
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-gray-200 flex flex-col items-center min-h-screen p-4 md:p-8">
+
+    <div id="settings-modal" class="fixed inset-0 z-50 flex items-center justify-center modal-backdrop hidden">
+        <div class="bg-gray-800 rounded-lg shadow-xl p-8 w-full max-w-lg">
+            <h2 class="text-2xl font-bold text-white mb-6">Typing Settings</h2>
+        
+            <div class="mb-6">
+                <label class="block text-lg font-medium text-gray-300 mb-3">Font Family</label>
+                <div id="font-family-selector" class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                    </div>
+            </div>
+
+            <div class="mb-8">
+                <label class="block text-lg font-medium text-gray-300 mb-3">Font Size</label>
+                <div id="font-size-selector" class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                    </div>
+            </div>
+        
+            <div class="mt-8 flex justify-end">
+                <button id="close-settings-btn" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-md">Done</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="profile-modal" class="fixed inset-0 z-50 flex items-center justify-center modal-backdrop hidden">
+        <div class="bg-gray-800 rounded-lg shadow-xl p-8 w-full max-w-md">
+            <h2 id="profile-modal-title" class="text-2xl font-bold text-white mb-4">Create Your Profile</h2>
+            <p class="text-gray-400 mb-6">Enter a username to save your progress and track your results.</p>
+            <div>
+                <label for="username-input" class="block text-sm font-medium text-gray-300 mb-1">Username</label>
+                <input type="text" id="username-input" class="w-full bg-gray-700 border border-gray-600 rounded-md p-2 focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+            </div>
+            <div class="mt-6">
+                <button id="save-profile-btn" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-md">Save and Start</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="profile-switcher-modal" class="fixed inset-0 z-50 flex items-center justify-center modal-backdrop hidden">
+        <div class="bg-gray-800 rounded-lg shadow-xl p-8 w-full max-w-md">
+            <h2 class="text-2xl font-bold text-white mb-6">Profile Manager</h2>
+            <div id="profile-list-container" class="space-y-3 mb-6 max-h-64 overflow-y-auto">
+                </div>
+            <div class="pt-4 border-t border-gray-700">
+                <button id="show-create-profile-btn" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-md">Add New Profile</button>
+            </div>
+        </div>
+    </div>
+    
+    <div id="chapter-selection-modal" class="fixed inset-0 z-50 flex items-center justify-center modal-backdrop hidden">
+        <div class="bg-gray-800 rounded-lg shadow-xl p-8 w-full max-w-2xl max-h-[90vh] flex flex-col">
+            <h2 class="text-2xl font-bold text-white mb-2">Select Chapters to Type</h2>
+            <p class="text-gray-400 mb-6">Choose which sections of the book you want to include in your typing practice.</p>
+            <div id="chapter-list-container" class="overflow-y-auto flex-grow pr-4">
+                </div>
+            <div class="mt-6 pt-4 border-t border-gray-700 flex justify-end space-x-4">
+                 <button id="cancel-add-book-btn" class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded-md">Cancel</button>
+                <button id="save-chapters-btn" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-md">Save Book to Library</button>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="w-full max-w-5xl mx-auto"> <header class="text-center mb-8">
+            <h1 id="app-title-header" class="text-5xl md:text-6xl font-bold text-white">Typing Tomes</h1>
+             <h1 id="book-title-header" class="text-5xl md:text-6xl font-bold hidden text-indigo-400"></h1>
+            <p id="welcome-message" class="text-gray-400 mt-2 hidden">Welcome, <span id="username-display" class="font-bold text-white"></span>!
+                <button id="change-user-btn" class="text-indigo-400 text-sm">(Change)</button>
+            </p>
+        </header>
+
+        <div id="library-view" class="w-full">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-3xl font-bold text-white">My Library</h2>
+                <button id="add-new-book-btn" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-md">Add New Book</button>
+            </div>
+            <div id="library-list" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
+                </div>
+        </div>
+
+
+        <div id="file-loader" class="bg-gray-800 p-6 rounded-lg shadow-lg mb-8 hidden">
+            <h2 class="text-xl font-semibold mb-4 text-white">Load a Book (.epub)</h2>
+            <div id="drop-zone" class="flex flex-col items-center justify-center p-8 border-2 border-dashed border-gray-600 rounded-lg transition-colors">
+                 <label for="local-file" class="block text-lg font-medium text-gray-300 mb-4 text-center">Drag & Drop EPUB file here<br>or click to select</label>
+                 <input type="file" id="local-file" accept=".epub" class="block w-full max-w-xs text-sm text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 cursor-pointer"/>
+            </div>
+            <div id="loading-status" class="text-center mt-4 text-amber-400"></div>
+            <button id="back-to-library-btn" class="mt-4 w-full bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded-md">Back to Library</button>
+        </div>
+
+        <main id="typing-app" class="hidden flex-col">
+            <div class="sticky top-0 bg-gray-900 py-4 z-10 relative">
+                 <button id="settings-btn" class="absolute top-4 right-0 bg-gray-700 hover:bg-gray-600 text-white font-bold py-1 px-3 rounded-md text-sm">Settings</button>
+				 <button id="exit-to-library-btn" class="absolute top-4 left-0 bg-gray-700 hover:bg-gray-600 text-white font-bold py-1 px-3 rounded-md text-sm">← Library</button>
+                <div class="grid grid-cols-2 lg:grid-cols-5 gap-4 text-center">
+                    <div class="bg-gray-800 p-4 rounded-lg shadow">
+                        <p class="text-sm text-gray-400">Live WPM</p>
+                        <div id="live-wpm-display" class="text-3xl font-bold text-green-400">0</div>
+                    </div>
+                    <div class="bg-gray-800 p-4 rounded-lg shadow">
+                        <p class="text-sm text-gray-400">Live Accuracy</p>
+                        <div id="live-accuracy-display" class="text-3xl font-bold text-sky-400">100%</div>
+                    </div>
+                    <div class="bg-gray-800 p-4 rounded-lg shadow">
+                        <p class="text-sm text-gray-400">Overall WPM</p>
+                        <div id="overall-wpm-display" class="text-3xl font-bold text-gray-300">0.0</div>
+                    </div>
+                    <div class="bg-gray-800 p-4 rounded-lg shadow">
+                        <p class="text-sm text-gray-400">Overall Accuracy</p>
+                        <div id="overall-accuracy-display" class="text-3xl font-bold text-blue-400">100%</div>
+                    </div>
+                    <div class="bg-gray-800 p-4 rounded-lg shadow col-span-2 lg:col-span-1">
+                        <p class="text-sm text-gray-400">Paragraphs Done</p>
+                        <div id="paragraph-count" class="text-3xl font-bold text-purple-400">0 / 0</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-6">
+                 <div id="chapter-selector-container" class="mb-4 hidden">
+                    <label for="chapter-selector" class="block text-sm font-medium text-gray-300 mb-1">Jump to Chapter</label>
+                    <select id="chapter-selector" class="w-full bg-gray-700 border border-gray-600 rounded-md p-2 focus:ring-2 focus:ring-indigo-500 focus:outline-none"></select>
+                </div>
+
+                <div id="chapter-stats" class="text-center text-gray-400 mb-4"></div>
+                <div class="bg-gray-800 p-6 rounded-lg shadow-lg relative">
+                     <div id="book-content" class="select-none overflow-y-auto" style="max-height: 70vh;">
+                         </div>
+                     <div class="text-right text-gray-400 text-sm mt-4">
+                         <span>Press <kbd class="font-sans bg-gray-600 text-gray-200 rounded px-2 py-1">Tab</kbd> to restart paragraph.</span>
+                         <span>Press <kbd class="font-sans bg-gray-600 text-gray-200 rounded px-2 py-1">Enter</kbd> to finish.<span> Press <kbd class="font-sans bg-gray-600 text-gray-200 rounded px-2 py-1">Shift+Enter</kbd> to skip.</span><span> Press <kbd class="font-sans bg-gray-600 text-gray-200 rounded px-2 py-1">Shift+Tab</kbd> to redo previous.</span></span>
+                     </div>
+                </div>
+
+                <div class="bg-gray-800 p-6 rounded-lg shadow-lg mt-8">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-xl font-semibold text-white ui-subheading">Performance History</h3>
+						    <button id="chart-toggle-btn" class="bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-md text-sm">Show Entire Book</button>
+                    </div>
+                    <canvas id="history-chart"></canvas>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // DOM Elements
+        const libraryView = document.getElementById('library-view');
+        const libraryList = document.getElementById('library-list');
+        const addNewBookBtn = document.getElementById('add-new-book-btn');
+        const fileLoaderSection = document.getElementById('file-loader');
+        const backToLibraryBtn = document.getElementById('back-to-library-btn');
+        const exitToLibraryBtn = document.getElementById('exit-to-library-btn');
+        const typingAppSection = document.getElementById('typing-app');
+        const localFileInput = document.getElementById('local-file');
+        const loadingStatus = document.getElementById('loading-status');
+        const dropZone = document.getElementById('drop-zone');
+        
+		// Add these with your other DOM Element constants
+        const settingsModal = document.getElementById('settings-modal');
+        const settingsBtn = document.getElementById('settings-btn');
+        const closeSettingsBtn = document.getElementById('close-settings-btn');
+        const fontFamilySelector = document.getElementById('font-family-selector');
+        const fontSizeSelector = document.getElementById('font-size-selector');
+
+        // Add these new constants for the settings options
+        const FONT_OPTIONS = {
+            'roboto-mono': 'Roboto Mono',
+            'lato': 'Lato',
+            'merriweather': 'Merriweather',
+            'noto-sans': 'Noto Sans'
+        };
+        const FONT_SIZES = {
+            'vs': 'V. Small',
+            'sm': 'Small',
+            'md': 'Medium',
+            'lg': 'Large',
+            'xl': 'X-Large'
+        };
+		
+        const appTitleHeader = document.getElementById('app-title-header');
+        const bookTitleHeader = document.getElementById('book-title-header');
+        const bookContentEl = document.getElementById('book-content');
+        const liveWpmDisplay = document.getElementById('live-wpm-display');
+        const liveAccuracyDisplay = document.getElementById('live-accuracy-display');
+        const overallWpmDisplay = document.getElementById('overall-wpm-display');
+        const overallAccuracyDisplay = document.getElementById('overall-accuracy-display');
+        const paragraphCountDisplay = document.getElementById('paragraph-count');
+        const chapterStatsDisplay = document.getElementById('chapter-stats');
+        const chartToggleButton = document.getElementById('chart-toggle-btn');
+        const chapterSelectorContainer = document.getElementById('chapter-selector-container');
+        const chapterSelector = document.getElementById('chapter-selector');
+        
+        // Profile Modal Elements
+        const profileModal = document.getElementById('profile-modal');
+        const profileModalTitle = document.getElementById('profile-modal-title');
+        const usernameInput = document.getElementById('username-input');
+        const saveProfileBtn = document.getElementById('save-profile-btn');
+        const usernameDisplay = document.getElementById('username-display');
+        const welcomeMessage = document.getElementById('welcome-message');
+        const changeUserBtn = document.getElementById('change-user-btn');
+        const deleteUserBtn = document.getElementById('delete-user-btn');
+
+        // Profile Switcher Elements (added)
+        const profileSwitcherModal = document.getElementById('profile-switcher-modal');
+        const profileListContainer = document.getElementById('profile-list-container');
+        const showCreateProfileBtn = document.getElementById('show-create-profile-btn');
+        const cancelCreateProfileBtn = document.getElementById('cancel-create-profile-btn'); // may be null
+
+        // Chapter Selection Modal Elements
+        const chapterSelectionModal = document.getElementById('chapter-selection-modal');
+        const chapterListContainer = document.getElementById('chapter-list-container');
+        const saveChaptersBtn = document.getElementById('save-chapters-btn');
+        const cancelAddBookBtn = document.getElementById('cancel-add-book-btn');
+
+        // App State
+        const CHARS_PER_WORD = 5; // Use industry standard of 5
+        let currentUsername = '';
+        let currentBookIdentifier = ''; // Use a unique ID for the book
+        let fullBookText = '';
+        let chapterMarkers = []; // This will now hold the user-selected chapters
+        let currentChapterIndex = -1;
+        let currentChapterWordCount = 0; 
+        
+        let currentChapterParagraphs = [];
+        let currentParagraphIndexInChapter = -1;
+        
+        let currentUserInput = '';
+        let isTestActive = false;
+        let isBookLoading = false;
+        
+        // Temporary state for book being added
+        let tempBookData = {};
+        
+        // Live WPM state
+        let paragraphKeyPressLog = [];
+        let liveAccuracyLog = [];
+
+        // Stats
+        let history = { wpm: [], accuracy: [], labels: [], overallWpmHistory: [], cumulativeWords: [], chapterIndices: [], paragraphWordCounts: [], cumulativeWordsInChapter: [], rawTimes: [], rawCorrectChars: [], rawTypedChars: [] };
+        let historyChart;
+        let isShowingAllHistory = false;
+        let overallStats = {
+            totalCorrectChars: 0,
+            totalTypedChars: 0,
+            totalTime: 0,
+            cumulativeWordCount: 0,
+        };
+
+        const getSettingsKey = () => `typingSettings_${currentUsername}`;
+
+        const saveSettings = (settings) => {
+            if (!currentUsername) return;
+            localStorage.setItem(getSettingsKey(), JSON.stringify(settings));
+        };
+
+        const loadSettings = () => {
+            const saved = localStorage.getItem(getSettingsKey());
+            const defaults = { fontFamily: 'roboto-mono', fontSize: 'md' };
+            if (saved) {
+                return { ...defaults, ...JSON.parse(saved) };
+            }
+            return defaults;
+        };
+
+        const applySettings = () => {
+            const settings = loadSettings();
+            const fontClass = `font-${settings.fontFamily}`;
+            const sizeClass = `font-size-${settings.fontSize}`;
+
+    // Remove any existing font/size classes
+            bookContentEl.className.split(' ').forEach(c => {
+                if (c.startsWith('font-')) {
+                    bookContentEl.classList.remove(c);
+                }
+            });
+
+    // Add the new classes
+            bookContentEl.classList.add(fontClass);
+            bookContentEl.classList.add(sizeClass);
+        };
+
+        const populateSettingsModal = () => {
+            const currentSettings = loadSettings();
+
+            // Populate Font Family Buttons
+            fontFamilySelector.innerHTML = '';
+            for (const key in FONT_OPTIONS) {
+                const btn = document.createElement('button');
+                btn.textContent = FONT_OPTIONS[key];
+                btn.dataset.font = key;
+                btn.className = `p-3 rounded-md text-white transition-colors choice-btn ${currentSettings.fontFamily === key ? 'bg-indigo-600 choice-btn-active' : 'bg-gray-700 hover:bg-gray-600'}`;
+                btn.addEventListener('click', () => {
+                    const newSettings = { ...loadSettings(), fontFamily: key };
+                    saveSettings(newSettings);
+                    applySettings();
+                    populateSettingsModal(); // Repopulate to update active styles
+                });
+                fontFamilySelector.appendChild(btn);
+            }
+
+    // Populate Font Size Buttons
+            fontSizeSelector.innerHTML = '';
+            for (const key in FONT_SIZES) {
+                const btn = document.createElement('button');
+                btn.textContent = FONT_SIZES[key];
+                btn.dataset.size = key;
+                btn.className = `p-3 rounded-md text-white transition-colors choice-btn ${currentSettings.fontSize === key ? 'bg-indigo-600 choice-btn-active' : 'bg-gray-700 hover:bg-gray-600'}`;
+                btn.addEventListener('click', () => {
+                    const newSettings = { ...loadSettings(), fontSize: key };
+                    saveSettings(newSettings);
+                    applySettings();
+                    populateSettingsModal();
+                });
+                fontSizeSelector.appendChild(btn);
+            }
+        };
+
+        // --- NEW PROFILE MANAGEMENT ---
+        const PROFILES_KEY = 'typingAppProfiles';
+        const LAST_USER_KEY = 'typingAppLastUser';
+
+        const getProfiles = () => JSON.parse(localStorage.getItem(PROFILES_KEY)) || [];
+        const saveProfiles = (profiles) => localStorage.setItem(PROFILES_KEY, JSON.stringify(profiles));
+
+        const setupUser = () => {
+            const profiles = getProfiles();
+            const lastUser = localStorage.getItem(LAST_USER_KEY);
+
+            if (lastUser && profiles.includes(lastUser)) {
+                loadProfile(lastUser);
+            } else if (profiles.length > 0) {
+                profileSwitcherModal.classList.remove('hidden');
+                showProfileSwitcher();
+            } else {
+                profileModal.classList.remove('hidden');
+            }
+        };
+
+        const loadProfile = (username) => {
+            currentUsername = username;
+            localStorage.setItem(LAST_USER_KEY, username);
+            usernameDisplay.textContent = currentUsername;
+            welcomeMessage.classList.remove('hidden');
+            profileModal.classList.add('hidden');
+            profileSwitcherModal.classList.add('hidden');
+            renderLibrary();
+        };
+
+        const saveNewProfile = () => {
+            const newUsername = usernameInput.value.trim();
+            if (newUsername) {
+                let profiles = getProfiles();
+                if (profiles.includes(newUsername)) {
+                    alert("A profile with this name already exists.");
+                    return;
+                }
+                profiles.push(newUsername);
+                saveProfiles(profiles);
+                loadProfile(newUsername);
+                usernameInput.value = '';
+            }
+        };
+        
+        const deleteProfile = (usernameToDelete) => {
+            if (!confirm(`Are you sure you want to delete the profile "${usernameToDelete}"? All associated books and progress will be permanently lost.`)) return;
+
+            Object.keys(localStorage)
+                .filter(key => key.startsWith(`typingProgress_${usernameToDelete}_`) || key.startsWith(`typingLibrary_${usernameToDelete}`))
+                .forEach(key => localStorage.removeItem(key));
+            
+            let profiles = getProfiles();
+            const newProfiles = profiles.filter(p => p !== usernameToDelete);
+            saveProfiles(newProfiles);
+
+            if (currentUsername === usernameToDelete) {
+                localStorage.removeItem(LAST_USER_KEY);
+                location.reload();
+            } else {
+                showProfileSwitcher(); // Refresh the list
+            }
+        };
+
+        const showProfileSwitcher = () => {
+            const profiles = getProfiles();
+            profileListContainer.innerHTML = '';
+            if (profiles.length === 0) {
+                profileListContainer.innerHTML = `<p class="text-gray-400 text-center">No profiles found. Please create one.</p>`;
+            } else {
+                profiles.forEach(username => {
+                    const profileItem = document.createElement('div');
+                    profileItem.className = 'flex justify-between items-center bg-gray-700 p-3 rounded-md';
+                    profileItem.innerHTML = `
+                        <span class="font-medium text-white">${username}</span>
+                        <div class="space-x-2">
+                            <button data-username="${username}" class="load-profile-btn bg-blue-600 hover:bg-blue-700 text-white font-bold py-1 px-3 rounded-md text-sm">Load</button>
+                            <button data-username="${username}" class="delete-profile-btn bg-red-600 hover:bg-red-700 text-white font-bold py-1 px-3 rounded-md text-sm">Delete</button>
+                        </div>
+                    `;
+                    profileListContainer.appendChild(profileItem);
+                });
+            }
+            profileSwitcherModal.classList.remove('hidden');
+        };
+
+        const getProgressSaveKey = () => `typingProgress_${currentUsername}_${currentBookIdentifier}`;
+        const getLibrarySaveKey = () => `typingLibrary_${currentUsername}`;
+
+        const saveProgress = () => {
+            if (!currentUsername || !currentBookIdentifier) return;
+            const progress = {
+                currentChapterIndex,
+                currentParagraphIndexInChapter,
+                overallStats,
+                history,
+                lastUpdated: Date.now()
+            };
+            localStorage.setItem(getProgressSaveKey(), JSON.stringify(progress));
+        };
+
+        const loadProgress = () => {
+            const savedData = localStorage.getItem(getProgressSaveKey());
+            if (savedData) {
+                if (confirm('Resume from where you left off?')) {
+                    const progress = JSON.parse(savedData);
+                    currentChapterIndex = progress.currentChapterIndex;
+                    currentParagraphIndexInChapter = progress.currentParagraphIndexInChapter;
+                    overallStats = progress.overallStats;
+                    history = progress.history;
+                    // Initialize new history arrays if loading old data
+                    if (!history.paragraphWordCounts) history.paragraphWordCounts = [];
+                    if (!history.cumulativeWordsInChapter) history.cumulativeWordsInChapter = [];
+                    if (!history.rawTimes) history.rawTimes = [];
+                    if (!history.rawCorrectChars) history.rawCorrectChars = [];
+                    if (!history.rawTypedChars) history.rawTypedChars = [];
+                    return true;
+                }
+            }
+            // Reset stats if not resuming
+            history = { wpm: [], accuracy: [], labels: [], overallWpmHistory: [], cumulativeWords: [], chapterIndices: [], paragraphWordCounts: [], cumulativeWordsInChapter: [], rawTimes: [], rawCorrectChars: [], rawTypedChars: [] };
+            overallStats = { totalCorrectChars: 0, totalTypedChars: 0, totalTime: 0, cumulativeWordCount: 0 };
+            return false;
+        };
+
+        // --- LIBRARY MANAGEMENT ---
+        const getLibrary = () => JSON.parse(localStorage.getItem(getLibrarySaveKey())) || [];
+        const saveLibrary = (library) => localStorage.setItem(getLibrarySaveKey(), JSON.stringify(library));
+
+        const renderLibrary = () => {
+            const library = getLibrary();
+            libraryList.innerHTML = '';
+            if (library.length === 0) {
+                // Show a message in the grid container
+                 libraryList.className = 'text-center col-span-full'; // Span all columns
+                 libraryList.innerHTML = `<p class="text-gray-400">Your library is empty. Add a book to get started!</p>`;
+            } else {
+                 libraryList.className = 'grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6'; // Restore grid
+                library.forEach((book, index) => {
+                    const bookElement = document.createElement('div');
+                    bookElement.className = 'library-book-card bg-gray-800 rounded-lg flex flex-col items-center text-center shadow-lg overflow-hidden';
+                    bookElement.innerHTML = `
+                        <img src="${book.cover || 'https://via.placeholder.com/300x450.png?text=No+Cover'}" alt="Cover for ${book.bookName}" class="w-full h-auto">
+                        <div class="p-4 flex flex-col flex-grow w-full">
+                            <div class="mt-auto space-y-2 w-full">
+                                <button data-index="${index}" class="start-typing-btn w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-3 rounded-md text-sm">Type</button>
+                                <button data-index="${index}" class="delete-book-btn w-full bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-3 rounded-md text-sm">Delete</button>
+                            </div>
+                        </div>
+                    `;
+                    libraryList.appendChild(bookElement);
+                });
+            }
+        };
+
+        const deleteBook = (index) => {
+             let library = getLibrary();
+             const bookToDelete = library[index];
+            if (!confirm(`Are you sure you want to delete "${bookToDelete.bookName}" from your library?`)) return;
+            // Remove progress file
+            localStorage.removeItem(`typingProgress_${currentUsername}_${bookToDelete.identifier}`);
+            // Remove from library
+            library.splice(index, 1);
+            saveLibrary(library);
+            renderLibrary();
+        };
+
+        // --- UI NAVIGATION ---
+        const showLibraryView = () => {
+            libraryView.classList.remove('hidden');
+            fileLoaderSection.classList.add('hidden');
+            typingAppSection.classList.add('hidden');
+            typingAppSection.classList.remove('flex');
+            appTitleHeader.classList.remove('hidden');
+            bookTitleHeader.classList.add('hidden');
+            bookTitleHeader.innerHTML = '';
+        };
+
+        const showFileLoaderView = () => {
+            libraryView.classList.add('hidden');
+            fileLoaderSection.classList.remove('hidden');
+            typingAppSection.classList.add('hidden');
+            typingAppSection.classList.remove('flex');
+        };
+        
+        const showTypingView = () => {
+            libraryView.classList.add('hidden');
+            fileLoaderSection.classList.add('hidden');
+            typingAppSection.classList.remove('hidden');
+            typingAppSection.classList.add('flex');
+            appTitleHeader.classList.add('hidden');
+            bookTitleHeader.classList.remove('hidden');
+        };
+
+        // --- HELPER FUNCTION TO CONVERT BLOB URL TO BASE64 ---
+        const blobUrlToBase64 = (url) => {
+            return new Promise((resolve, reject) => {
+                if (!url) {
+                    resolve(null);
+                    return;
+                }
+                const reader = new FileReader();
+                reader.onloadend = () => resolve(reader.result);
+                reader.onerror = reject;
+                fetch(url)
+                    .then(res => res.blob())
+                    .then(blob => reader.readAsDataURL(blob))
+                    .catch(reject);
+            });
+        };
+
+        // --- FILE LOADING & CHAPTER PARSING ---
+        const handleFile = async (file) => {
+            if (file && file.name.endsWith('.epub')) {
+                loadingStatus.textContent = 'Loading EPUB...';
+                isBookLoading = true;
+                try {
+                    const book = ePub(file);
+                    await book.ready;
+                    
+                    const metadata = book.packaging.metadata;
+                    const coverUrl = await book.coverUrl();
+                    const coverBase64 = await blobUrlToBase64(coverUrl);
+
+                    const allSections = [];
+                    const MIN_TEXT_LENGTH = 200;
+
+                    const processTocItems = async (tocItems) => {
+                        for (const item of tocItems) {
+                            const cleanHref = item.href.split('#')[0];
+                            const doc = await book.load(cleanHref);
+                            const body = doc.body || doc.documentElement;
+                            const htmlContent = body.innerHTML;
+
+                            const tempDiv = document.createElement('div');
+                            tempDiv.innerHTML = htmlContent;
+                            const textContent = (tempDiv.textContent || "").trim();
+                            
+                            if (textContent.length > MIN_TEXT_LENGTH) {
+                                allSections.push({
+                                    title: item.label.trim(),
+                                    htmlContent: htmlContent
+                                });
+                            }
+
+                            if (item.subitems && item.subitems.length > 0) {
+                                await processTocItems(item.subitems);
+                            }
+                        }
+                    };
+
+                    await processTocItems(book.navigation.toc);
+                    
+                    prepareBookForSelection(metadata, coverBase64, allSections);
+                } catch (error) {
+                    loadingStatus.textContent = `Error processing EPUB file: ${error.message}`;
+                    console.error(error);
+                } finally {
+                    isBookLoading = false;
+                }
+            } else {
+                alert('Please select or drop a valid .epub file.');
+            }
+        };
+
+        const prepareBookForSelection = (metadata, cover, allSections) => {
+            // Store all extracted data temporarily
+            tempBookData.title = metadata.title;
+            tempBookData.author = metadata.creator;
+            tempBookData.cover = cover; // Now storing Base64 string
+            tempBookData.identifier = `${metadata.title}-${metadata.creator}`.replace(/\s+/g, '-'); // Create a unique ID
+            tempBookData.chapterMarkers = allSections;
+
+            // Populate and show the modal
+            chapterListContainer.innerHTML = '';
+            tempBookData.chapterMarkers.forEach((marker, index) => {
+                const item = document.createElement('div');
+                item.className = 'flex justify-between items-center p-3 bg-gray-700 rounded-md mb-2';
+                item.innerHTML = `
+                    <span class="text-gray-300 truncate">${marker.title}</span>
+                    <div class="flex space-x-2" data-index="${index}">
+                        <button class="choice-btn bg-green-600 hover:bg-green-700 text-white font-bold py-1 px-3 rounded-md text-sm choice-btn-active" data-choice="type">Type</button>
+                        <button class="choice-btn bg-gray-500 hover:bg-gray-600 text-white font-bold py-1 px-3 rounded-md text-sm" data-choice="skip">Skip</button>
+                        <button class="choice-btn bg-gray-500 hover:bg-gray-600 text-white font-bold py-1 px-3 rounded-md text-sm" data-choice="hide">Hide</button>
+                    </div>
+                `;
+                chapterListContainer.appendChild(item);
+            });
+            
+            chapterSelectionModal.classList.remove('hidden');
+            loadingStatus.textContent = '';
+        };
+
+        // --- CHAPTER AND PARAGRAPH MANAGEMENT ---
+        const countWords = (text) => {
+            return text.split(/[\s-]+/).filter(w => w.length > 0).length;
+        };
+
+        const normalizeText = (text) => {
+            if (!text) return '';
+            return text
+                .replace(/[\u201C\u201D]/g, '"') // Normalizes curly double quotes
+                .replace(/[\u2018\u2019]/g, "'") // Normalizes curly single quotes/apostrophes
+                .replace(/[\u2013\u2014]/g, '-') // Normalizes en and em dashes
+                .replace(/\u2026/g, '...');      // Normalizes ellipsis
+        };
+
+        const startTypingBook = (book) => {
+            currentBookIdentifier = book.identifier;
+            bookTitleHeader.innerHTML = `${book.bookName}<br><span class="text-3xl text-indigo-300 font-normal" style="font-family: 'Cormorant Garamond', serif;">By ${book.author}</span>`;
+    
+            chapterMarkers = book.chapterMarkers.filter((marker, index) => {
+                const choice = book.userChapterChoices[index];
+                return choice && choice.status === 'type';
+            });
+    
+            chapterSelector.innerHTML = '';
+            chapterMarkers.forEach((marker, index) => {
+                const option = document.createElement('option');
+                option.value = index;
+                option.textContent = marker.title;
+                chapterSelector.appendChild(option);
+            });
+            chapterSelectorContainer.classList.remove('hidden');
+            
+			showTypingView();
+			
+            applySettings(); // Apply user's font/size settings
+
+            const resumed = loadProgress();
+
+            if (!resumed) {
+        // If not resuming, it's a fresh start. Reset position indices.
+                currentChapterIndex = 0;
+                currentParagraphIndexInChapter = -1;
+                bookContentEl.scrollTop = 0;
+            }
+    
+            initializeChart();
+            loadChapter(resumed ? currentChapterIndex : 0, resumed);
+        };
+
+        const loadChapter = (chapterIndex, isResuming = false) => {
+            if (chapterIndex >= chapterMarkers.length) {
+                bookContentEl.innerHTML = `<h2 class="text-center text-green-400 text-3xl font-bold mt-8">Congratulations! You've finished all selected chapters.</h2>`;
+                chapterStatsDisplay.textContent = '';
+                return;
+            }
+
+            const isNewChapter = currentChapterIndex !== chapterIndex;
+            currentChapterIndex = chapterIndex;
+            chapterSelector.value = chapterIndex; // Sync dropdown
+
+            const marker = chapterMarkers[currentChapterIndex];
+            const chapterHtml = marker.htmlContent;
+
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = chapterHtml;
+
+            // --- PARSING LOGIC ---
+            let paragraphElements = Array.from(tempDiv.querySelectorAll('p'));
+
+            if (paragraphElements.filter(p => (p.textContent || "").trim()).length < 3) {
+                currentChapterParagraphs = (tempDiv.textContent || "")
+                    .split(/\n\s*\n+/)
+                    .map(text => text.trim())
+                    .filter(text => text.length > 0)
+                    .map(text => {
+                // Apply normalization to the text used for comparison
+                        const cleanText = normalizeText(text.trim());
+                        return {
+                           html: cleanText,
+                           text: cleanText
+                        };
+                    });
+            } else {
+                currentChapterParagraphs = paragraphElements
+                    .map(p_el => {
+                        const rawText = p_el.textContent || "";
+                        return {
+                            html: p_el.innerHTML.replace(/\s+/g, ' '),
+                    // Apply normalization to the text used for comparison
+                            text: normalizeText(rawText.replace(/\s+/g, ' ').trim())
+                        };
+                    })
+                    .filter(p => p.text.length > 0);
+            }
+    // --- END OF LOGIC ---
+
+            const chapterWordCount = countWords(currentChapterParagraphs.map(p => p.text).join(' '));
+            currentChapterWordCount = chapterWordCount;
+            chapterStatsDisplay.innerHTML = `Current Chapter: <span class="font-bold text-white" style="font-family: 'Noto Sans', sans-serif;">${marker.title}</span> | Total Words: <span class="font-bold text-white">${chapterWordCount}</span>`;
+
+            const paragraphsDone = history.chapterIndices.filter(i => i === currentChapterIndex).length;
+            paragraphCountDisplay.textContent = `${paragraphsDone} / ${currentChapterParagraphs.length}`;
+
+            renderChapter(isResuming);
+
+            if (isResuming) {
+                activateNextParagraph(false);
+            } else {
+                if (isNewChapter) currentParagraphIndexInChapter = -1;
+                activateNextParagraph(true);
+            }
+        };
+
+        const renderChapter = (isResuming) => {
+            let html = `<h2 class="chapter-heading text-3xl font-bold text-gray-400">${chapterMarkers[currentChapterIndex].title}</h2>`;
+            currentChapterParagraphs.forEach((p, index) => {
+                const chars = wrapCharsInSpans(p.html);
+                html += `<div class="paragraph-block" data-paragraph-index="${index}">${chars}<span class="end-cursor-target"></span></div>`;
+            });
+            bookContentEl.innerHTML = html;
+            bookContentEl.scrollTop = 0;
+
+            if (isResuming) {
+                highlightCompletedParagraphs();
+                updateChart();
+            }
+        };
+
+        const highlightCompletedParagraphs = () => {
+    // Find all history entries that correspond to the current chapter
+            const historyIndicesForChapter = history.chapterIndices
+                .map((chapIdx, i) => ({ chapIdx, historyIndex: i }))
+                .filter(item => item.chapIdx === currentChapterIndex);
+
+    // Loop through the completed paragraphs and apply the correct style based on history
+            historyIndicesForChapter.forEach((item, paraIndexInChapter) => {
+                const paragraphEl = document.querySelector(`[data-paragraph-index="${paraIndexInChapter}"]`);
+                if (paragraphEl) {
+                    const wasSkipped = history.wpm[item.historyIndex] === null;
+                    const styleClass = wasSkipped ? 'char-span skipped' : 'char-span correct';
+                    paragraphEl.querySelectorAll('.char-span').forEach(span => span.className = styleClass);
+                }
+            });
+        };
+
+        const activateNextParagraph = (shouldIncrement = true) => {
+            resetParagraphState();
+            if (shouldIncrement) {
+                currentParagraphIndexInChapter++;
+            }
+
+            if (currentParagraphIndexInChapter >= currentChapterParagraphs.length) {
+                loadChapter(currentChapterIndex + 1);
+                return;
+            }
+
+            const paragraphEl = document.querySelector(`[data-paragraph-index="${currentParagraphIndexInChapter}"]`);
+            if (paragraphEl) {
+                const topPos = paragraphEl.getBoundingClientRect().top - bookContentEl.getBoundingClientRect().top + bookContentEl.scrollTop;
+        // The scroll is now instant instead of smooth
+                bookContentEl.scrollTop = topPos;
+                updateCursor();
+            }
+        };
+
+        const skipParagraph = () => {
+    // Highlight the skipped paragraph with the new "skipped" style
+            const paragraphEl = document.querySelector(`[data-paragraph-index="${currentParagraphIndexInChapter}"]`);
+            if (paragraphEl) {
+                paragraphEl.querySelectorAll('.char-span').forEach(span => span.className = 'char-span skipped');
+            }
+
+    // Add a placeholder record to history so we can go back to it
+            history.wpm.push(null); // Using null indicates a skip
+            history.accuracy.push(null);
+            history.labels.push(`S${history.labels.length + 1}`); // "S" for Skipped
+    
+    // Add zero values for raw stats, so "go back" works correctly
+            history.rawTimes.push(0);
+            history.rawCorrectChars.push(0);
+            history.rawTypedChars.push(0);
+
+    // Overall stats don't change, so we carry over the previous values
+            const lastOverallWpm = history.overallWpmHistory.length > 0 ? history.overallWpmHistory[history.overallWpmHistory.length - 1] : 0;
+            history.overallWpmHistory.push(lastOverallWpm);
+            history.cumulativeWords.push(overallStats.cumulativeWordCount); // Word count doesn't increase
+
+    // Record the location
+            history.chapterIndices.push(currentChapterIndex);
+    
+    // For chart consistency, don't advance the word count on the x-axis for a skip
+            const lastCumulativeWordsInChapter = history.cumulativeWordsInChapter.length > 0 ? history.cumulativeWordsInChapter[history.cumulativeWordsInChapter.length-1] : 0;
+            history.cumulativeWordsInChapter.push(lastCumulativeWordsInChapter);
+            history.paragraphWordCounts.push(0); // 0 words were contributed
+
+    // Update the UI
+            const paragraphsDone = history.chapterIndices.filter(i => i === currentChapterIndex).length;
+            paragraphCountDisplay.textContent = `${paragraphsDone} / ${currentChapterParagraphs.length}`;
+            updateChart(); // This will register the "null" data point, creating a gap in the chart
+
+    // Move to the next paragraph
+            activateNextParagraph(true);
+            saveProgress();
+        };
+
+        // --- TYPING LOGIC ---
+
+        const resetParagraphState = () => {
+            isTestActive = false;
+            paragraphKeyPressLog = [];
+            liveAccuracyLog = [];
+            currentUserInput = '';
+            liveWpmDisplay.textContent = '0';
+            liveAccuracyDisplay.textContent = '100%';
+        };
+
+        const startTest = () => {
+            isTestActive = true;
+        };
+
+        const handleKeyPress = (e) => {
+            
+            const activeEl = document.activeElement;
+            // If a profile modal/switcher is open, or an input/textarea is focused, ignore typing handler
+            if (!profileModal.classList.contains('hidden') || !profileSwitcherModal.classList.contains('hidden')) {
+                return;
+            }
+            if (activeEl && (activeEl.tagName === 'INPUT' || activeEl.tagName === 'TEXTAREA' || activeEl.isContentEditable)) {
+                return;
+            }
+            if (isBookLoading || !typingAppSection.classList.contains('hidden')) e.preventDefault();
+            if (isBookLoading) return;
+            if (currentParagraphIndexInChapter < 0 || currentParagraphIndexInChapter >= currentChapterParagraphs.length) return;
+
+            const paragraphObject = currentChapterParagraphs[currentParagraphIndexInChapter];
+            if (!paragraphObject) {
+                console.error("Current paragraph object is undefined!", currentParagraphIndexInChapter, currentChapterParagraphs);
+                return;
+            }
+
+            const currentParagraphText = paragraphObject.text;
+            if (!currentParagraphText) return;
+
+            if (e.key === 'Enter') {
+                if (e.shiftKey) { skipParagraph(); return; }
+                const sourceText = currentChapterParagraphs[currentParagraphIndexInChapter].text;
+                if (currentUserInput.length === sourceText.length) {
+                    if (isTestActive) finishParagraph();
+                }
+                return;
+            } else if (e.key === 'Tab') {
+                if (e.shiftKey) {
+                    if (currentUserInput.length === 0) {
+                        goToPreviousParagraph();
+                    }
+                    return;
+                }
+                resetParagraphState();
+                const paragraphEl = document.querySelector(`[data-paragraph-index="${currentParagraphIndexInChapter}"]`);
+                if (paragraphEl) {
+                    const topPos = paragraphEl.getBoundingClientRect().top - bookContentEl.getBoundingClientRect().top + bookContentEl.scrollTop;
+                    bookContentEl.scrollTo({ top: topPos, behavior: 'smooth' });
+                }
+                paragraphEl.querySelectorAll('.char-span').forEach(span => span.className = 'char-span untyped');
+                updateCursor();
+            } else if (e.key === 'Backspace') {
+                if (currentUserInput.length > 0) {
+                    currentUserInput = currentUserInput.slice(0, -1);
+                }
+            } else if (e.key.length === 1) {
+                if (!isTestActive) startTest();
+                if (currentUserInput.length < currentParagraphText.length) {
+                    currentUserInput += e.key;
+                    paragraphKeyPressLog.push({ char: e.key, time: Date.now() });
+                    const isCorrect = currentParagraphText[currentUserInput.length - 1] === e.key;
+                    liveAccuracyLog.push(isCorrect);
+                }
+            }
+
+            updateHighlighting();
+            updateCursor();
+            updateLiveStats();
+        };
+
+
+        // --- UI & STATS UPDATES ---
+
+        const updateLiveStats = () => {
+            if (!isTestActive) return;
+
+            const now = Date.now();
+            const recentKeyPresses = paragraphKeyPressLog.slice(-40);
+
+            if (recentKeyPresses.length > 5) {
+                const timeSpan = (now - recentKeyPresses[0].time) / 1000;
+                if (timeSpan > 0) {
+                    const grossWPM = (recentKeyPresses.length / CHARS_PER_WORD) / (timeSpan / 60);
+                    liveWpmDisplay.textContent = Math.round(grossWPM);
+                }
+            } else {
+                liveWpmDisplay.textContent = '...';
+            }
+
+            if (liveAccuracyLog.length > 0) {
+                const recentAccuracyLog = liveAccuracyLog.slice(-40);
+                const correctCount = recentAccuracyLog.filter(Boolean).length;
+                liveAccuracyDisplay.textContent = `${Math.round((correctCount / recentAccuracyLog.length) * 100)}%`;
+            }
+        };
+
+        const finishParagraph = () => {
+            const sourceText = currentChapterParagraphs[currentParagraphIndexInChapter].text;
+            if(paragraphKeyPressLog.length < 2) {
+                activateNextParagraph();
+                return;
+            };
+            const timeElapsed = (paragraphKeyPressLog[paragraphKeyPressLog.length - 1].time - paragraphKeyPressLog[0].time) / 1000;
+
+            let correctChars = 0;
+            for(let i=0; i < currentUserInput.length; i++) {
+                if(sourceText[i] === currentUserInput[i]) correctChars++;
+            }
+            const typedChars = currentUserInput.length;
+
+            const paragraphWPM = ((typedChars / CHARS_PER_WORD) / (timeElapsed / 60)) || 0;
+            const paragraphAccuracy = Math.round((correctChars / sourceText.length) * 100) || 0;
+            const paragraphWordCount = countWords(sourceText);
+
+            // Push raw stats for "undo" functionality
+            history.rawTimes.push(timeElapsed);
+            history.rawCorrectChars.push(correctChars);
+            history.rawTypedChars.push(typedChars);
+
+            history.paragraphWordCounts.push(paragraphWordCount);
+            history.chapterIndices.push(currentChapterIndex);
+
+            let currentChapterCumulative = 0;
+            for (let i = 0; i < history.paragraphWordCounts.length; i++) {
+                if (history.chapterIndices[i] === currentChapterIndex) {
+                    currentChapterCumulative += history.paragraphWordCounts[i];
+                }
+            }
+            history.cumulativeWordsInChapter.push(currentChapterCumulative);
+
+            overallStats.cumulativeWordCount += paragraphWordCount;
+            overallStats.totalCorrectChars += correctChars;
+            overallStats.totalTypedChars += typedChars;
+            overallStats.totalTime += timeElapsed;
+
+            const overallWPM = ((overallStats.totalTypedChars / CHARS_PER_WORD) / (overallStats.totalTime / 60)) || 0;
+            const overallAccuracy = Math.round((overallStats.totalCorrectChars / overallStats.totalTypedChars) * 100) || 0;
+
+            overallWpmDisplay.textContent = overallWPM.toFixed(1);
+            overallAccuracyDisplay.textContent = `${overallAccuracy}%`;
+
+            const newCount = history.labels.length + 1;
+            history.wpm.push(paragraphWPM);
+            history.accuracy.push(paragraphAccuracy);
+            history.overallWpmHistory.push(overallWPM);
+            history.cumulativeWords.push(overallStats.cumulativeWordCount);
+            history.labels.push(`P${newCount}`);
+
+            paragraphCountDisplay.textContent = `${history.chapterIndices.filter(i => i === currentChapterIndex).length} / ${currentChapterParagraphs.length}`;
+
+            updateChart();
+            activateNextParagraph();
+            saveProgress();
+        };
+
+        const goToPreviousParagraph = () => {
+            // Check if there's any history to go back to.
+            if (history.wpm.length === 0) return;
+
+            // --- Start of Corrected Logic ---
+
+            // 1. Get info about the last completed paragraph BEFORE modifying history.
+            const chapterOfLastParagraph = history.chapterIndices[history.chapterIndices.length - 1];
+            
+            // 2. Calculate the index (within its chapter) of the paragraph we want to redo.
+            // This is the number of paragraphs from that chapter already in the history, minus one.
+            const paragraphIndexToGoTo = history.chapterIndices.filter(i => i === chapterOfLastParagraph).length - 1;
+
+            // 3. Get the raw stats for the paragraph to be "undone".
+            const lastWordCount = history.paragraphWordCounts[history.paragraphWordCounts.length - 1];
+            const lastTime = history.rawTimes[history.rawTimes.length - 1];
+            const lastCorrectChars = history.rawCorrectChars[history.rawCorrectChars.length - 1];
+            const lastTypedChars = history.rawTypedChars[history.rawTypedChars.length - 1];
+
+            // 4. Now, pop all data for the last paragraph from history.
+            history.wpm.pop();
+            history.accuracy.pop();
+            history.labels.pop();
+            history.overallWpmHistory.pop();
+            history.cumulativeWords.pop();
+            history.chapterIndices.pop();
+            history.paragraphWordCounts.pop();
+            history.cumulativeWordsInChapter.pop();
+            history.rawTimes.pop();
+            history.rawCorrectChars.pop();
+            history.rawTypedChars.pop();
+
+            // --- End of Corrected Logic ---
+
+            // 5. Decrement overall stats.
+            overallStats.totalTime -= lastTime;
+            overallStats.totalCorrectChars -= lastCorrectChars;
+            overallStats.totalTypedChars -= lastTypedChars;
+            overallStats.cumulativeWordCount -= lastWordCount;
+            
+            // 6. Handle UI and state transition.
+            const chapterNeedsReload = currentChapterIndex !== chapterOfLastParagraph;
+            currentChapterIndex = chapterOfLastParagraph;
+            currentParagraphIndexInChapter = paragraphIndexToGoTo;
+
+            if (chapterNeedsReload) {
+                // loadChapter will render the chapter, highlight completed paragraphs, and activate the correct one.
+                loadChapter(currentChapterIndex, true);
+            } else {
+                // If we are in the same chapter, manually reset the styling of the target paragraph.
+                const paragraphEl = document.querySelector(`[data-paragraph-index="${currentParagraphIndexInChapter}"]`);
+                if (paragraphEl) {
+                    paragraphEl.querySelectorAll('.char-span').forEach(span => {
+                        span.className = 'char-span untyped';
+                    });
+                }
+                // Then, activate it. This will reset the paragraph's typing state and move the cursor.
+                activateNextParagraph(false);
+            }
+
+            // 7. Update all stats displays.
+            const overallWPM = overallStats.totalTime > 0 ? ((overallStats.totalTypedChars / CHARS_PER_WORD) / (overallStats.totalTime / 60)) : 0;
+            const overallAccuracy = overallStats.totalTypedChars > 0 ? Math.round((overallStats.totalCorrectChars / overallStats.totalTypedChars) * 100) : 100;
+            overallWpmDisplay.textContent = overallWPM.toFixed(1);
+            overallAccuracyDisplay.textContent = `${overallAccuracy}%`;
+            
+            const paragraphsDone = history.chapterIndices.filter(i => i === currentChapterIndex).length;
+            paragraphCountDisplay.textContent = `${paragraphsDone} / ${currentChapterParagraphs.length}`;
+
+            updateChart();
+            saveProgress();
+        };
+
+        const updateHighlighting = () => {
+            const paragraphEl = document.querySelector(`[data-paragraph-index="${currentParagraphIndexInChapter}"]`);
+            if (!paragraphEl) return;
+
+            const spans = paragraphEl.querySelectorAll('.char-span');
+            const sourceText = currentChapterParagraphs[currentParagraphIndexInChapter].text;
+
+            for (let i = 0; i < sourceText.length; i++) {
+                if (i < currentUserInput.length) {
+                    spans[i].className = currentUserInput[i] === sourceText[i] ? 'char-span correct' : 'char-span incorrect-char';
+                } else {
+                    spans[i].className = 'char-span untyped';
+                }
+            }
+        };
+
+        const updateCursor = () => {
+            const paragraphEl = document.querySelector(`[data-paragraph-index="${currentParagraphIndexInChapter}"]`);
+            if (!paragraphEl) return;
+
+            document.querySelectorAll('.cursor').forEach(el => el.classList.remove('cursor'));
+
+            const spans = paragraphEl.querySelectorAll('.char-span');
+            const cursorPosition = currentUserInput.length;
+
+            if (cursorPosition < spans.length) {
+                const cursorSpan = spans[cursorPosition];
+                cursorSpan.classList.add('cursor');
+
+                const container = bookContentEl;
+                const containerRect = container.getBoundingClientRect();
+                const cursorRect = cursorSpan.getBoundingClientRect();
+
+                if (cursorRect.bottom > (containerRect.bottom - (cursorRect.height * 2))) {
+                    const topPos = cursorSpan.getBoundingClientRect().top - container.getBoundingClientRect().top + container.scrollTop;
+            // The scroll is now instant instead of smooth
+                    container.scrollTop = topPos;
+                }
+            } else {
+                const endTarget = paragraphEl.querySelector('.end-cursor-target');
+                if (endTarget) endTarget.classList.add('cursor');
+            }
+        };
+
+        // --- CHART LOGIC ---
+        const getChapterColor = (chapterIndex) => {
+            const hue = (chapterIndex * 40) % 360;
+            return `hsla(${hue}, 60%, 50%, 0.6)`;
+        };
+
+        const initializeChart = () => {
+            const ctx = document.getElementById('history-chart').getContext('2d');
+            if (historyChart) {
+                historyChart.destroy();
+            }
+            historyChart = new Chart(ctx, {
+                data: { labels: [], datasets: [{ type: 'bar', label: 'Paragraph WPM', data: [], yAxisID: 'y' }] },
+                options: {
+                    responsive: true,
+                    interaction: { mode: 'index', intersect: false },
+                    scales: {
+                        x: { title: { display: true, text: 'Words Typed', color: '#d1d5db' }, grid: { color: 'rgba(255, 255, 255, 0.1)' }, ticks: { color: '#d1d5db' } },
+                        y: { type: 'linear', display: true, position: 'left', title: { display: true, text: 'WPM', color: '#d1d5db' }, grid: { color: 'rgba(255, 255, 255, 0.1)'}, ticks: { color: '#d1d5db' }, beginAtZero: false }
+                    },
+                    plugins: { 
+                        legend: { labels: { color: '#d1d5db' }},
+                        tooltip: { callbacks: { label: function(context) {
+                            if (isShowingAllHistory) {
+                                const chapterIndex = context.dataIndex;
+                                const chapterTitle = `Chapter ${chapterIndex + 1}`;
+                                const wpm = context.raw;
+                                return `${chapterTitle}: ${Math.round(wpm)} WPM Avg`;
+                            }
+                            const paragraphIndex = context.dataIndex;
+                            const wpm = history.wpm[paragraphIndex];
+                            const accuracy = history.accuracy[paragraphIndex];
+                            return `Paragraph ${paragraphIndex + 1}: ${wpm.toFixed(1)} WPM, ${accuracy}% Accuracy`;
+                        }}}
+                    }
+                }
+            });
+        };
+
+        const updateChart = () => {
+            if (!historyChart) return;
+
+            let dataIndices = [];
+            if (isShowingAllHistory) {
+                const chapterAggregates = [];
+                for (let i = 0; i < chapterMarkers.length; i++) {
+                    const chapterHistory = history.wpm.map((wpm, j) => ({ wpm, chapter: history.chapterIndices[j] })).filter(h => h.chapter === i);
+                    if (chapterHistory.length > 0) {
+                        const avgWpm = chapterHistory.reduce((sum, h) => sum + h.wpm, 0) / chapterHistory.length;
+                        chapterAggregates.push(avgWpm);
+                    } else {
+                        chapterAggregates.push(0);
+                    }
+                }
+                historyChart.data.labels = chapterMarkers.map((cm, i) => `Chapter ${i + 1}`);
+                historyChart.data.datasets[0].data = chapterAggregates;
+                historyChart.data.datasets[0].backgroundColor = chapterMarkers.map((_, i) => getChapterColor(i));
+                historyChart.data.datasets[0].label = 'Chapter WPM';
+                historyChart.options.scales.x.type = 'category';
+                historyChart.options.scales.x.title.text = 'Chapters';
+                dataIndices = chapterAggregates.map((_, i) => i);
+
+            } else {
+                for (let i = 0; i < history.chapterIndices.length; i++) {
+                    if (history.chapterIndices[i] === currentChapterIndex) {
+                        dataIndices.push(i);
+                    }
+                }
+                const barData = dataIndices.map(i => ({ x: history.cumulativeWordsInChapter[i], y: history.wpm[i] }));
+                historyChart.data.datasets[0].data = barData;
+                historyChart.data.datasets[0].backgroundColor = '#60a5fa'; // Light blue for bars
+                historyChart.data.datasets[0].label = 'Paragraph WPM';
+                historyChart.options.scales.x.type = 'linear';
+                historyChart.options.scales.x.title.text = 'Words Typed in Chapter';
+
+                historyChart.options.scales.x.min = 0;
+                historyChart.options.scales.x.max = currentChapterWordCount;
+            }
+
+            const allWpms = isShowingAllHistory ? historyChart.data.datasets[0].data.filter(w => w > 0) : history.wpm.filter((_, i) => dataIndices.includes(i));
+            if (allWpms.length > 0) {
+                const maxWpm = Math.max(...allWpms);
+                historyChart.options.scales.y.min = 0;
+                historyChart.options.scales.y.max = Math.ceil(maxWpm * 1.20);
+            } else {
+                historyChart.options.scales.y.min = 0;
+                historyChart.options.scales.y.max = 100;
+            }
+
+            historyChart.update();
+        };
+
+        function wrapCharsInSpans(htmlString) {
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = htmlString;
+
+            function wrapNode(node) {
+                if (node.nodeType === Node.TEXT_NODE) {
+                    const text = node.textContent;
+                    const fragment = document.createDocumentFragment();
+                    for (const char of text) {
+                        const span = document.createElement('span');
+                        span.className = 'char-span untyped';
+                        span.textContent = char;
+                        fragment.appendChild(span);
+                    }
+                    node.parentNode.replaceChild(fragment, node);
+                } else if (node.nodeType === Node.ELEMENT_NODE) {
+                    const children = Array.from(node.childNodes);
+                    children.forEach(wrapNode);
+                }
+            }
+
+            wrapNode(tempDiv);
+            return tempDiv.innerHTML;
+        }
+
+        // --- EVENT LISTENERS ---
+        document.addEventListener('DOMContentLoaded', setupUser);
+        changeUserBtn.addEventListener('click', () => { showLibraryView(); showProfileSwitcher(); });
+
+        // Profile Creation Listeners
+        saveProfileBtn.addEventListener('click', saveNewProfile);
+        if (cancelCreateProfileBtn) {
+            cancelCreateProfileBtn.addEventListener('click', () => {
+                profileModal.classList.add('hidden');
+                if (getProfiles().length > 0) {
+                    showProfileSwitcher();
+                }
+            });
+        }
+        
+        // Profile Switcher Listeners
+        profileSwitcherModal.addEventListener('click', (e) => {
+            const loadBtn = e.target.closest('.load-profile-btn');
+            const deleteBtn = e.target.closest('.delete-profile-btn');
+            if (loadBtn) { loadProfile(loadBtn.dataset.username); }
+            if (deleteBtn) { deleteProfile(deleteBtn.dataset.username); }
+        });
+        showCreateProfileBtn.addEventListener('click', () => {
+            profileSwitcherModal.classList.add('hidden');
+            profileModal.classList.remove('hidden');
+        });
+        
+        // Book Adding and Chapter Selection Listeners
+        addNewBookBtn.addEventListener('click', showFileLoaderView);
+        backToLibraryBtn.addEventListener('click', showLibraryView);
+        localFileInput.addEventListener('change', (e) => { if (e.target.files.length > 0) handleFile(e.target.files[0]); });
+        cancelAddBookBtn.addEventListener('click', () => { tempBookData = {}; chapterSelectionModal.classList.add('hidden'); showFileLoaderView(); });
+
+        // Typing View Listeners
+        exitToLibraryBtn.addEventListener('click', () => { saveProgress(); showLibraryView(); });
+        document.addEventListener('keydown', handleKeyPress);
+        chartToggleButton.addEventListener('click', () => { isShowingAllHistory = !isShowingAllHistory; chartToggleButton.textContent = isShowingAllHistory ? 'Show Current Chapter' : 'Show Entire Book'; updateChart(); });
+        libraryList.addEventListener('click', (e) => {
+            const startBtn = e.target.closest('.start-typing-btn');
+            const deleteBtn = e.target.closest('.delete-book-btn');
+            if (startBtn) { startTypingBook(getLibrary()[startBtn.dataset.index]); }
+            if (deleteBtn) { deleteBook(deleteBtn.dataset.index); }
+        }); 
+
+        // --- Drag and Drop Event Listeners ---
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.classList.add('drag-over');
+        });
+
+        dropZone.addEventListener('dragleave', () => {
+            dropZone.classList.remove('drag-over');
+        });
+
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('drag-over');
+            if (e.dataTransfer.files.length > 0) {
+                handleFile(e.dataTransfer.files[0]);
+            }
+        });
+
+
+        chapterSelector.addEventListener('change', (e) => {
+            const newChapterIndex = parseInt(e.target.value);
+            if (newChapterIndex !== currentChapterIndex) {
+                loadChapter(newChapterIndex);
+            }
+        });
+
+        libraryList.addEventListener('click', (e) => {
+            const startBtn = e.target.closest('.start-typing-btn');
+            const deleteBtn = e.target.closest('.delete-book-btn');
+
+            if (startBtn) {
+                const index = startBtn.dataset.index;
+                const library = getLibrary();
+                startTypingBook(library[index]);
+            }
+            if (deleteBtn) {
+                const index = deleteBtn.dataset.index;
+                deleteBook(index);
+            }
+        });
+
+        chapterListContainer.addEventListener('click', (e) => {
+            if (e.target.classList.contains('choice-btn')) {
+                const choice = e.target.dataset.choice;
+                const buttonGroup = e.target.parentElement;
+                
+                buttonGroup.querySelectorAll('.choice-btn').forEach(btn => {
+                    btn.classList.remove('bg-green-600', 'bg-yellow-600', 'bg-red-600', 'choice-btn-active');
+                    btn.classList.add('bg-gray-500', 'hover:bg-gray-600');
+                });
+
+                e.target.classList.remove('bg-gray-500', 'hover:bg-gray-600');
+                e.target.classList.add('choice-btn-active');
+                if (choice === 'type') e.target.classList.add('bg-green-600');
+                if (choice === 'skip') e.target.classList.add('bg-yellow-600');
+                if (choice === 'hide') e.target.classList.add('bg-red-600');
+            }
+        });
+
+        saveChaptersBtn.addEventListener('click', () => {
+            const choices = [];
+            chapterListContainer.querySelectorAll('.flex.space-x-2').forEach(group => {
+                const index = group.dataset.index;
+                const activeButton = group.querySelector('.choice-btn-active');
+                const status = activeButton ? activeButton.dataset.choice : 'type';
+                choices[index] = { status };
+            });
+
+            const newBook = {
+                bookName: tempBookData.title,
+                author: tempBookData.author,
+                cover: tempBookData.cover,
+                identifier: tempBookData.identifier,
+                chapterMarkers: tempBookData.chapterMarkers,
+                userChapterChoices: choices
+            };
+
+            const library = getLibrary();
+            library.push(newBook);
+            saveLibrary(library);
+
+            tempBookData = {};
+            chapterSelectionModal.classList.add('hidden');
+            showLibraryView();
+            renderLibrary();
+        });
+        
+        cancelAddBookBtn.addEventListener('click', () => {
+            tempBookData = {};
+            chapterSelectionModal.classList.add('hidden');
+            showFileLoaderView();
+        });
+
+        settingsBtn.addEventListener('click', () => {
+            populateSettingsModal();
+            settingsModal.classList.remove('hidden');
+        });
+
+        closeSettingsBtn.addEventListener('click', () => {
+            settingsModal.classList.add('hidden');
+        });
+
+    </script>
+</body>
+</html>
