@@ -188,7 +188,7 @@
         <div class="bg-gray-800 rounded-lg shadow-xl p-8 w-full max-w-2xl max-h-[90vh] flex flex-col">
             <h2 class="text-2xl font-bold text-white mb-2">Select Chapters to Type</h2>
             <p class="text-gray-400 mb-6">Choose which sections of the book you want to include in your typing practice.</p>
-            <div id="chapter-list-container" class="overflow-y-auto flex-grow pr-4">
+            <div id="chapter-list-container" class="overflow-y-auto flex-grow pr-4 min-h-0">
                 </div>
             <div class="mt-6 pt-4 border-t border-gray-700 flex justify-end space-x-4">
                  <button id="cancel-add-book-btn" class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded-md">Cancel</button>
@@ -1453,7 +1453,7 @@
             }
         });
 
-        const handleSaveChapters = () => {
+        saveChaptersBtn.addEventListener('click', () => {
             const choices = [];
             chapterListContainer.querySelectorAll('.flex.space-x-2').forEach(group => {
                 const index = group.dataset.index;
@@ -1478,27 +1478,15 @@
             tempBookData = {};
             chapterSelectionModal.classList.add('hidden');
             showLibraryView();
-           renderLibrary();
-        };
-
-        const handleCancelAddBook = () => {
+            renderLibrary();
+        });
+        
+        cancelAddBookBtn.addEventListener('click', () => {
             tempBookData = {};
             chapterSelectionModal.classList.add('hidden');
             showFileLoaderView();
-        };
-
-        saveChaptersBtn.addEventListener('click', handleSaveChapters);
-        saveChaptersBtn.addEventListener('touchstart', (e) => {
-            e.preventDefault();
-            handleSaveChapters();
         });
 
-        cancelAddBookBtn.addEventListener('click', handleCancelAddBook);
-        cancelAddBookBtn.addEventListener('touchstart', (e) => {
-            e.preventDefault();
-            handleCancelAddBook();
-        });
-		
         settingsBtn.addEventListener('click', () => {
             populateSettingsModal();
             settingsModal.classList.remove('hidden');
