@@ -9,7 +9,7 @@ It is really pretty self-explanatory. When you first start it, you are asked to 
 You will start in the *My Library* area. Press *Add Book* and it will open a dialogue to let you add an ePub, which you can select from the folder on your computer or just drag and drop on the space. 
 Once you do this it will open your ePub and a dialogue for you to choose what you want to practice typing on or not. Books will have all manner of extras like an Introduction, an Author's Note, Table of Contents, and so on. Select the ones you want and when done, press *Save Book to Library*. Note that this also works well for short story collections.
 
-<img width="879" height="860" alt="select_chapters" src="https://github.com/user-attachments/assets/85fe8f15-3448-4fac-b65d-e5cd50b57335" />
+<img width="812" height="790" alt="select_chapters2" src="https://github.com/user-attachments/assets/f3b15e7e-33e7-4d80-b216-1c5241beb7f7" />
 
 Your ebook will now appear in the library. A book is attached to a profile so if you create more than one profile, each person's books will be separate. If you delete a profile, the books will also be deleted, however only for that profile.
 
