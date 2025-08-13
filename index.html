@@ -68,12 +68,13 @@
         /* Underline cursor effect */
         .cursor {
             border-bottom: 3px solid #f59e0b; /* amber-500 */
-            animation: underline-pulse 1.s ease-in-out infinite;
+            animation: underline-pulse 1.5s ease-in-out infinite;
         }
         @keyframes underline-pulse {
             0%, 100% { border-color: #f59e0b; } /* amber-500 */
             50% { border-color: #fcd34d; } /* amber-300 */
         }
+		
         /* Character styling */
         .char-span {
             transition: color 0.2s ease-in-out, background-color 0.2s ease-in-out, border-color 0.2s ease-in-out;
@@ -227,19 +228,17 @@
         </div>
 
         <main id="typing-app" class="hidden flex-col">
-            <div class="sticky top-0 bg-gray-900 py-4 z-10 relative">
-                 <button id="settings-btn" class="absolute top-4 right-0 bg-gray-700 hover:bg-gray-600 text-white font-bold py-1 px-3 rounded-md text-sm">Settings</button>
-				 <button id="exit-to-library-btn" class="absolute top-4 left-0 bg-gray-700 hover:bg-gray-600 text-white font-bold py-1 px-3 rounded-md text-sm">← Library</button>
+            <div class="sticky top-0 bg-gray-900 py-4 z-10">
                 <div class="grid grid-cols-2 lg:grid-cols-5 gap-4 text-center">
                     <div class="bg-gray-800 p-4 rounded-lg shadow">
                         <p class="text-sm text-gray-400">Live WPM</p>
                         <div id="live-wpm-display" class="text-3xl font-bold text-green-400">0</div>
                     </div>
-                    <div class="bg-gray-800 p-4 rounded-lg shadow">
+                   <div class="bg-gray-800 p-4 rounded-lg shadow">
                         <p class="text-sm text-gray-400">Live Accuracy</p>
                         <div id="live-accuracy-display" class="text-3xl font-bold text-sky-400">100%</div>
-                    </div>
-                    <div class="bg-gray-800 p-4 rounded-lg shadow">
+                   </div>
+                   <div class="bg-gray-800 p-4 rounded-lg shadow">
                         <p class="text-sm text-gray-400">Overall WPM</p>
                         <div id="overall-wpm-display" class="text-3xl font-bold text-gray-300">0.0</div>
                     </div>
@@ -278,7 +277,13 @@
                     <canvas id="history-chart"></canvas>
                 </div>
             </div>
-        </main>
+        
+            <div class="mt-8 flex justify-between items-center">
+                <button id="exit-to-library-btn" class="bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-md">← Back to Library</button>
+                <button id="settings-btn" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-md">Settings</button>
+            </div>		
+		
+		</main>
     </div>
 
     <script>
@@ -356,7 +361,7 @@
         let currentUsername = '';
         let currentBookIdentifier = ''; // Use a unique ID for the book
         let fullBookText = '';
-        let chapterMarkers = []; // This will now hold the user-selected chapters
+        let chapterMarkers = [];
         let currentChapterIndex = -1;
         let currentChapterWordCount = 0; 
         
@@ -454,7 +459,7 @@
             }
         };
 
-        // --- NEW PROFILE MANAGEMENT ---
+        // --- PROFILE MANAGEMENT ---
         const PROFILES_KEY = 'typingAppProfiles';
         const LAST_USER_KEY = 'typingAppLastUser';
 
@@ -906,14 +911,14 @@
             const paragraphEl = document.querySelector(`[data-paragraph-index="${currentParagraphIndexInChapter}"]`);
             if (paragraphEl) {
                 const topPos = paragraphEl.getBoundingClientRect().top - bookContentEl.getBoundingClientRect().top + bookContentEl.scrollTop;
-        // The scroll is now instant instead of smooth
                 bookContentEl.scrollTop = topPos;
-                updateCursor();
+
+                setTimeout(updateCursor, 0);
             }
         };
 
         const skipParagraph = () => {
-    // Highlight the skipped paragraph with the new "skipped" style
+    // Highlight the skipped paragraph
             const paragraphEl = document.querySelector(`[data-paragraph-index="${currentParagraphIndexInChapter}"]`);
             if (paragraphEl) {
                 paragraphEl.querySelectorAll('.char-span').forEach(span => span.className = 'char-span skipped');
@@ -1120,8 +1125,6 @@
             // Check if there's any history to go back to.
             if (history.wpm.length === 0) return;
 
-            // --- Start of Corrected Logic ---
-
             // 1. Get info about the last completed paragraph BEFORE modifying history.
             const chapterOfLastParagraph = history.chapterIndices[history.chapterIndices.length - 1];
             
@@ -1147,8 +1150,6 @@
             history.rawTimes.pop();
             history.rawCorrectChars.pop();
             history.rawTypedChars.pop();
-
-            // --- End of Corrected Logic ---
 
             // 5. Decrement overall stats.
             overallStats.totalTime -= lastTime;
@@ -1210,7 +1211,7 @@
             if (!paragraphEl) return;
 
             document.querySelectorAll('.cursor').forEach(el => el.classList.remove('cursor'));
-
+    
             const spans = paragraphEl.querySelectorAll('.char-span');
             const cursorPosition = currentUserInput.length;
 
@@ -1218,15 +1219,27 @@
                 const cursorSpan = spans[cursorPosition];
                 cursorSpan.classList.add('cursor');
 
+        // ---  Center-Scrolling Logic ---
                 const container = bookContentEl;
                 const containerRect = container.getBoundingClientRect();
                 const cursorRect = cursorSpan.getBoundingClientRect();
 
-                if (cursorRect.bottom > (containerRect.bottom - (cursorRect.height * 2))) {
-                    const topPos = cursorSpan.getBoundingClientRect().top - container.getBoundingClientRect().top + container.scrollTop;
-            // The scroll is now instant instead of smooth
-                    container.scrollTop = topPos;
+        // Calculate the vertical midpoint of the container
+                const containerMidpoint = containerRect.top + (containerRect.height / 2);
+
+        // If the cursor is past the midpoint, scroll to keep it centered
+                if (cursorRect.top > containerMidpoint) {
+            // Calculate how much to scroll to bring the cursor to the midpoint
+                    const scrollOffset = cursorRect.top - containerMidpoint;
+                    const newScrollTop = container.scrollTop + scrollOffset;
+
+            // Use 'smooth' for the visible but fast scroll
+                    container.scrollTo({
+                        top: newScrollTop,
+                        behavior: 'smooth'
+                    });
                 }
+        
             } else {
                 const endTarget = paragraphEl.querySelector('.end-cursor-target');
                 if (endTarget) endTarget.classList.add('cursor');
@@ -1449,7 +1462,6 @@
                 e.target.classList.add('choice-btn-active');
                 if (choice === 'type') e.target.classList.add('bg-green-600');
                 if (choice === 'skip') e.target.classList.add('bg-yellow-600');
-                if (choice === 'hide') e.target.classList.add('bg-red-600');
             }
         });
 
