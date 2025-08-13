@@ -20,7 +20,7 @@ Once you open a book to start typing you will see a screen like this:
 
 <img width="868" height="571" alt="typing_area2" src="https://github.com/user-attachments/assets/5fa35c33-d0fd-4366-8702-6cb5d7074f68" />
 
-The app will track your live typing speed as you type as well as the accuracy, it is reset for each paragraph, and the clock only starts once you start typing a new paragraph. You will notice two buttons on the left and right. *Library* returns you to the library to upload or change books.  *Settings* lets you change the font or its size. There is a drop-down menu to change chapters/sections. 
+The app will track your live typing speed as you type as well as the accuracy, it is reset for each paragraph, and the clock only starts once you start typing a new paragraph. There is a drop-down menu to change chapters/sections.
 
 <img width="818" height="121" alt="shortcuts" src="https://github.com/user-attachments/assets/fac9cd94-725e-4118-a3d0-01f459ef1cd2" />
 
@@ -28,7 +28,11 @@ These are shortcuts for the typing experience. To end a paragraph and go to the 
 
 <img width="2575" height="1448" alt="histogram" src="https://github.com/user-attachments/assets/5a76c200-53df-4e50-97a9-66cb38d4ca64" />
 
-As you finish, each paragraph will be measured and entered into the histogram at the bottom. The results are unique for each book. 
+As you finish, each paragraph will be measured and entered into the histogram at the bottom. The results are unique for each book.
+
+<img width="870" height="149" alt="Screenshot 2025-08-13 004900" src="https://github.com/user-attachments/assets/029a0d7e-290e-48ec-bcfb-4570a884c280" />
+
+At the very bottom, you will notice two buttons on the left and right. *Library* returns you to the library to upload or change books.  *Settings* lets you change the font or its size.
 
 I hope you find the app useful and fun.
 
