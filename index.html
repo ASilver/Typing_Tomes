@@ -564,22 +564,23 @@
         const loadProgress = () => {
             const savedData = localStorage.getItem(getProgressSaveKey());
             if (savedData) {
-                if (confirm('Resume from where you left off?')) {
-                    const progress = JSON.parse(savedData);
-                    currentChapterIndex = progress.currentChapterIndex;
-                    currentParagraphIndexInChapter = progress.currentParagraphIndexInChapter;
-                    overallStats = progress.overallStats;
-                    history = progress.history;
-                    // Initialize new history arrays if loading old data
-                    if (!history.paragraphWordCounts) history.paragraphWordCounts = [];
-                    if (!history.cumulativeWordsInChapter) history.cumulativeWordsInChapter = [];
-                    if (!history.rawTimes) history.rawTimes = [];
-                    if (!history.rawCorrectChars) history.rawCorrectChars = [];
-                    if (!history.rawTypedChars) history.rawTypedChars = [];
-                    return true;
-                }
+                const progress = JSON.parse(savedData);
+                currentChapterIndex = progress.currentChapterIndex;
+                currentParagraphIndexInChapter = progress.currentParagraphIndexInChapter;
+                overallStats = progress.overallStats;
+                history = progress.history;
+        
+                // Ensure backward compatibility for older save files
+                if (!history.paragraphWordCounts) history.paragraphWordCounts = [];
+                if (!history.cumulativeWordsInChapter) history.cumulativeWordsInChapter = [];
+                if (!history.rawTimes) history.rawTimes = [];
+                if (!history.rawCorrectChars) history.rawCorrectChars = [];
+                if (!history.rawTypedChars) history.rawTypedChars = [];
+        
+                return true;
             }
-            // Reset stats if not resuming
+
+            // If no saved data is found, reset stats as normal
             history = { wpm: [], accuracy: [], labels: [], overallWpmHistory: [], cumulativeWords: [], chapterIndices: [], paragraphWordCounts: [], cumulativeWordsInChapter: [], rawTimes: [], rawCorrectChars: [], rawTypedChars: [] };
             overallStats = { totalCorrectChars: 0, totalTypedChars: 0, totalTime: 0, cumulativeWordCount: 0 };
             return false;
@@ -760,10 +761,12 @@
         const normalizeText = (text) => {
             if (!text) return '';
             return text
-                .replace(/[\u201C\u201D]/g, '"') // Normalizes curly double quotes
-                .replace(/[\u2018\u2019]/g, "'") // Normalizes curly single quotes/apostrophes
-                .replace(/[\u2013\u2014]/g, '-') // Normalizes en and em dashes
-                .replace(/\u2026/g, '...');      // Normalizes ellipsis
+			    .replace(/[\u201C\u201D]/g, '"')      // Curly Double Quotes: “ ” → "
+                .replace(/[«»]/g, '"')             // French Guillemets: « » → "
+                .replace(/[\u2018\u2019]/g, "'")      // Curly Single Quotes: ‘ ’ → '
+                .replace(/[\u2013\u2014]/g, '-')      // En & Em Dashes: – — → -
+                .replace(/\u2026/g, '...')          // Ellipsis Character: … → ...
+                .replace(/\.\s\.\s\./g, '...');    // Spaced Ellipsis: . . . → ...
         };
 
         const startTypingBook = (book) => {
