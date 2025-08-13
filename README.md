@@ -32,7 +32,7 @@ As you finish, each paragraph will be measured and entered into the histogram at
 
 <img width="870" height="149" alt="Screenshot 2025-08-13 004900" src="https://github.com/user-attachments/assets/029a0d7e-290e-48ec-bcfb-4570a884c280" />
 
-At the very bottom, you will notice two buttons on the left and right. *Library* returns you to the library to upload or change books.  *Settings* lets you change the font or its size.
+At the very bottom, you will notice two buttons on the left and right. *Back to Library* returns you to the library to upload or change books.  *Settings* lets you change the font or its size.
 
 I hope you find the app useful and fun.
 
