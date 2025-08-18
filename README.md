@@ -30,7 +30,7 @@ As you finish, each paragraph will be measured and entered into the histogram at
 
 <img width="864" height="504" alt="image" src="https://github.com/user-attachments/assets/3c5f0ddc-1d87-45c4-815d-82cbf627cbcf" />
 
-At the very bottom, you will notice three buttons on the left and right. *Back to Library* returns you to the library to upload or change books.  *Analysis and Drills* lets you se a report on your weaknesses (see below for more details) and train against them, and *Settings* lets you change the font or its size.
+At the very bottom, you will notice three buttons. *Back to Library* returns you to the library to upload or change books. *Analysis and Drills* lets you se a report on your weaknesses (see below for more details) and train against them, and *Settings* lets you change the font and its size.
 
 # Analysis and Drills
 
