@@ -26,13 +26,27 @@ The app will track your live typing speed as you type as well as the accuracy, i
 
 These are shortcuts for the typing experience. To end a paragraph and go to the next one, press *Enter* at the end. If you want to start over midway, just press *Tab*, and if you want to skip a paragraph, just press *Shift+Enter*. Lastly, if you want to go back and redo a previous paragraph again then press *Shift+Tab*.
 
-<img width="2575" height="1448" alt="histogram" src="https://github.com/user-attachments/assets/5a76c200-53df-4e50-97a9-66cb38d4ca64" />
+<img width="858" height="483" alt="histogram" src="https://github.com/user-attachments/assets/5a76c200-53df-4e50-97a9-66cb38d4ca64" />
 
 As you finish, each paragraph will be measured and entered into the histogram at the bottom. The results are unique for each book.
 
 <img width="870" height="149" alt="Screenshot 2025-08-13 004900" src="https://github.com/user-attachments/assets/029a0d7e-290e-48ec-bcfb-4570a884c280" />
 
-At the very bottom, you will notice two buttons on the left and right. *Back to Library* returns you to the library to upload or change books.  *Settings* lets you change the font or its size.
+At the very bottom, you will notice three buttons on the left and right. *Back to Library* returns you to the library to upload or change books.  *Analysis and Drills* lets you se a report on your weaknesses (see below for more details) and train against them, and *Settings* lets you change the font or its size.
+
+# Analysis and Drills
+
+Pressing this button under the histogram produces a report of your measured weakneses in bigrams (two-letter sequences, such as th-) and trigrams (three-letter sequences, such as -ion). It will list your five weakest and list them in order. It takes into account slowdowns as well as mistakes.
+
+<img width="824" height="640" alt="image" src="https://github.com/user-attachments/assets/f910df1c-d4d2-46d8-8b4d-7bb64bb5a43f" />
+
+You can then drill against them by pressing *Drill My Weaknesses*. The first time this requires a minimum of 200 typed words in the book typing area. Thereafter it will update to measure your last 200 words.
+
+<img width="888" height="550" alt="image" src="https://github.com/user-attachments/assets/51e61a96-6a78-48cb-b1c7-777fa41e1c34" />
+
+The drill will produce a list of 50 words, taken from a master list of the 1000 most common words in English, chosen to target your bigram and trigram weaknesses. You can restart a drill at any time by pressing the Tab key, just as you can restart a paragraph in the book typing area. After it is done, you can choose to redo a test on the same weaknesses by pressing *Drill more words* though bear in mind it will likely use many of the same words, albeit in a different order. Pressing *End drill* will return you to the book typing area.
+
+<img width="655" height="210" alt="image" src="https://github.com/user-attachments/assets/9be32632-0cfc-4e6b-a2f4-49ee48abc4df" />
 
 I hope you find the app useful and fun.
 
