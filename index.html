@@ -836,32 +836,37 @@
         const getLibrary = () => JSON.parse(localStorage.getItem(getLibrarySaveKey())) || [];
         const saveLibrary = (library) => localStorage.setItem(getLibrarySaveKey(), JSON.stringify(library));
 
-        const renderLibrary = () => {
-            const library = getLibrary();
-            libraryList.innerHTML = '';
-            if (library.length === 0) {
-                // Show a message in the grid container
-                 libraryList.className = 'text-center col-span-full'; // Span all columns
-                 libraryList.innerHTML = `<p class="text-gray-400">Your library is empty. Add a book to get started!</p>`;
-            } else {
-                 libraryList.className = 'grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6'; // Restore grid
-                library.forEach((book, index) => {
-                    const bookElement = document.createElement('div');
-                    bookElement.className = 'library-book-card bg-gray-800 rounded-lg flex flex-col items-center text-center shadow-lg overflow-hidden';
-                    bookElement.innerHTML = `
-                        <img src="${book.cover || 'https://via.placeholder.com/300x450.png?text=No+Cover'}" alt="Cover for ${book.bookName}" class="w-full h-auto">
-                        <div class="p-4 flex flex-col flex-grow w-full">
-                            <div class="mt-auto space-y-2 w-full">
-                                <button data-index="${index}" class="start-typing-btn w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-3 rounded-md text-sm">Type</button>
-                                <button data-index="${index}" class="delete-book-btn w-full bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-3 rounded-md text-sm">Delete</button>
-                            </div>
-                        </div>
-                    `;
-                    libraryList.appendChild(bookElement);
-                });
-            }
-        };
-
+		const renderLibrary = () => {
+			const library = getLibrary();
+			libraryList.innerHTML = '';
+			if (library.length === 0) {
+				libraryList.className = 'text-center col-span-full';
+				libraryList.innerHTML = `<p class="text-gray-400">Your library is empty. Add a book to get started!</p>`;
+			} else {
+				libraryList.className = 'grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6';
+				library.forEach((book, index) => {
+					const bookElement = document.createElement('div');
+					bookElement.className = 'library-book-card bg-gray-800 rounded-lg flex flex-col text-center shadow-lg overflow-hidden';
+					
+					// This is the updated HTML for each book card
+					bookElement.innerHTML = `
+						<img src="${book.cover || 'https://via.placeholder.com/300x450.png?text=No+Cover'}" alt="Cover for ${book.bookName}" class="w-full h-auto">
+						
+						<div class="p-4 flex flex-col flex-grow w-full">
+							<h3 class="font-bold text-white text-md leading-tight mb-1 truncate" title="${book.bookName}">${book.bookName}</h3>
+							<p class="text-gray-400 text-sm mb-4 truncate" title="${book.author}">${book.author}</p>
+							
+							<div class="mt-auto space-y-2 w-full">
+								<button data-index="${index}" class="start-typing-btn w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-3 rounded-md text-sm">Type</button>
+								<button data-index="${index}" class="delete-book-btn w-full bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-3 rounded-md text-sm">Delete</button>
+							</div>
+						</div>
+					`;
+					libraryList.appendChild(bookElement);
+				});
+			}
+		};
+		
         const deleteBook = (index) => {
              let library = getLibrary();
              const bookToDelete = library[index];
@@ -1077,59 +1082,68 @@
         };
 
         // --- FILE LOADING & CHAPTER PARSING ---
-        const handleFile = async (file) => {
-            if (file && file.name.endsWith('.epub')) {
-                loadingStatus.textContent = 'Loading EPUB...';
-                isBookLoading = true;
-                try {
-                    const book = ePub(file);
-                    await book.ready;
-                    
-                    const metadata = book.packaging.metadata;
-                    const coverUrl = await book.coverUrl();
-                    const coverBase64 = await blobUrlToBase64(coverUrl);
+		const handleFile = async (file) => {
+			if (file && file.name.endsWith('.epub')) {
+				loadingStatus.textContent = 'Loading EPUB...';
+				isBookLoading = true;
+				try {
+					const book = ePub(file);
+					await book.ready;
+					
+					const metadata = book.packaging.metadata;
+					let coverBase64 = null; // Default the cover to null
 
-                    const allSections = [];
-                    const MIN_TEXT_LENGTH = 200;
+					// New: Gracefully attempt to load the cover
+					try {
+						const coverUrl = await book.coverUrl();
+						if (coverUrl) { // Only proceed if a cover URL was actually found
+							coverBase64 = await blobUrlToBase64(coverUrl);
+						}
+					} catch (coverError) {
+						console.warn("Could not load cover for this EPUB, proceeding without it:", coverError);
+					}
 
-                    const processTocItems = async (tocItems) => {
-                        for (const item of tocItems) {
-                            const cleanHref = item.href.split('#')[0];
-                            const doc = await book.load(cleanHref);
-                            const body = doc.body || doc.documentElement;
-                            const htmlContent = body.innerHTML;
+					const allSections = [];
+					const MIN_TEXT_LENGTH = 200;
 
-                            const tempDiv = document.createElement('div');
-                            tempDiv.innerHTML = htmlContent;
-                            const textContent = (tempDiv.textContent || "").trim();
-                            
-                            if (textContent.length > MIN_TEXT_LENGTH) {
-                                allSections.push({
-                                    title: item.label.trim(),
-                                    htmlContent: htmlContent
-                                });
-                            }
+					const processTocItems = async (tocItems) => {
+						for (const item of tocItems) {
+							const cleanHref = item.href.split('#')[0];
+							const doc = await book.load(cleanHref);
+							const body = doc.body || doc.documentElement;
+							const htmlContent = body.innerHTML;
 
-                            if (item.subitems && item.subitems.length > 0) {
-                                await processTocItems(item.subitems);
-                            }
-                        }
-                    };
+							const tempDiv = document.createElement('div');
+							tempDiv.innerHTML = htmlContent;
+							const textContent = (tempDiv.textContent || "").trim();
+							
+							if (textContent.length > MIN_TEXT_LENGTH) {
+								allSections.push({
+									title: item.label.trim(),
+									htmlContent: htmlContent
+								});
+							}
 
-                    await processTocItems(book.navigation.toc);
-                    
-                    prepareBookForSelection(metadata, coverBase64, allSections);
-                } catch (error) {
-                    loadingStatus.textContent = `Error processing EPUB file: ${error.message}`;
-                    console.error(error);
-                } finally {
-                    isBookLoading = false;
-                }
-            } else {
-                alert('Please select or drop a valid .epub file.');
-            }
-        };
+							if (item.subitems && item.subitems.length > 0) {
+								await processTocItems(item.subitems);
+							}
+						}
+					};
 
+					await processTocItems(book.navigation.toc);
+					
+					prepareBookForSelection(metadata, coverBase64, allSections);
+				} catch (error) {
+					loadingStatus.textContent = `Error processing EPUB file: ${error.message}`;
+					console.error(error);
+				} finally {
+					isBookLoading = false;
+				}
+			} else {
+				alert('Please select or drop a valid .epub file.');
+			}
+		};
+		
         const prepareBookForSelection = (metadata, cover, allSections) => {
             // Store all extracted data temporarily
             tempBookData.title = metadata.title;
