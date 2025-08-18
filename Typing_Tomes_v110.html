@@ -998,7 +998,7 @@
 			drillTotalWords = drillSet.length;
 
 			const drillParagraph = drillSet.join(' ');
-			drillTargetLength = drillParagraph;
+			drillTargetLength = drillParagraph.length; // <-- This is the corrected line
 			currentChapterParagraphs = [{ text: drillParagraph, html: drillParagraph }];
 			const totalWeaknesses = tier1Weaknesses.length + tier2Weaknesses.length;
 			chapterStatsDisplay.textContent = `Drilling ${totalWeaknesses} identified weaknesses.`;
@@ -1020,8 +1020,6 @@
 
 		const finishDrill = () => {
 			if (!isDrillActive) return;
-			isDrillActive = false;
-			currentContentEl = bookContentEl;
 
 			const totalTime = (paragraphKeyPressLog.length > 1) ? (paragraphKeyPressLog[paragraphKeyPressLog.length - 1].time - paragraphKeyPressLog[0].time) / 1000 : 0;
 			const typedChars = currentUserInput.length;
@@ -1036,6 +1034,11 @@
 
 			drillWpmDisplay.textContent = finalWPM.toFixed(1);
 			drillAccuracyDisplay.textContent = `${finalAccuracy.toFixed(0)}%`;
+			
+			drillWordCount.textContent = `${drillTotalWords} / ${drillTotalWords}`;
+
+			isDrillActive = false;
+			currentContentEl = bookContentEl;
 			
 			const fanfareText = createFanfareText("Drill Complete! Good job!");
 
