@@ -26,8 +26,6 @@ The app will track your live typing speed as you type as well as the accuracy, i
 
 These are shortcuts for the typing experience. To end a paragraph and go to the next one, press *Enter* at the end. If you want to start over midway, just press *Tab*, and if you want to skip a paragraph, just press *Shift+Enter*. Lastly, if you want to go back and redo a previous paragraph again then press *Shift+Tab*.
 
-<img width="858" height="483" alt="histogram" src="https://github.com/user-attachments/assets/5a76c200-53df-4e50-97a9-66cb38d4ca64" />
-
 As you finish, each paragraph will be measured and entered into the histogram at the bottom. The results are unique for each book.
 
 <img width="864" height="504" alt="image" src="https://github.com/user-attachments/assets/3c5f0ddc-1d87-45c4-815d-82cbf627cbcf" />
