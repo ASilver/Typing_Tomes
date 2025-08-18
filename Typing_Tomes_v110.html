@@ -9,13 +9,13 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.5/jszip.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/epubjs/dist/epub.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@700&family=Noto+Sans:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Merriweather:wght@400;700&family=Source+Sans+Pro:wght@400;700&display=swap" rel="stylesheet">
 	<style>
         /* Custom styles for the new UI */
@@ -80,7 +80,7 @@
             transition: color 0.2s ease-in-out, background-color 0.2s ease-in-out, border-color 0.2s ease-in-out;
             border-radius: 2px;
             padding-bottom: 2px; /* Add padding for the underline */
-            border-bottom: 2px solid transparent; /* Placeholder for underline */
+            border-bottom: 2px solid transparent;
         }
         .correct { color: #f3f4f6; } /* gray-100 */
         .incorrect-char {
@@ -92,7 +92,7 @@
         /* Paragraph styling */
         .paragraph-block {
             margin-bottom: 2rem;
-            overflow-wrap: break-word; /* Fix for word wrapping issue */
+            overflow-wrap: break-word;
             hyphens: auto;
         }
         .chapter-heading {
@@ -127,13 +127,25 @@
         .library-book-card img {
             object-fit: cover;
             aspect-ratio: 2 / 3;
-            background-color: #374151; /* gray-700 for placeholder */
+            background-color: #374151;
         }
         /* Drag-and-drop visual feedback */
         .drag-over {
             border-color: #f59e0b; /* amber-500 */
             background-color: rgba(245, 158, 11, 0.1);
         }
+		/* Drill Completion Animation */
+		.fanfare-char {
+			display: inline-block;
+			animation: color-shift 1.5s infinite;
+		}
+		@keyframes color-shift {
+			0%   { color: #4ade80; } /* green-400 */
+			25%  { color: #38bdf8; } /* sky-400 */
+			50%  { color: #818cf8; } /* indigo-400 */
+			75%  { color: #c084fc; } /* purple-400 */
+			100% { color: #4ade80; } /* cycle back to green */
+		}
     </style>
 </head>
 <body class="bg-gray-900 text-gray-200 flex flex-col items-center min-h-screen p-4 md:p-8">
@@ -159,6 +171,31 @@
             </div>
         </div>
     </div>
+
+	<div id="analysis-modal" class="fixed inset-0 z-50 flex items-center justify-center modal-backdrop hidden">
+		<div class="bg-gray-800 rounded-lg shadow-xl p-4 sm:p-8 w-full max-w-2xl max-h-[90vh] flex flex-col">
+			<h2 class="text-2xl font-bold text-white mb-4">Your Typing Analysis</h2>
+			<p class="text-gray-400 mb-6">Here are your slowest letter combinations based on your typing history. Use the drill button to practice them.</p>
+
+			<div class="flex-grow overflow-y-auto pr-4 grid grid-cols-1 md:grid-cols-2 gap-8 min-h-0">
+				<div>
+					<h3 class="text-lg font-semibold text-indigo-400 mb-3 ui-subheading">Slowest Bigrams (2-Letters)</h3>
+					<div id="weak-bigrams-list" class="space-y-2">
+						</div>
+				</div>
+				<div>
+					<h3 class="text-lg font-semibold text-indigo-400 mb-3 ui-subheading">Slowest Trigrams (3-Letters)</h3>
+					<div id="weak-trigrams-list" class="space-y-2">
+						</div>
+				</div>
+			</div>
+
+			<div class="mt-8 pt-4 border-t border-gray-700 flex justify-between items-center">
+				<button id="close-analysis-btn" class="bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-md">Close</button>
+				<button id="drill-weaknesses-btn" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-md">Drill My Weaknesses</button>
+			</div>
+		</div>
+	</div>
 
     <div id="profile-modal" class="fixed inset-0 z-50 flex items-center justify-center modal-backdrop hidden">
         <div class="bg-gray-800 rounded-lg shadow-xl p-8 w-full max-w-md">
@@ -261,7 +298,7 @@
 
                 <div id="chapter-stats" class="text-center text-gray-400 mb-4"></div>
                 <div class="bg-gray-800 p-6 rounded-lg shadow-lg relative">
-                     <div id="book-content" class="select-none overflow-y-auto" style="max-height: 70vh;">
+                     <div id="book-content" class="select-none overflow-y-auto focus:outline-none" style="max-height: 70vh;">
                          </div>
                      <div class="text-right text-gray-400 text-sm mt-4">
                          <span>Press <kbd class="font-sans bg-gray-600 text-gray-200 rounded px-2 py-1">Tab</kbd> to restart paragraph.</span>
@@ -280,14 +317,59 @@
         
             <div class="mt-8 flex justify-between items-center">
                 <button id="exit-to-library-btn" class="bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-md">← Back to Library</button>
+				<button id="analysis-btn" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-md">Analysis and Drills</button>
                 <button id="settings-btn" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-md">Settings</button>
             </div>		
 		
 		</main>
+		
+		<main id="drill-mode" class="hidden flex-col">
+            <div class="py-4 z-10">
+                <h2 class="text-3xl font-bold text-center text-green-400 mb-4">Practice Drill</h2>
+                <div class="grid grid-cols-3 gap-4 text-center">
+                    <div class="bg-gray-800 p-4 rounded-lg shadow">
+                        <p class="text-sm text-gray-400">Drill WPM</p>
+                        <div id="drill-wpm-display" class="text-3xl font-bold text-green-400">0</div>
+                    </div>
+                    <div class="bg-gray-800 p-4 rounded-lg shadow">
+                        <p class="text-sm text-gray-400">Drill Accuracy</p>
+                        <div id="drill-accuracy-display" class="text-3xl font-bold text-sky-400">100%</div>
+                    </div>
+                    <div class="bg-gray-800 p-4 rounded-lg shadow">
+                        <p class="text-sm text-gray-400">Words Typed</p>
+                        <div id="drill-word-count" class="text-3xl font-bold text-purple-400">0 / 50</div>
+                    </div>
+                </div>
+            </div>
+    
+            <div class="mt-6 bg-gray-800 p-6 rounded-lg shadow-lg relative">
+                <div id="drill-content" class="select-none overflow-y-auto text-3xl leading-loose focus:outline-none" style="max-height: 50vh;" tabindex="-1">
+                </div>
+            </div>
+    
+            <div class="mt-8 flex justify-between items-center">
+                <button id="end-drill-btn" class="bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-md">End Drill</button>
+                <button id="drill-more-btn" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-md">Drill More Words</button>
+            </div>
+        </main>
+		
     </div>
 
     <script>
         // DOM Elements
+		const drillModeSection = document.getElementById('drill-mode');
+		const drillContentEl = document.getElementById('drill-content');
+		const drillWpmDisplay = document.getElementById('drill-wpm-display');
+		const drillAccuracyDisplay = document.getElementById('drill-accuracy-display');
+		const drillWordCount = document.getElementById('drill-word-count');
+		const endDrillBtn = document.getElementById('end-drill-btn');
+		const drillMoreBtn = document.getElementById('drill-more-btn');
+		const analysisModal = document.getElementById('analysis-modal');
+		const analysisBtn = document.getElementById('analysis-btn');
+		const closeAnalysisBtn = document.getElementById('close-analysis-btn');
+		const drillWeaknessesBtn = document.getElementById('drill-weaknesses-btn');
+		const weakBigramsList = document.getElementById('weak-bigrams-list');
+		const weakTrigramsList = document.getElementById('weak-trigrams-list');
         const libraryView = document.getElementById('library-view');
         const libraryList = document.getElementById('library-list');
         const addNewBookBtn = document.getElementById('add-new-book-btn');
@@ -298,13 +380,22 @@
         const localFileInput = document.getElementById('local-file');
         const loadingStatus = document.getElementById('loading-status');
         const dropZone = document.getElementById('drop-zone');
-        
-		// Add these with your other DOM Element constants
         const settingsModal = document.getElementById('settings-modal');
         const settingsBtn = document.getElementById('settings-btn');
         const closeSettingsBtn = document.getElementById('close-settings-btn');
         const fontFamilySelector = document.getElementById('font-family-selector');
         const fontSizeSelector = document.getElementById('font-size-selector');
+
+        // --- MASTER LISTS FOR ADAPTIVE TRAINING ---
+
+        // Top 1000 most common English words
+        const MASTER_WORDS_1K = ["the", "of", "to", "and", "a", "in", "is", "it", "you", "that", "he", "was", "for", "on", "are", "with", "as", "I", "his", "they", "be", "at", "one", "have", "this", "from", "or", "had", "by", "not", "word", "but", "what", "some", "we", "can", "out", "other", "were", "all", "there", "when", "up", "use", "your", "how", "said", "an", "each", "she", "which", "do", "their", "time", "if", "will", "way", "about", "many", "then", "them", "write", "would", "like", "so", "these", "her", "long", "make", "thing", "see", "him", "two", "has", "look", "more", "day", "could", "go", "come", "did", "number", "sound", "no", "most", "people", "my", "over", "know", "water", "than", "call", "first", "who", "may", "down", "side", "been", "now", "find", "any", "new", "work", "part", "take", "get", "place", "made", "live", "where", "after", "back", "little", "only", "round", "man", "year", "came", "show", "every", "good", "me", "give", "our", "under", "name", "very", "through", "just", "form", "sentence", "great", "think", "say", "help", "low", "line", "differ", "turn", "cause", "much", "mean", "before", "move", "right", "boy", "old", "too", "same", "tell", "does", "set", "three", "want", "air", "well", "also", "play", "small", "end", "put", "home", "read", "hand", "port", "large", "spell", "add", "even", "land", "here", "must", "big", "high", "such", "follow", "act", "why", "ask", "men", "change", "went", "light", "kind", "off", "need", "house", "picture", "try", "us", "again", "animal", "point", "mother", "world", "near", "build", "self", "earth", "father", "head", "stand", "own", "page", "should", "country", "found", "answer", "school", "grow", "study", "still", "learn", "plant", "cover", "food", "sun", "four", "between", "state", "keep", "eye", "never", "last", "let", "thought", "city", "tree", "cross", "farm", "hard", "start", "might", "story", "saw", "far", "sea", "draw", "left", "late", "run", "while", "press", "close", "night", "real", "life", "few", "north", "open", "seem", "together", "next", "white", "children", "begin", "got", "walk", "example", "ease", "paper", "group", "always", "music", "those", "both", "mark", "often", "letter", "until", "mile", "river", "car", "feet", "care", "second", "book", "carry", "took", "science", "eat", "room", "friend", "began", "idea", "fish", "mountain", "stop", "once", "base", "hear", "horse", "cut", "sure", "watch", "color", "face", "wood", "main", "enough", "plain", "girl", "usual", "young", "ready", "above", "ever", "red", "list", "though", "feel", "talk", "bird", "soon", "body", "dog", "family", "direct", "pose", "leave", "song", "measure", "door", "product", "black", "short", "numeral", "class", "wind", "question", "happen", "complete", "ship", "area", "half", "rock", "order", "fire", "south", "problem", "piece", "told", "knew", "pass", "since", "top", "whole", "king", "space", "heard", "best", "hour", "better", "true", "during", "hundred", "five", "remember", "step", "early", "hold", "west", "ground", "interest", "reach", "fast", "verb", "sing", "listen", "six", "table", "travel", "less", "morning", "ten", "simple", "several", "vowel", "toward", "war", "lay", "against", "pattern", "slow", "center", "love", "person", "money", "serve", "appear", "road", "map", "rain", "rule", "govern", "pull", "cold", "notice", "voice", "unit", "power", "town", "fine", "certain", "fly", "fall", "lead", "cry", "dark", "machine", "note", "wait", "plan", "figure", "star", "box", "noun", "field", "rest", "correct", "able", "pound", "done", "beauty", "drive", "stood", "contain", "front", "teach", "week", "final", "gave", "green", "oh", "quick", "develop", "ocean", "warm", "free", "minute", "strong", "special", "mind", "behind", "clear", "tail", "produce", "fact", "street", "inch", "multiply", "nothing", "course", "stay", "wheel", "full", "force", "blue", "object", "decide", "surface", "deep", "moon", "island", "foot", "system", "busy", "test", "record", "boat", "common", "gold", "possible", "plane", "stead", "dry", "wonder", "laugh", "thousand", "ago", "ran", "check", "game", "shape", "equate", "hot", "miss", "brought", "heat", "snow", "tire", "bring", "yes", "distant", "fill", "east", "paint", "language", "among", "grand", "ball", "yet", "wave", "drop", "heart", "am", "present", "heavy", "dance", "engine", "position", "arm", "wide", "sail", "material", "size", "vary", "settle", "speak", "weight", "general", "ice", "matter", "circle", "pair", "include", "divide", "syllable", "felt", "perhaps", "pick", "sudden", "count", "square", "reason", "length", "represent", "art", "subject", "region", "energy", "hunt", "probable", "bed", "brother", "egg", "ride", "cell", "believe", "fraction", "forest", "sit", "race", "window", "store", "summer", "train", "sleep", "prove", "lone", "leg", "exercise", "wall", "catch", "mount", "wish", "sky", "board", "joy", "winter", "sat", "written", "wild", "instrument", "kept", "glass", "grass", "cow", "job", "edge", "sign", "visit", "past", "soft", "fun", "bright", "gas", "weather", "month", "million", "bear", "finish", "happy", "hope", "flower", "clothes", "strange", "gone", "jump", "baby", "eight", "village", "meet", "root", "buy", "raise", "solve", "metal", "whether", "push", "seven", "paragraph", "third", "shall", "held", "hair", "describe", "cook", "floor", "either", "result", "burn", "hill", "safe", "cat", "century", "consider", "type", "law", "bit", "coast", "copy", "phrase", "silent", "tall", "sand", "soil", "roll", "temperature", "finger", "industry", "value", "fight", "lie", "beat", "excite", "natural", "view", "sense", "ear", "else", "quite", "broke", "case", "middle", "kill", "son", "lake", "moment", "scale", "loud", "spring", "observe", "child", "straight", "consonant", "nation", "dictionary", "milk", "speed", "method", "organ", "pay", "age", "section", "dress", "cloud", "surprise", "quiet", "stone", "tiny", "climb", "cool", "design", "poor", "lot", "experiment", "bottom", "key", "iron", "single", "stick", "flat", "twenty", "skin", "smile", "crease", "hole", "trade", "melody", "trip", "office", "receive", "row", "mouth", "exact", "symbol", "die", "least", "trouble", "shout", "except", "wrote", "seed", "tone", "join", "suggest", "clean", "break", "lady", "yard", "rise", "bad", "blow", "oil", "blood", "touch", "grew", "cent", "mix", "team", "wire", "cost", "lost", "brown", "wear", "garden", "equal", "sent", "choose", "fell", "fit", "flow", "fair", "bank", "collect", "save", "control", "decimal", "gentle", "woman", "captain", "practice", "separate", "difficult", "doctor", "please", "protect", "noon", "whose", "locate", "ring", "character", "insect", "caught", "period", "indicate", "radio", "spoke", "atom", "human", "history", "effect", "electric", "expect", "crop", "modern", "element", "hit", "student", "corner", "party", "supply", "bone", "rail", "imagine", "provide", "agree", "thus", "capital", "chair", "danger", "fruit", "rich", "thick", "soldier", "process", "operate", "guess", "necessary", "sharp", "wing", "create", "neighbor", "wash", "bat", "rather", "crowd", "corn", "compare", "poem", "string", "bell", "depend", "meat", "rub", "tube", "famous", "dollar", "stream", "fear", "sight", "thin", "triangle", "planet", "hurry", "chief", "colony", "clock", "mine", "tie", "enter", "major", "fresh", "search", "send", "yellow", "gun", "allow", "print", "dead", "spot", "desert", "suit", "current", "lift", "rose", "continue", "block", "chart", "hat", "sell", "success", "company", "subtract", "event", "particular", "deal", "swim", "term", "opposite", "wife", "shoe", "shoulder", "spread", "arrange", "camp", "invent", "cotton", "born", "determine", "quart", "nine", "truck", "noise", "level", "chance", "gather", "shop", "stretch", "throw", "shine", "property", "column", "molecule", "select", "wrong", "gray", "repeat", "require", "broad", "prepare", "salt", "nose", "plural", "anger", "claim", "continent", "oxygen", "sugar", "death", "pretty", "skill", "women", "season", "solution", "magnet", "silver", "thank", "branch", "match", "suffix", "especially", "fig", "afraid", "huge", "sister", "steel", "discuss", "forward", "similar", "guide", "experience", "score", "apple", "bought", "led", "pitch", "coat", "mass", "card", "band", "rope", "slip", "win", "dream", "evening", "condition", "feed", "tool", "total", "basic", "smell", "valley", "nor", "double", "seat", "arrive", "master", "track", "parent", "shore", "division", "sheet", "substance", "favor", "connect", "post", "spend", "chord", "fat", "glad", "original", "share", "station", "dad", "bread", "charge", "proper", "bar", "offer", "segment", "duck", "instant", "market", "degree", "populate", "chick", "dear", "enemy", "reply", "drink", "occur", "support", "speech", "nature", "range", "steam", "motion", "path", "liquid", "log", "meant", "quotient", "teeth", "shell", "neck", "program", "public", "universe"];
+
+        // Top 200 most common English bigrams (letter pairs)
+        const MASTER_BIGRAMS_200 = ["th", "he", "in", "er", "an", "re", "on", "at", "en", "nd", "ti", "es", "or", "te", "of", "ed", "is", "it", "al", "ar", "st", "to", "nt", "ng", "se", "ha", "as", "ou", "io", "le", "ve", "co", "me", "de", "hi", "ri", "ro", "ic", "ne", "ea", "ra", "ce", "li", "ch", "ll", "be", "ma", "si", "om", "ur", "ca", "el", "ta", "la", "ns", "di", "fo", "ho", "pe", "ec", "pr", "no", "ct", "us", "ac", "ot", "il", "tr", "ly", "nc", "et", "ut", "ss", "so", "rs", "un", "lo", "wa", "ge", "ie", "wh", "ee", "wi", "em", "ad", "ol", "rt", "po", "we", "na", "ul", "ni", "ts", "mo", "ow", "pa", "im", "mi", "ai", "sh", "ir", "su", "id", "os", "iv", "ia", "am", "fi", "ci", "vi", "pl", "ig", "tu", "ev", "ld", "ry", "mp", "fe", "bl", "ab", "gh", "ty", "op", "wo", "sa", "ay", "ex", "ke", "fr", "oo", "av", "ag", "if", "ap", "gr", "od", "bo", "sp", "rd", "do", "uc", "bu", "ei", "ov", "by", "rm", "ep", "tt", "oc", "fa", "ef", "cu", "rn", "sc", "gi", "da", "yo", "cr", "cl", "du", "ga", "qu", "ue", "ff", "ba", "ey", "ls", "va", "um", "pp", "ua", "up", "lu", "go", "ht", "ru", "ug", "ds", "lt", "pi", "rc", "rr", "eg", "au", "ck", "ew", "mu", "br", "bi", "pt", "ak", "pu", "ui", "rg", "ib", "tl", "ny", "ki", "rk", "ys", "ob", "mm", "fu", "ph", "og", "ms", "ye", "ud", "mb", "ip", "ub", "oi", "rl", "gu", "dr", "hr", "cc", "tw", "ft", "wn", "nu", "af", "hu", "nn", "eo", "vo", "rv", "nf", "xp", "gn", "sm", "fl", "iz", "ok", "nl", "my", "gl", "aw", "ju", "oa", "eq", "sy", "sl", "ps", "jo", "lf", "nv", "je", "nk", "kn"];
+
+        // Top 200 most common English trigrams (letter triplets)
+        const MASTER_TRIGRAMS_200 = ["the", "and", "ing", "ion", "tio", "ent", "ati", "for", "her", "ter", "hat", "tha", "ere", "ate", "his", "con", "res", "ver", "all", "ons", "nce", "men", "ith", "ted", "ers", "pro", "thi", "wit", "are", "ess", "not", "ive", "was", "ect", "rea", "com", "eve", "per", "int", "est", "sta", "cti", "ica", "ist", "ear", "ain", "one", "our", "iti", "rat", "nte", "tin", "ine", "der", "ome", "man", "pre", "rom", "tra", "whi", "ave", "str", "act", "ill", "ure", "ide", "ove", "cal", "ble", "out", "sti", "tic", "oun", "enc", "ore", "ant", "ity", "fro", "art", "tur", "par", "red", "oth", "eri", "hic", "ies", "ste", "ght", "ich", "igh", "und", "you", "ort", "era", "wer", "nti", "oul", "nde", "ind", "tho", "hou", "nal", "but", "hav", "uld", "use", "han", "hin", "een", "ces", "cou", "lat", "tor", "ese", "age", "ame", "rin", "anc", "ten", "hen", "min", "eas", "can", "lit", "cha", "ous", "eat", "end", "ssi", "ial", "les", "ren", "tiv", "nts", "whe", "tat", "abl", "dis", "ran", "wor", "rou", "lin", "had", "sed", "ont", "ple", "ugh", "inc", "sio", "din", "ral", "ust", "tan", "nat", "ins", "ass", "pla", "ven", "ell", "she", "ose", "ite", "lly", "rec", "lan", "ard", "hey", "rie", "pos", "eme", "mor", "den", "oug", "tte", "ned", "rit", "ime", "sin", "ast", "any", "orm", "ndi", "ona", "spe", "ene", "hei", "ric", "ice", "ord", "omp", "nes", "sen", "tim", "tri", "ern", "tes", "por", "app", "lar", "ntr", "eir", "sho", "son", "cat", "lle", "ner", "hes", "who", "mat", "ase", "kin", "ost", "ber", "its", "nin", "lea", "ina", "mpl", "sto", "ari", "pri", "own", "ali", "ree", "ish", "des", "ead", "nst", "sit", "ses", "ans", "has", "gre", "ong", "als", "fic", "ual", "ien", "gen", "ser", "unt", "eco", "nta", "ace", "chi", "fer", "tal", "low", "ach", "ire"];
 
         // Add these new constants for the settings options
         const FONT_OPTIONS = {
@@ -323,7 +414,8 @@
 		
         const appTitleHeader = document.getElementById('app-title-header');
         const bookTitleHeader = document.getElementById('book-title-header');
-        const bookContentEl = document.getElementById('book-content');
+		const bookContentEl = document.getElementById('book-content');
+		let currentContentEl = bookContentEl; // This will track the active typing area
         const liveWpmDisplay = document.getElementById('live-wpm-display');
         const liveAccuracyDisplay = document.getElementById('live-accuracy-display');
         const overallWpmDisplay = document.getElementById('overall-wpm-display');
@@ -359,11 +451,15 @@
         // App State
         const CHARS_PER_WORD = 5; // Use industry standard of 5
         let currentUsername = '';
+		let currentParagraphAnalysis = {};
         let currentBookIdentifier = ''; // Use a unique ID for the book
         let fullBookText = '';
         let chapterMarkers = [];
         let currentChapterIndex = -1;
         let currentChapterWordCount = 0; 
+		let isDrillActive = false; // To track when we are in drill mode
+		let drillTargetLength = 0;
+		let drillTotalWords = 0;
         
         let currentChapterParagraphs = [];
         let currentParagraphIndexInChapter = -1;
@@ -442,7 +538,7 @@
                 fontFamilySelector.appendChild(btn);
             }
 
-    // Populate Font Size Buttons
+            // Populate Font Size Buttons
             fontSizeSelector.innerHTML = '';
             for (const key in FONT_SIZES) {
                 const btn = document.createElement('button');
@@ -459,7 +555,158 @@
             }
         };
 
+        const getAnalysisKey = () => `typingAnalysis_${currentUsername}`;
+
+        const loadAnalysis = () => {
+            const saved = localStorage.getItem(getAnalysisKey());
+            // The structure for storing all performance data
+            const defaultStructure = { bigrams: {}, trigrams: {}, entryDelays: {} };
+            if (saved) {
+                return { ...defaultStructure, ...JSON.parse(saved) };
+            }
+            return defaultStructure;
+        };
+
+        const saveAnalysis = (data) => {
+            if (!currentUsername) return;
+            localStorage.setItem(getAnalysisKey(), JSON.stringify(data));
+        };
+
+        // Analyzes the paragraph's performance and saves it to the user's profile
+		const analyzeAndSaveParagraphStats = () => {
+			const analysis = loadAnalysis();
+			const paragraphData = currentParagraphAnalysis;
+			const currentWordCount = overallStats.cumulativeWordCount;
+
+			// Ensure main analysis object has the right structure
+			if (!analysis.bigrams) analysis.bigrams = {};
+			if (!analysis.trigrams) analysis.trigrams = {};
+			if (!analysis.metadata) analysis.metadata = {};
+
+			// 1. Add new events from the just-completed paragraph
+			for (const bigram in paragraphData.bigrams) {
+				if (MASTER_BIGRAMS_200.includes(bigram)) {
+					if (!analysis.bigrams[bigram]) analysis.bigrams[bigram] = { events: [] };
+					paragraphData.bigrams[bigram].delays.forEach(delay => {
+						analysis.bigrams[bigram].events.push({ type: 'delay', value: delay, wordCount: currentWordCount });
+					});
+					for (let i = 0; i < paragraphData.bigrams[bigram].errors; i++) {
+						analysis.bigrams[bigram].events.push({ type: 'error', wordCount: currentWordCount });
+					}
+				}
+			}
+			for (const trigram in paragraphData.trigrams) {
+				if (MASTER_TRIGRAMS_200.includes(trigram)) {
+					if (!analysis.trigrams[trigram]) analysis.trigrams[trigram] = { events: [] };
+					paragraphData.trigrams[trigram].delays.forEach(delay => {
+						analysis.trigrams[trigram].events.push({ type: 'delay', value: delay, wordCount: currentWordCount });
+					});
+					for (let i = 0; i < paragraphData.trigrams[trigram].errors; i++) {
+						analysis.trigrams[trigram].events.push({ type: 'error', wordCount: currentWordCount });
+					}
+				}
+			}
+
+			// 2. Perform Garbage Collection on the entire dataset
+			const cutoffWordCount = Math.max(0, currentWordCount - 200);
+
+			for (const bigram in analysis.bigrams) {
+				analysis.bigrams[bigram].events = analysis.bigrams[bigram].events.filter(
+					event => event.wordCount > cutoffWordCount
+				);
+				if (analysis.bigrams[bigram].events.length === 0) {
+					delete analysis.bigrams[bigram];
+				}
+			}
+			for (const trigram in analysis.trigrams) {
+				analysis.trigrams[trigram].events = analysis.trigrams[trigram].events.filter(
+					event => event.wordCount > cutoffWordCount
+				);
+				if (analysis.trigrams[trigram].events.length === 0) {
+					delete analysis.trigrams[trigram];
+				}
+			}
+			
+			// 3. Update metadata and save
+			analysis.metadata = { totalWordsTyped: currentWordCount };
+			saveAnalysis(analysis);
+		};
+
+		const displayAnalysis = () => {
+			const analysis = loadAnalysis();
+			
+			// Check for minimum word count
+			const totalWordsTyped = analysis.metadata?.totalWordsTyped || 0;
+			if (totalWordsTyped < 200) {
+				weakBigramsList.innerHTML = `<p class="text-gray-500 text-sm">Type at least 200 words in your books to generate an analysis.</p>`;
+				weakTrigramsList.innerHTML = `<p class="text-gray-500 text-sm">Keep practicing!</p>`;
+				drillWeaknessesBtn.disabled = true;
+				drillWeaknessesBtn.classList.add('opacity-50', 'cursor-not-allowed');
+				return;
+			}
+			drillWeaknessesBtn.disabled = false;
+			drillWeaknessesBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+
+			const getWeakestNgrams = (ngrams) => {
+				return Object.entries(ngrams)
+					.map(([ngram, data]) => {
+						const recentDelays = data.events.filter(e => e.type === 'delay').map(e => e.value);
+						const recentErrors = data.events.filter(e => e.type === 'error').length;
+						const totalOccurrences = recentDelays.length + recentErrors;
+						if (totalOccurrences === 0) return null;
+
+						const avgCorrectDelay = recentDelays.length > 0 
+							? recentDelays.reduce((a, b) => a + b, 0) / recentDelays.length 
+							: 300;
+
+						const errorPenalty = recentErrors * (avgCorrectDelay * 2);
+						const totalTimeCost = recentDelays.reduce((a, b) => a + b, 0) + errorPenalty;
+						const weaknessScore = totalTimeCost / totalOccurrences;
+
+						return { ngram, averageDelay: weaknessScore, errors: recentErrors };
+					})
+					.filter(item => item !== null)
+					.sort((a, b) => b.averageDelay - a.averageDelay)
+					.slice(0, 5);
+			};
+
+			const weakBigrams = getWeakestNgrams(analysis.bigrams);
+			const weakTrigrams = getWeakestNgrams(analysis.trigrams);
+
+			weakBigramsList.innerHTML = '';
+			weakTrigramsList.innerHTML = '';
+
+			if (weakBigrams.length > 0) {
+				weakBigrams.forEach(item => {
+					const el = document.createElement('div');
+					el.className = 'bg-gray-700 p-2 rounded-md flex justify-between items-center text-sm';
+					el.innerHTML = `
+						<span class="font-bold text-white">${item.ngram}</span>
+						<span class="text-gray-400">${Math.round(item.averageDelay)}ms score, ${item.errors} err</span>
+					`;
+					weakBigramsList.appendChild(el);
+				});
+			} else {
+				weakBigramsList.innerHTML = `<p class="text-gray-500 text-sm">Not enough recent data. Keep typing!</p>`;
+			}
+			
+			if (weakTrigrams.length > 0) {
+				weakTrigrams.forEach(item => {
+					const el = document.createElement('div');
+					el.className = 'bg-gray-700 p-2 rounded-md flex justify-between items-center text-sm';
+					el.innerHTML = `
+						<span class="font-bold text-white">${item.ngram}</span>
+						<span class="text-gray-400">${Math.round(item.averageDelay)}ms score, ${item.errors} err</span>
+					`;
+					weakTrigramsList.appendChild(el);
+				});
+			} else {
+				weakTrigramsList.innerHTML = `<p class="text-gray-500 text-sm">Not enough recent data. Keep typing!</p>`;
+			}
+		};
+
         // --- PROFILE MANAGEMENT ---
+		
         const PROFILES_KEY = 'typingAppProfiles';
         const LAST_USER_KEY = 'typingAppLastUser';
 
@@ -570,7 +817,6 @@
                 overallStats = progress.overallStats;
                 history = progress.history;
         
-                // Ensure backward compatibility for older save files
                 if (!history.paragraphWordCounts) history.paragraphWordCounts = [];
                 if (!history.cumulativeWordsInChapter) history.cumulativeWordsInChapter = [];
                 if (!history.rawTimes) history.rawTimes = [];
@@ -654,7 +900,162 @@
             appTitleHeader.classList.add('hidden');
             bookTitleHeader.classList.remove('hidden');
         };
+		
+		const showDrillView = () => {
+			libraryView.classList.add('hidden');
+			fileLoaderSection.classList.add('hidden');
+			typingAppSection.classList.add('hidden');
+			typingAppSection.classList.remove('flex');
+			analysisModal.classList.add('hidden');
 
+			drillModeSection.classList.remove('hidden');
+			drillModeSection.classList.add('flex');
+
+			appTitleHeader.classList.add('hidden');
+			bookTitleHeader.classList.remove('hidden'); // Keep the main book title visible
+		};
+
+		const startDrill = () => {
+			isDrillActive = true;
+			currentParagraphIndexInChapter = -1;
+			currentContentEl = drillContentEl;
+
+			const analysis = loadAnalysis();
+			
+			const totalWordsTyped = analysis.metadata?.totalWordsTyped || 0;
+			if (totalWordsTyped < 200) {
+				alert("You need to type at least 200 words before you can use the drill feature.");
+				analysisModal.classList.add('hidden');
+				return;
+			}
+
+			const getWeakest = (ngrams) => {
+				return Object.entries(ngrams)
+					.map(([ngram, data]) => {
+						const recentDelays = data.events.filter(e => e.type === 'delay').map(e => e.value);
+						const recentErrors = data.events.filter(e => e.type === 'error').length;
+						const totalOccurrences = recentDelays.length + recentErrors;
+						if (totalOccurrences === 0) return null;
+						const avgCorrectDelay = recentDelays.length > 0 ? recentDelays.reduce((a, b) => a + b, 0) / recentDelays.length : 300;
+						const errorPenalty = recentErrors * (avgCorrectDelay * 2);
+						const totalTimeCost = recentDelays.reduce((a, b) => a + b, 0) + errorPenalty;
+						const score = totalTimeCost / totalOccurrences;
+						return { ngram, weaknessScore: score };
+					})
+					.filter(item => item !== null)
+					.sort((a, b) => b.weaknessScore - a.weaknessScore)
+					.slice(0, 10);
+			};
+
+			const weakBigrams = getWeakest(analysis.bigrams);
+			const weakTrigrams = getWeakest(analysis.trigrams);
+
+			const tier1Weaknesses = [...weakBigrams.slice(0, 5), ...weakTrigrams.slice(0, 5)].sort((a, b) => b.weaknessScore - a.weaknessScore);
+			const tier2Weaknesses = [...weakBigrams.slice(5, 10), ...weakTrigrams.slice(5, 10)];
+
+			if (tier1Weaknesses.length === 0) {
+				alert("Not enough analysis data from the last 200 words. Please type a few more paragraphs.");
+				isDrillActive = false;
+				analysisModal.classList.add('hidden');
+				return;
+			}
+
+			const DRILL_SIZE = 50;
+			let practiceSet = [];
+			const usedWords = new Set();
+			const totalTier1Score = tier1Weaknesses.reduce((sum, item) => sum + item.weaknessScore, 0);
+
+			if (totalTier1Score > 0) {
+				tier1Weaknesses.forEach(weakness => {
+					const wordCountForThisNgram = Math.round((weakness.weaknessScore / totalTier1Score) * DRILL_SIZE);
+					if (wordCountForThisNgram < 1) return;
+					const matchingWords = MASTER_WORDS_1K.filter(word => word.includes(weakness.ngram) && !usedWords.has(word));
+					matchingWords.sort(() => 0.5 - Math.random());
+					const wordsToAdd = matchingWords.slice(0, wordCountForThisNgram);
+					wordsToAdd.forEach(word => {
+						practiceSet.push(word);
+						usedWords.add(word);
+					});
+				});
+			}
+
+			if (practiceSet.length < DRILL_SIZE && tier2Weaknesses.length > 0) {
+				const remainingNeeded = DRILL_SIZE - practiceSet.length;
+				const tier2MatchingWords = MASTER_WORDS_1K.filter(word => tier2Weaknesses.some(w => word.includes(w.ngram)) && !usedWords.has(word));
+				tier2MatchingWords.sort(() => 0.5 - Math.random());
+				practiceSet.push(...tier2MatchingWords.slice(0, remainingNeeded));
+			}
+
+			if (practiceSet.length < DRILL_SIZE) {
+				const remainingNeeded = DRILL_SIZE - practiceSet.length;
+				const randomFillWords = MASTER_WORDS_1K.filter(word => !usedWords.has(word)).sort(() => 0.5 - Math.random()).slice(0, remainingNeeded);
+				practiceSet.push(...randomFillWords);
+			}
+			
+			practiceSet.sort(() => 0.5 - Math.random());
+			const drillSet = practiceSet.slice(0, DRILL_SIZE);
+			
+			drillTotalWords = drillSet.length;
+
+			const drillParagraph = drillSet.join(' ');
+			drillTargetLength = drillParagraph;
+			currentChapterParagraphs = [{ text: drillParagraph, html: drillParagraph }];
+			const totalWeaknesses = tier1Weaknesses.length + tier2Weaknesses.length;
+			chapterStatsDisplay.textContent = `Drilling ${totalWeaknesses} identified weaknesses.`;
+			chapterSelectorContainer.classList.add('hidden');
+			drillWordCount.textContent = `0 / ${drillTotalWords}`;
+
+			showDrillView();
+			renderDrill();
+			activateNextParagraph(true);
+		};
+
+		const createFanfareText = (text) => {
+			return text.split('').map(char => {
+				if (char === ' ') { return ' '; } // Keep spaces as normal characters
+				const delay = (Math.random() * -1.5).toFixed(2);
+				return `<span class="fanfare-char" style="animation-delay: ${delay}s;">${char}</span>`;
+			}).join('');
+		};
+
+		const finishDrill = () => {
+			if (!isDrillActive) return;
+			isDrillActive = false;
+			currentContentEl = bookContentEl;
+
+			const totalTime = (paragraphKeyPressLog.length > 1) ? (paragraphKeyPressLog[paragraphKeyPressLog.length - 1].time - paragraphKeyPressLog[0].time) / 1000 : 0;
+			const typedChars = currentUserInput.length;
+			let correctChars = 0;
+			const sourceText = currentChapterParagraphs[0].text;
+			for (let i = 0; i < typedChars; i++) {
+				if (currentUserInput[i] === sourceText[i]) correctChars++;
+			}
+
+			const finalWPM = (totalTime > 0) ? ((typedChars / CHARS_PER_WORD) / (totalTime / 60)) : 0;
+			const finalAccuracy = (typedChars > 0) ? (correctChars / typedChars) * 100 : 0;
+
+			drillWpmDisplay.textContent = finalWPM.toFixed(1);
+			drillAccuracyDisplay.textContent = `${finalAccuracy.toFixed(0)}%`;
+			
+			const fanfareText = createFanfareText("Drill Complete! Good job!");
+
+			drillContentEl.innerHTML = `
+				<div class="text-center p-8 rounded-lg">
+					<h2 class="text-3xl font-bold text-green-400 mb-4 ui-subheading">${fanfareText}</h2>
+					<div class="flex justify-center space-x-8 mt-4">
+						<div>
+							<p class="text-sm text-gray-400">WPM</p>
+							<div class="text-3xl font-bold text-green-400">${finalWPM.toFixed(1)}</div>
+						</div>
+						<div>
+							<p class="text-sm text-gray-400">Accuracy</p>
+							<div class="text-3xl font-bold text-sky-400">${finalAccuracy.toFixed(0)}%</div>
+						</div>
+					</div>
+				</div>
+			`;
+		};
+		
         // --- HELPER FUNCTION TO CONVERT BLOB URL TO BASE64 ---
         const blobUrlToBase64 = (url) => {
             return new Promise((resolve, reject) => {
@@ -730,7 +1131,7 @@
             // Store all extracted data temporarily
             tempBookData.title = metadata.title;
             tempBookData.author = metadata.creator;
-            tempBookData.cover = cover; // Now storing Base64 string
+            tempBookData.cover = cover; // Storing Base64 string
             tempBookData.identifier = `${metadata.title}-${metadata.creator}`.replace(/\s+/g, '-'); // Create a unique ID
             tempBookData.chapterMarkers = allSections;
 
@@ -804,92 +1205,97 @@
             loadChapter(resumed ? currentChapterIndex : 0, resumed);
         };
 
-        const loadChapter = (chapterIndex, isResuming = false) => {
-            if (chapterIndex >= chapterMarkers.length) {
-                bookContentEl.innerHTML = `<h2 class="text-center text-green-400 text-3xl font-bold mt-8">Congratulations! You've finished all selected chapters.</h2>`;
-                chapterStatsDisplay.textContent = '';
-                return;
-            }
+		const loadChapter = (chapterIndex, isResuming = false) => {
+			if (chapterIndex >= chapterMarkers.length) {
+				bookContentEl.innerHTML = `<h2 class="text-center text-green-400 text-3xl font-bold mt-8">Congratulations! You've finished all selected chapters.</h2>`;
+				chapterStatsDisplay.textContent = '';
+				return;
+			}
 
-            const isNewChapter = currentChapterIndex !== chapterIndex;
-            currentChapterIndex = chapterIndex;
-            chapterSelector.value = chapterIndex; // Sync dropdown
+			const isNewChapter = currentChapterIndex !== chapterIndex;
+			currentChapterIndex = chapterIndex;
+			chapterSelector.value = chapterIndex;
 
-            const marker = chapterMarkers[currentChapterIndex];
-            const chapterHtml = marker.htmlContent;
+			const marker = chapterMarkers[currentChapterIndex];
+			const chapterHtml = marker.htmlContent;
+			const tempDiv = document.createElement('div');
+			tempDiv.innerHTML = chapterHtml;
 
-            const tempDiv = document.createElement('div');
-            tempDiv.innerHTML = chapterHtml;
+			let paragraphElements = Array.from(tempDiv.querySelectorAll('p'));
+			if (paragraphElements.filter(p => (p.textContent || "").trim()).length < 3) {
+				currentChapterParagraphs = (tempDiv.textContent || "")
+					.split(/\n\s*\n+/)
+					.map(text => text.trim())
+					.filter(text => text.length > 0)
+					.map(text => {
+						const cleanText = normalizeText(text);
+						return { html: cleanText, text: cleanText };
+					});
+			} else {
+				currentChapterParagraphs = paragraphElements.map(p_el => {
+					const rawText = p_el.textContent || "";
+					const cleanText = normalizeText(rawText.replace(/\s+/g, ' ').trim());
+					return { html: cleanText, text: cleanText };
+				}).filter(p => p.text.length > 0);
+			}
 
-            // --- PARSING LOGIC ---
-            let paragraphElements = Array.from(tempDiv.querySelectorAll('p'));
+			const chapterWordCount = countWords(currentChapterParagraphs.map(p => p.text).join(' '));
+			currentChapterWordCount = chapterWordCount;
+			chapterStatsDisplay.innerHTML = `Current Chapter: <span class="font-bold text-white" style="font-family: 'Noto Sans', sans-serif;">${marker.title}</span> | Total Words: <span class="font-bold text-white">${chapterWordCount}</span>`;
+			
+			const paragraphsDone = history.chapterIndices.filter(i => i === currentChapterIndex).length;
+			paragraphCountDisplay.textContent = `${paragraphsDone} / ${currentChapterParagraphs.length}`;
 
-            if (paragraphElements.filter(p => (p.textContent || "").trim()).length < 3) {
-                currentChapterParagraphs = (tempDiv.textContent || "")
-                    .split(/\n\s*\n+/)
-                    .map(text => text.trim())
-                    .filter(text => text.length > 0)
-                    .map(text => {
-                // Apply normalization to the text used for comparison
-                        const cleanText = normalizeText(text.trim());
-                        return {
-                           html: cleanText,
-                           text: cleanText
-                        };
-                    });
-            } else {
-                currentChapterParagraphs = paragraphElements
-                    .map(p_el => {
-                        const rawText = p_el.textContent || "";
-                        return {
-                            html: p_el.innerHTML.replace(/\s+/g, ' '),
-                    // Apply normalization to the text used for comparison
-                            text: normalizeText(rawText.replace(/\s+/g, ' ').trim())
-                        };
-                    })
-                    .filter(p => p.text.length > 0);
-            }
+			renderChapter(isResuming);
+
+			if (isResuming) {
+				const paragraphsDoneInChapter = history.chapterIndices.filter(i => i === currentChapterIndex).length;
+				const lastValidIndex = Math.max(0, currentChapterParagraphs.length - 1);
+				currentParagraphIndexInChapter = Math.min(paragraphsDoneInChapter, lastValidIndex);
+				activateNextParagraph(false);
+			} else {
+				if (isNewChapter) currentParagraphIndexInChapter = -1;
+				activateNextParagraph(true);
+			}
+		};
+
     // --- END OF LOGIC ---
 
-            const chapterWordCount = countWords(currentChapterParagraphs.map(p => p.text).join(' '));
-            currentChapterWordCount = chapterWordCount;
-            chapterStatsDisplay.innerHTML = `Current Chapter: <span class="font-bold text-white" style="font-family: 'Noto Sans', sans-serif;">${marker.title}</span> | Total Words: <span class="font-bold text-white">${chapterWordCount}</span>`;
+		const renderChapter = (isResuming) => {
+			let html = '';
+			// Only render the chapter heading if we are NOT in a drill
+			if (!isDrillActive) {
+				html += `<h2 class="chapter-heading text-3xl font-bold text-gray-400">${chapterMarkers[currentChapterIndex].title}</h2>`;
+			}
 
-            const paragraphsDone = history.chapterIndices.filter(i => i === currentChapterIndex).length;
-            paragraphCountDisplay.textContent = `${paragraphsDone} / ${currentChapterParagraphs.length}`;
+			currentChapterParagraphs.forEach((p, index) => {
+				const chars = wrapCharsInSpans(p.html);
+				html += `<div class="paragraph-block" data-paragraph-index="${index}">${chars}<span class="end-cursor-target"></span></div>`;
+			});
+			currentContentEl.innerHTML = html;
+			currentContentEl.scrollTop = 0;
 
-            renderChapter(isResuming);
-
-            if (isResuming) {
-                activateNextParagraph(false);
-            } else {
-                if (isNewChapter) currentParagraphIndexInChapter = -1;
-                activateNextParagraph(true);
-            }
-        };
-
-        const renderChapter = (isResuming) => {
-            let html = `<h2 class="chapter-heading text-3xl font-bold text-gray-400">${chapterMarkers[currentChapterIndex].title}</h2>`;
-            currentChapterParagraphs.forEach((p, index) => {
-                const chars = wrapCharsInSpans(p.html);
-                html += `<div class="paragraph-block" data-paragraph-index="${index}">${chars}<span class="end-cursor-target"></span></div>`;
-            });
-            bookContentEl.innerHTML = html;
-            bookContentEl.scrollTop = 0;
-
-            if (isResuming) {
-                highlightCompletedParagraphs();
-                updateChart();
-            }
-        };
+			if (isResuming) {
+				highlightCompletedParagraphs();
+				updateChart();
+			}
+		};
+		
+		const renderDrill = () => {
+			const drillText = currentChapterParagraphs[0].html;
+			const chars = wrapCharsInSpans(drillText);
+			// Directly target the drill content element to avoid confusion
+			drillContentEl.innerHTML = `<div class="paragraph-block" data-paragraph-index="0">${chars}<span class="end-cursor-target"></span></div>`;
+			drillContentEl.scrollTop = 0;
+		};
 
         const highlightCompletedParagraphs = () => {
-    // Find all history entries that correspond to the current chapter
+		// Find all history entries that correspond to the current chapter
             const historyIndicesForChapter = history.chapterIndices
                 .map((chapIdx, i) => ({ chapIdx, historyIndex: i }))
                 .filter(item => item.chapIdx === currentChapterIndex);
 
-    // Loop through the completed paragraphs and apply the correct style based on history
+		// Loop through the completed paragraphs and apply the correct style based on history
             historyIndicesForChapter.forEach((item, paraIndexInChapter) => {
                 const paragraphEl = document.querySelector(`[data-paragraph-index="${paraIndexInChapter}"]`);
                 if (paragraphEl) {
@@ -900,25 +1306,27 @@
             });
         };
 
-        const activateNextParagraph = (shouldIncrement = true) => {
-            resetParagraphState();
-            if (shouldIncrement) {
-                currentParagraphIndexInChapter++;
-            }
+		const activateNextParagraph = (shouldIncrement = true) => {
+			resetParagraphState();
+			if (shouldIncrement) {
+				currentParagraphIndexInChapter++;
+			}
 
-            if (currentParagraphIndexInChapter >= currentChapterParagraphs.length) {
-                loadChapter(currentChapterIndex + 1);
-                return;
-            }
+			if (currentParagraphIndexInChapter >= currentChapterParagraphs.length) {
+				loadChapter(currentChapterIndex + 1);
+				return;
+			}
 
-            const paragraphEl = document.querySelector(`[data-paragraph-index="${currentParagraphIndexInChapter}"]`);
-            if (paragraphEl) {
-                const topPos = paragraphEl.getBoundingClientRect().top - bookContentEl.getBoundingClientRect().top + bookContentEl.scrollTop;
-                bookContentEl.scrollTop = topPos;
+			const paragraphEl = currentContentEl.querySelector(`[data-paragraph-index="${currentParagraphIndexInChapter}"]`);
+			if (paragraphEl) {
+				const topPos = paragraphEl.getBoundingClientRect().top - currentContentEl.getBoundingClientRect().top + currentContentEl.scrollTop;
+				currentContentEl.scrollTop = topPos;
 
-                setTimeout(updateCursor, 0);
-            }
-        };
+				currentContentEl.focus({ preventScroll: true }); 
+				startTest();
+				setTimeout(updateCursor, 0);
+			}
+		};
 
         const skipParagraph = () => {
     // Highlight the skipped paragraph
@@ -969,160 +1377,271 @@
             currentUserInput = '';
             liveWpmDisplay.textContent = '0';
             liveAccuracyDisplay.textContent = '100%';
+			// Clear the analysis for the new paragraph
+			currentParagraphAnalysis = {
+			    bigrams: {},
+				trigrams: {},
+				entryDelays: {}
+			};
         };
+		
+		const logKeyPressAnalysis = (key, isCorrect) => {
+			const isLetter = /^[a-zA-Z]$/.test(key);
+			if (!isLetter) return;
+
+			const log = paragraphKeyPressLog;
+			const input = currentUserInput;
+			const analysis = currentParagraphAnalysis;
+
+			let lastTimestamp = log.length > 0 ? log[log.length - 1].time : 0;
+			const delay = lastTimestamp ? Date.now() - lastTimestamp : 0;
+
+			const charIndex = input.length;
+
+			// 1. Analyze Bigrams
+			if (charIndex >= 1) {
+				const prevChar = input[charIndex - 1];
+				if (/^[a-zA-Z]$/.test(prevChar)) {
+					const rawBigram = `${prevChar}${key}`;
+					const bigram = rawBigram.toLowerCase();
+
+					if (!analysis.bigrams[bigram]) {
+						analysis.bigrams[bigram] = { delays: [], errors: 0 };
+					}
+					// Only log the delay if no capital letters were involved
+					if (!/[A-Z]/.test(rawBigram)) {
+						analysis.bigrams[bigram].delays.push(delay);
+					}
+					if (!isCorrect) {
+						analysis.bigrams[bigram].errors++;
+					}
+
+					// 2. Analyze Entry Delay
+					const charBefore = input[charIndex - 2] || ' ';
+					if (charBefore === ' ') {
+						const firstLetter = prevChar.toLowerCase();
+						if (!analysis.entryDelays[firstLetter]) {
+							analysis.entryDelays[firstLetter] = [];
+						}
+						const lastSpaceEvent = log.slice().reverse().find(e => e.char === ' ');
+						if (lastSpaceEvent) {
+							const entryDelay = log[log.length - 1].time - lastSpaceEvent.time;
+							analysis.entryDelays[firstLetter].push(entryDelay);
+						}
+					}
+				}
+			}
+
+			// 3. Analyze Trigrams
+			if (charIndex >= 2) {
+				const prevChar1 = input[charIndex - 2];
+				const prevChar2 = input[charIndex - 1];
+				if (/^[a-zA-Z]$/.test(prevChar1) && /^[a-zA-Z]$/.test(prevChar2)) {
+					const rawTrigram = `${prevChar1}${prevChar2}${key}`;
+					const trigram = rawTrigram.toLowerCase();
+
+					if (!analysis.trigrams[trigram]) {
+						analysis.trigrams[trigram] = { delays: [], errors: 0 };
+					}
+					// Only log the delay if no capital letters were involved
+					if (!/[A-Z]/.test(rawTrigram)) {
+						const delay2 = log[log.length - 1].time - log[log.length - 2].time;
+						analysis.trigrams[trigram].delays.push(delay + delay2);
+					}
+					 if (!isCorrect) {
+						analysis.trigrams[trigram].errors++;
+					}
+				}
+			}
+		};
 
         const startTest = () => {
             isTestActive = true;
         };
 
-        const handleKeyPress = (e) => {
-            
-            const activeEl = document.activeElement;
-            // If a profile modal/switcher is open, or an input/textarea is focused, ignore typing handler
-            if (!profileModal.classList.contains('hidden') || !profileSwitcherModal.classList.contains('hidden')) {
-                return;
-            }
-            if (activeEl && (activeEl.tagName === 'INPUT' || activeEl.tagName === 'TEXTAREA' || activeEl.isContentEditable)) {
-                return;
-            }
-            if (isBookLoading || !typingAppSection.classList.contains('hidden')) e.preventDefault();
-            if (isBookLoading) return;
-            if (currentParagraphIndexInChapter < 0 || currentParagraphIndexInChapter >= currentChapterParagraphs.length) return;
+		const handleKeyPress = (e) => {
+			const activeEl = document.activeElement;
+			if (!profileModal.classList.contains('hidden') || !profileSwitcherModal.classList.contains('hidden') || !settingsModal.classList.contains('hidden')) { return; }
+			if (activeEl && (activeEl.tagName === 'INPUT' || activeEl.tagName === 'TEXTAREA' || activeEl.isContentEditable)) { return; }
+			if (isBookLoading || !typingAppSection.classList.contains('hidden') || !drillModeSection.classList.contains('hidden')) e.preventDefault();
+			if (isBookLoading) return;
+			if (currentParagraphIndexInChapter < 0 || currentParagraphIndexInChapter >= currentChapterParagraphs.length) return;
 
-            const paragraphObject = currentChapterParagraphs[currentParagraphIndexInChapter];
-            if (!paragraphObject) {
-                console.error("Current paragraph object is undefined!", currentParagraphIndexInChapter, currentChapterParagraphs);
-                return;
-            }
+			const paragraphObject = currentChapterParagraphs[currentParagraphIndexInChapter];
+			if (!paragraphObject) return;
+			const currentParagraphText = paragraphObject.text;
+			if (!currentParagraphText) return;
 
-            const currentParagraphText = paragraphObject.text;
-            if (!currentParagraphText) return;
+			if (e.key === 'Enter') {
+				if (isDrillActive) return; // Enter does nothing in drill mode
+				if (e.shiftKey) { skipParagraph(); return; }
+				if (currentUserInput.length === currentParagraphText.length && isTestActive) {
+					finishParagraph();
+				}
+				return;
+			} else if (e.key === 'Tab') {
+				if (e.shiftKey) {
+					if (currentUserInput.length === 0) goToPreviousParagraph();
+					return;
+				}
+				resetParagraphState();
+				const paragraphEl = currentContentEl.querySelector(`[data-paragraph-index="${currentParagraphIndexInChapter}"]`);
+				if (paragraphEl) {
+					paragraphEl.querySelectorAll('.char-span').forEach(span => span.className = 'char-span untyped');
+				}
+				activateNextParagraph(false);
+			} else if (e.key === 'Backspace') {
+				if (currentUserInput.length > 0) {
+					currentUserInput = currentUserInput.slice(0, -1);
+					paragraphKeyPressLog.push({ char: 'Backspace', time: Date.now() });
+				}
+			} else if (e.key.length === 1) {
+				if (!isTestActive) startTest();
+				if (currentUserInput.length < currentParagraphText.length) {
+					const isCorrect = currentParagraphText[currentUserInput.length] === e.key;
+					logKeyPressAnalysis(e.key, isCorrect);
+					currentUserInput += e.key;
+					paragraphKeyPressLog.push({ char: e.key, time: Date.now() });
+					liveAccuracyLog.push(isCorrect);
 
-            if (e.key === 'Enter') {
-                if (e.shiftKey) { skipParagraph(); return; }
-                const sourceText = currentChapterParagraphs[currentParagraphIndexInChapter].text;
-                if (currentUserInput.length === sourceText.length) {
-                    if (isTestActive) finishParagraph();
-                }
-                return;
-            } else if (e.key === 'Tab') {
-                if (e.shiftKey) {
-                    if (currentUserInput.length === 0) {
-                        goToPreviousParagraph();
-                    }
-                    return;
-                }
-                resetParagraphState();
-                const paragraphEl = document.querySelector(`[data-paragraph-index="${currentParagraphIndexInChapter}"]`);
-                if (paragraphEl) {
-                    const topPos = paragraphEl.getBoundingClientRect().top - bookContentEl.getBoundingClientRect().top + bookContentEl.scrollTop;
-                    bookContentEl.scrollTo({ top: topPos, behavior: 'smooth' });
-                }
-                paragraphEl.querySelectorAll('.char-span').forEach(span => span.className = 'char-span untyped');
-                updateCursor();
-            } else if (e.key === 'Backspace') {
-                if (currentUserInput.length > 0) {
-                    currentUserInput = currentUserInput.slice(0, -1);
-                }
-            } else if (e.key.length === 1) {
-                if (!isTestActive) startTest();
-                if (currentUserInput.length < currentParagraphText.length) {
-                    currentUserInput += e.key;
-                    paragraphKeyPressLog.push({ char: e.key, time: Date.now() });
-                    const isCorrect = currentParagraphText[currentUserInput.length - 1] === e.key;
-                    liveAccuracyLog.push(isCorrect);
-                }
-            }
+					// Auto-finish logic for drills
+					if (isDrillActive && currentUserInput.length === drillTargetLength) {
+						finishDrill();
+					}
+				}
+			}
 
-            updateHighlighting();
-            updateCursor();
-            updateLiveStats();
-        };
-
+			updateHighlighting();
+			updateCursor();
+			updateLiveStats();
+		};
 
         // --- UI & STATS UPDATES ---
 
-        const updateLiveStats = () => {
-            if (!isTestActive) return;
+		const updateLiveStats = () => {
+			if (!isTestActive) return;
 
-            const now = Date.now();
-            const recentKeyPresses = paragraphKeyPressLog.slice(-40);
+			const now = Date.now();
+			const recentKeyPresses = paragraphKeyPressLog.slice(-40);
+			let wpm = 0;
+			let accuracy = 100;
 
-            if (recentKeyPresses.length > 5) {
-                const timeSpan = (now - recentKeyPresses[0].time) / 1000;
-                if (timeSpan > 0) {
-                    const grossWPM = (recentKeyPresses.length / CHARS_PER_WORD) / (timeSpan / 60);
-                    liveWpmDisplay.textContent = Math.round(grossWPM);
-                }
-            } else {
-                liveWpmDisplay.textContent = '...';
-            }
+			if (recentKeyPresses.length > 5) {
+				const timeSpan = (now - recentKeyPresses[0].time) / 1000;
+				if (timeSpan > 0) {
+					wpm = (recentKeyPresses.length / CHARS_PER_WORD) / (timeSpan / 60);
+				}
+			}
 
-            if (liveAccuracyLog.length > 0) {
-                const recentAccuracyLog = liveAccuracyLog.slice(-40);
-                const correctCount = recentAccuracyLog.filter(Boolean).length;
-                liveAccuracyDisplay.textContent = `${Math.round((correctCount / recentAccuracyLog.length) * 100)}%`;
-            }
-        };
+			if (liveAccuracyLog.length > 0) {
+				const recentAccuracyLog = liveAccuracyLog.slice(-40);
+				const correctCount = recentAccuracyLog.filter(Boolean).length;
+				accuracy = (correctCount / recentAccuracyLog.length) * 100;
+			}
 
-        const finishParagraph = () => {
-            const sourceText = currentChapterParagraphs[currentParagraphIndexInChapter].text;
-            if(paragraphKeyPressLog.length < 2) {
-                activateNextParagraph();
-                return;
-            };
-            const timeElapsed = (paragraphKeyPressLog[paragraphKeyPressLog.length - 1].time - paragraphKeyPressLog[0].time) / 1000;
+			if (isDrillActive) {
+				drillWpmDisplay.textContent = wpm > 0 ? Math.round(wpm) : '0';
+				drillAccuracyDisplay.textContent = `${Math.round(accuracy)}%`;
+				
+				let wordsTyped = 0;
+				const sourceText = currentChapterParagraphs[0].text;
+				
+				if (currentUserInput.length > 0) {
+					// Get the slice of the source text that the cursor has passed
+					const progressText = sourceText.substring(0, currentUserInput.length);
+					// The number of completed words is the number of spaces they have passed
+					wordsTyped = (progressText.match(/ /g) || []).length;
+				}
+		
+				// When the user has typed all characters, set the count to the known total
+				if (currentUserInput.length === sourceText.length) {
+					wordsTyped = drillTotalWords;
+				}
+				
+				drillWordCount.textContent = `${wordsTyped} / ${drillTotalWords}`;
+			} else {
+				liveWpmDisplay.textContent = wpm > 0 ? Math.round(wpm) : '0';
+				liveAccuracyDisplay.textContent = `${Math.round(accuracy)}%`;
+			}
+		};
 
-            let correctChars = 0;
-            for(let i=0; i < currentUserInput.length; i++) {
-                if(sourceText[i] === currentUserInput[i]) correctChars++;
-            }
-            const typedChars = currentUserInput.length;
+		const finishParagraph = () => {
+			const sourceText = currentChapterParagraphs[currentParagraphIndexInChapter].text;
+			if (paragraphKeyPressLog.length < 2) {
+				activateNextParagraph();
+				return;
+			};
+			const timeElapsed = (paragraphKeyPressLog[paragraphKeyPressLog.length - 1].time - paragraphKeyPressLog[0].time) / 1000;
 
-            const paragraphWPM = ((typedChars / CHARS_PER_WORD) / (timeElapsed / 60)) || 0;
-            const paragraphAccuracy = Math.round((correctChars / sourceText.length) * 100) || 0;
-            const paragraphWordCount = countWords(sourceText);
+			let correctChars = 0;
+			for (let i = 0; i < currentUserInput.length; i++) {
+				if (sourceText[i] === currentUserInput[i]) correctChars++;
+			}
+			const typedChars = currentUserInput.length;
+			const paragraphWPM = ((typedChars / CHARS_PER_WORD) / (timeElapsed / 60)) || 0;
+			const paragraphAccuracy = Math.round((correctChars / sourceText.length) * 100) || 0;
 
-            // Push raw stats for "undo" functionality
-            history.rawTimes.push(timeElapsed);
-            history.rawCorrectChars.push(correctChars);
-            history.rawTypedChars.push(typedChars);
+			// --- LOGIC FOR DRILL MODE ---
+			if (isDrillActive) {
+				// Update the drill-specific stat displays
+				drillWpmDisplay.textContent = paragraphWPM.toFixed(1);
+				drillAccuracyDisplay.textContent = `${paragraphAccuracy}%`;
 
-            history.paragraphWordCounts.push(paragraphWordCount);
-            history.chapterIndices.push(currentChapterIndex);
+				// Display the completion message in the content area
+				currentContentEl.innerHTML = `
+					<div class="text-center p-8">
+						<h2 class="text-3xl font-bold text-green-400 mb-4 ui-subheading">Drill Complete!</h2>
+						<p class="text-xl text-gray-300">Your stats for that set:</p>
+						<div class="flex justify-center space-x-8 mt-4">
+							<div>
+								<p class="text-sm text-gray-400">WPM</p>
+								<div class="text-3xl font-bold text-green-400">${paragraphWPM.toFixed(1)}</div>
+							</div>
+							<div>
+								<p class="text-sm text-gray-400">Accuracy</p>
+								<div class="text-3xl font-bold text-sky-400">${paragraphAccuracy}%</div>
+							</div>
+						</div>
+					</div>
+				`;
+				return; // Stop the function here to prevent loading a new paragraph
+			}
 
-            let currentChapterCumulative = 0;
-            for (let i = 0; i < history.paragraphWordCounts.length; i++) {
-                if (history.chapterIndices[i] === currentChapterIndex) {
-                    currentChapterCumulative += history.paragraphWordCounts[i];
-                }
-            }
-            history.cumulativeWordsInChapter.push(currentChapterCumulative);
+			// This part below only runs for normal book typing
+			const paragraphWordCount = countWords(sourceText);
+			history.rawTimes.push(timeElapsed);
+			history.rawCorrectChars.push(correctChars);
+			history.rawTypedChars.push(typedChars);
+			history.paragraphWordCounts.push(paragraphWordCount);
+			history.chapterIndices.push(currentChapterIndex);
 
-            overallStats.cumulativeWordCount += paragraphWordCount;
-            overallStats.totalCorrectChars += correctChars;
-            overallStats.totalTypedChars += typedChars;
-            overallStats.totalTime += timeElapsed;
-
-            const overallWPM = ((overallStats.totalTypedChars / CHARS_PER_WORD) / (overallStats.totalTime / 60)) || 0;
-            const overallAccuracy = Math.round((overallStats.totalCorrectChars / overallStats.totalTypedChars) * 100) || 0;
-
-            overallWpmDisplay.textContent = overallWPM.toFixed(1);
-            overallAccuracyDisplay.textContent = `${overallAccuracy}%`;
-
-            const newCount = history.labels.length + 1;
-            history.wpm.push(paragraphWPM);
-            history.accuracy.push(paragraphAccuracy);
-            history.overallWpmHistory.push(overallWPM);
-            history.cumulativeWords.push(overallStats.cumulativeWordCount);
-            history.labels.push(`P${newCount}`);
-
-            paragraphCountDisplay.textContent = `${history.chapterIndices.filter(i => i === currentChapterIndex).length} / ${currentChapterParagraphs.length}`;
-
-            updateChart();
-            activateNextParagraph();
-            saveProgress();
-        };
+			let currentChapterCumulative = 0;
+			for (let i = 0; i < history.paragraphWordCounts.length; i++) {
+				if (history.chapterIndices[i] === currentChapterIndex) {
+					currentChapterCumulative += history.paragraphWordCounts[i];
+				}
+			}
+			history.cumulativeWordsInChapter.push(currentChapterCumulative);
+			overallStats.cumulativeWordCount += paragraphWordCount;
+			overallStats.totalCorrectChars += correctChars;
+			overallStats.totalTypedChars += typedChars;
+			overallStats.totalTime += timeElapsed;
+			const overallWPM = ((overallStats.totalTypedChars / CHARS_PER_WORD) / (overallStats.totalTime / 60)) || 0;
+			const overallAccuracy = Math.round((overallStats.totalCorrectChars / overallStats.totalTypedChars) * 100) || 0;
+			overallWpmDisplay.textContent = overallWPM.toFixed(1);
+			overallAccuracyDisplay.textContent = `${overallAccuracy}%`;
+			const newCount = history.labels.length + 1;
+			history.wpm.push(paragraphWPM);
+			history.accuracy.push(paragraphAccuracy);
+			history.overallWpmHistory.push(overallWPM);
+			history.cumulativeWords.push(overallStats.cumulativeWordCount);
+			history.labels.push(`P${newCount}`);
+			paragraphCountDisplay.textContent = `${history.chapterIndices.filter(i => i === currentChapterIndex).length} / ${currentChapterParagraphs.length}`;
+			analyzeAndSaveParagraphStats();
+			updateChart();
+			activateNextParagraph();
+			saveProgress();
+		};
 
         const goToPreviousParagraph = () => {
             // Check if there's any history to go back to.
@@ -1141,7 +1660,7 @@
             const lastCorrectChars = history.rawCorrectChars[history.rawCorrectChars.length - 1];
             const lastTypedChars = history.rawTypedChars[history.rawTypedChars.length - 1];
 
-            // 4. Now, pop all data for the last paragraph from history.
+            // 4. Pop all data for the last paragraph from history.
             history.wpm.pop();
             history.accuracy.pop();
             history.labels.pop();
@@ -1193,61 +1712,54 @@
             saveProgress();
         };
 
-        const updateHighlighting = () => {
-            const paragraphEl = document.querySelector(`[data-paragraph-index="${currentParagraphIndexInChapter}"]`);
-            if (!paragraphEl) return;
+		const updateHighlighting = () => {
+			const paragraphEl = currentContentEl.querySelector(`[data-paragraph-index="${currentParagraphIndexInChapter}"]`);
+			if (!paragraphEl) return;
 
-            const spans = paragraphEl.querySelectorAll('.char-span');
-            const sourceText = currentChapterParagraphs[currentParagraphIndexInChapter].text;
+			const spans = paragraphEl.querySelectorAll('.char-span');
+			const sourceText = currentChapterParagraphs[currentParagraphIndexInChapter].text;
 
-            for (let i = 0; i < sourceText.length; i++) {
-                if (i < currentUserInput.length) {
-                    spans[i].className = currentUserInput[i] === sourceText[i] ? 'char-span correct' : 'char-span incorrect-char';
-                } else {
-                    spans[i].className = 'char-span untyped';
-                }
-            }
-        };
+			for (let i = 0; i < sourceText.length; i++) {
+				if (i < currentUserInput.length) {
+					spans[i].className = currentUserInput[i] === sourceText[i] ? 'char-span correct' : 'char-span incorrect-char';
+				} else {
+					spans[i].className = 'char-span untyped';
+				}
+			}
+		};
 
-        const updateCursor = () => {
-            const paragraphEl = document.querySelector(`[data-paragraph-index="${currentParagraphIndexInChapter}"]`);
-            if (!paragraphEl) return;
+		const updateCursor = () => {
+			const paragraphEl = currentContentEl.querySelector(`[data-paragraph-index="${currentParagraphIndexInChapter}"]`);
+			if (!paragraphEl) return;
 
-            document.querySelectorAll('.cursor').forEach(el => el.classList.remove('cursor'));
-    
-            const spans = paragraphEl.querySelectorAll('.char-span');
-            const cursorPosition = currentUserInput.length;
+			document.querySelectorAll('.cursor').forEach(el => el.classList.remove('cursor'));
 
-            if (cursorPosition < spans.length) {
-                const cursorSpan = spans[cursorPosition];
-                cursorSpan.classList.add('cursor');
+			const spans = paragraphEl.querySelectorAll('.char-span');
+			const cursorPosition = currentUserInput.length;
 
-        // ---  Center-Scrolling Logic ---
-                const container = bookContentEl;
-                const containerRect = container.getBoundingClientRect();
-                const cursorRect = cursorSpan.getBoundingClientRect();
+			if (cursorPosition < spans.length) {
+				const cursorSpan = spans[cursorPosition];
+				cursorSpan.classList.add('cursor');
 
-        // Calculate the vertical midpoint of the container
-                const containerMidpoint = containerRect.top + (containerRect.height / 2);
+				const container = currentContentEl;
+				const containerRect = container.getBoundingClientRect();
+				const cursorRect = cursorSpan.getBoundingClientRect();
 
-        // If the cursor is past the midpoint, scroll to keep it centered
-                if (cursorRect.top > containerMidpoint) {
-            // Calculate how much to scroll to bring the cursor to the midpoint
-                    const scrollOffset = cursorRect.top - containerMidpoint;
-                    const newScrollTop = container.scrollTop + scrollOffset;
+				const containerMidpoint = containerRect.top + (containerRect.height / 2);
 
-            // Use 'smooth' for the visible but fast scroll
-                    container.scrollTo({
-                        top: newScrollTop,
-                        behavior: 'smooth'
-                    });
-                }
-        
-            } else {
-                const endTarget = paragraphEl.querySelector('.end-cursor-target');
-                if (endTarget) endTarget.classList.add('cursor');
-            }
-        };
+				if (cursorRect.top > containerMidpoint) {
+					const scrollOffset = cursorRect.top - containerMidpoint;
+					const newScrollTop = container.scrollTop + scrollOffset;
+					container.scrollTo({
+						top: newScrollTop,
+						behavior: 'smooth'
+					});
+				}
+			} else {
+				const endTarget = paragraphEl.querySelector('.end-cursor-target');
+				if (endTarget) endTarget.classList.add('cursor');
+			}
+		};
 
         // --- CHART LOGIC ---
         const getChapterColor = (chapterIndex) => {
@@ -1510,6 +2022,37 @@
         closeSettingsBtn.addEventListener('click', () => {
             settingsModal.classList.add('hidden');
         });
+
+		analysisBtn.addEventListener('click', () => {
+			displayAnalysis();
+			analysisModal.classList.remove('hidden');
+		});
+
+		closeAnalysisBtn.addEventListener('click', () => {
+			analysisModal.classList.add('hidden');
+		});
+
+		drillWeaknessesBtn.addEventListener('click', () => {
+			startDrill();
+		});
+
+		// Add listeners for the new buttons in the drill view
+		endDrillBtn.addEventListener('click', () => {
+			isDrillActive = false;
+			currentContentEl = bookContentEl;
+			drillModeSection.classList.add('hidden');
+			drillModeSection.classList.remove('flex');
+			showTypingView();
+			chapterSelectorContainer.classList.remove('hidden');
+
+			// Just tell the app to resume the chapter you were on
+			loadChapter(currentChapterIndex, true);
+		});
+
+		drillMoreBtn.addEventListener('click', () => {
+			// This will generate a new set of 50 words
+			startDrill();
+		});
 
     </script>
 	<footer class="text-center py-8 text-sm text-gray-500">
