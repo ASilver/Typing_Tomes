@@ -30,7 +30,7 @@ These are shortcuts for the typing experience. To end a paragraph and go to the 
 
 As you finish, each paragraph will be measured and entered into the histogram at the bottom. The results are unique for each book.
 
-<img width="870" height="149" alt="Screenshot 2025-08-13 004900" src="https://github.com/user-attachments/assets/029a0d7e-290e-48ec-bcfb-4570a884c280" />
+<img width="864" height="504" alt="image" src="https://github.com/user-attachments/assets/3c5f0ddc-1d87-45c4-815d-82cbf627cbcf" />
 
 At the very bottom, you will notice three buttons on the left and right. *Back to Library* returns you to the library to upload or change books.  *Analysis and Drills* lets you se a report on your weaknesses (see below for more details) and train against them, and *Settings* lets you change the font or its size.
 
