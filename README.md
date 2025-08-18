@@ -42,7 +42,7 @@ You can then drill against them by pressing *Drill My Weaknesses*. The first tim
 
 <img width="888" height="550" alt="image" src="https://github.com/user-attachments/assets/51e61a96-6a78-48cb-b1c7-777fa41e1c34" />
 
-The drill will produce a list of 50 words, taken from a master list of the 1000 most common words in English, chosen to target your bigram and trigram weaknesses. You can restart a drill at any time by pressing the Tab key, just as you can restart a paragraph in the book typing area. After it is done, you can choose to redo a test on the same weaknesses by pressing *Drill More Words*, though bear in mind it will likely use many of the same words, albeit in a different order. Pressing *End Drill* will return you to the book typing area.
+The drill will produce a list of 50 words, taken from a master list of the 2000 most common words in English (2 to 10 letters long), chosen to target your bigram and trigram weaknesses. You can restart a drill at any time by pressing the Tab key, just as you can restart a paragraph in the book typing area. After it is done, you can choose to redo a test on the same weaknesses by pressing *Drill More Words*, though bear in mind it will likely use many of the same words, albeit in a different order. Pressing *End Drill* will return you to the book typing area.
 
 <img width="655" height="210" alt="image" src="https://github.com/user-attachments/assets/9be32632-0cfc-4e6b-a2f4-49ee48abc4df" />
 
