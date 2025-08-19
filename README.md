@@ -1,6 +1,8 @@
 # Typing Tomes
 Typing Tomes is a single-page HTML app to practice typing on books and target your typing weaknesses. You create a profile, and then upload a book (an ePub) and you are good to go. It is designed to be as easy as possible to use and install.
 
+*(Note: The addition of visual themes - see below - may break your profile from previous versions. If this happens, delete it and create a new one.)*
+
 # How to install
 Just download the HTML file and open it in the browser of your choice. 
 
