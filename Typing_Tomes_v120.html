@@ -25,11 +25,11 @@
 		*/
 		:root {
 			/* Default Theme Colors */
-			--theme-default-page-bg: #0D131F; /* gray-900 */
-			--theme-default-ui-bg: #1D2633; /* gray-800 */
-			--theme-default-untyped: #7C8599; /* gray-400 */
-			--theme-default-correct: #DFF8FF; /* gray-100 */
-			--theme-default-incorrect: #F84D6C; /* red-400 */
+			--theme-default-page-bg: #0D131F;
+			--theme-default-ui-bg: #1D2633;
+			--theme-default-untyped: #7C8599;
+			--theme-default-correct: #DFF8FF;
+			--theme-default-incorrect: #F84D6C;
 			--theme-default-cursor-style: underline;
 			--theme-default-ui-bright: #B9FFFA;
 			--theme-default-ui-medium: #7E9AA1;
@@ -38,7 +38,7 @@
 
 		body[data-theme="espresso"] {
 			--theme-page-bg: #0F0000;
-			--theme-ui-bg: #2B0404; /* Solid reddish-brown for content */
+			--theme-ui-bg: #1F0303;
 			--theme-untyped: #B36205;
 			--theme-correct: #fde68a;
 			--theme-incorrect: #ef4444;
@@ -516,7 +516,7 @@
         const fontFamilySelector = document.getElementById('font-family-selector');
         const fontSizeSelector = document.getElementById('font-size-selector');
 
-        // --- MASTER LISTS FOR ADAPTIVE TRAINING ---
+        // --- MASTER LISTS FOR ADAPTIVE TRAINING (with thanks to Monkeytype) ---
 
         // Top 2000 most common English words (2-10 letters long)
 		const MASTER_WORDS_2K = ["the", "of", "to", "and", "in", "is", "it", "you", "that", "he", "was", "for", "on", "are", "with", "as", "his", "they", "be", "at", "one", "have", "this", "from", "or", "had", "by", "not", "word", "but", "what", "some", "we", "can", "out", "other", "were", "all", "there", "when", "up", "use", "your", "how", "said", "an", "each", "she", "which", "do", "their", "time", "if", "will", "way", "about", "many", "then", "them", "write", "would", "like", "so", "these", "her", "long", "make", "thing", "see", "him", "two", "has", "look", "more", "day", "could", "go", "come", "did", "number", "sound", "no", "most", "people", "my", "over", "know", "water", "than", "call", "first", "who", "may", "down", "side", "been", "now", "find", "any", "new", "work", "part", "take", "get", "place", "made", "live", "where", "after", "back", "little", "only", "round", "man", "year", "came", "show", "every", "good", "me", "give", "our", "under", "name", "very", "through", "just", "form", "sentence", "great", "think", "say", "help", "low", "line", "differ", "turn", "cause", "much", "mean", "before", "move", "right", "boy", "old", "too", "same", "tell", "does", "set", "three", "want", "air", "well", "also", "play", "small", "end", "put", "home", "read", "hand", "port", "large", "spell", "add", "even", "land", "here", "must", "big", "high", "such", "follow", "act", "why", "ask", "men", "change", "went", "light", "kind", "off", "need", "house", "picture", "try", "us", "again", "animal", "point", "mother", "world", "near", "build", "self", "earth", "father", "head", "stand", "own", "page", "should", "country", "found", "answer", "school", "grow", "study", "still", "learn", "plant", "cover", "food", "sun", "four", "between", "state", "keep", "eye", "never", "last", "let", "thought", "city", "tree", "cross", "farm", "hard", "start", "might", "story", "saw", "far", "sea", "draw", "left", "late", "run", "while", "press", "close", "night", "real", "life", "few", "north", "open", "seem", "together", "next", "white", "children", "begin", "got", "walk", "example", "ease", "paper", "group", "always", "music", "those", "both", "mark", "often", "letter", "until", "mile", "river", "car", "feet", "care", "second", "book", "carry", "took", "science", "eat", "room", "friend", "began", "idea", "fish", "mountain", "stop", "once", "base", "hear", "horse", "cut", "sure", "watch", "color", "face", "wood", "main", "enough", "plain", "girl", "usual", "young", "ready", "above", "ever", "red", "list", "though", "feel", "talk", "bird", "soon", "body", "dog", "family", "direct", "pose", "leave", "song", "measure", "door", "product", "black", "short", "numeral", "class", "wind", "question", "happen", "complete", "ship", "area", "half", "rock", "order", "fire", "south", "problem", "piece", "told", "knew", "pass", "since", "top", "whole", "king", "space", "heard", "best", "hour", "better", "true", "during", "hundred", "five", "remember", "step", "early", "hold", "west", "ground", "interest", "reach", "fast", "verb", "sing", "listen", "six", "table", "travel", "less", "morning", "ten", "simple", "several", "vowel", "toward", "war", "lay", "against", "pattern", "slow", "center", "love", "person", "money", "serve", "appear", "road", "map", "rain", "rule", "govern", "pull", "cold", "notice", "voice", "unit", "power", "town", "fine", "certain", "fly", "fall", "lead", "cry", "dark", "machine", "note", "wait", "plan", "figure", "star", "box", "noun", "field", "rest", "correct", "able", "pound", "done", "beauty", "drive", "stood", "contain", "front", "teach", "week", "final", "gave", "green", "oh", "quick", "develop", "ocean", "warm", "free", "minute", "strong", "special", "mind", "behind", "clear", "tail", "produce", "fact", "street", "inch", "multiply", "nothing", "course", "stay", "wheel", "full", "force", "blue", "object", "decide", "surface", "deep", "moon", "island", "foot", "system", "busy", "test", "record", "boat", "common", "gold", "possible", "plane", "stead", "dry", "wonder", "laugh", "thousand", "ago", "ran", "check", "game", "shape", "equate", "hot", "miss", "brought", "heat", "snow", "tire", "bring", "yes", "distant", "fill", "east", "paint", "language", "among", "grand", "ball", "yet", "wave", "drop", "heart", "am", "present", "heavy", "dance", "engine", "position", "arm", "wide", "sail", "material", "size", "vary", "settle", "speak", "weight", "general", "ice", "matter", "circle", "pair", "include", "divide", "syllable", "felt", "perhaps", "pick", "sudden", "count", "square", "reason", "length", "represent", "art", "subject", "region", "energy", "hunt", "probable", "bed", "brother", "egg", "ride", "cell", "believe", "fraction", "forest", "sit", "race", "window", "store", "summer", "train", "sleep", "prove", "lone", "leg", "exercise", "wall", "catch", "mount", "wish", "sky", "board", "joy", "winter", "sat", "written", "wild", "kept", "glass", "grass", "cow", "job", "edge", "sign", "visit", "past", "soft", "fun", "bright", "gas", "weather", "month", "million", "bear", "finish", "happy", "hope", "flower", "clothes", "strange", "gone", "jump", "baby", "eight", "village", "meet", "root", "buy", "raise", "solve", "metal", "whether", "push", "seven", "third", "shall", "held", "hair", "describe", "cook", "floor", "either", "result", "burn", "hill", "safe", "cat", "century", "consider", "type", "law", "bit", "coast", "copy", "phrase", "silent", "tall", "sand", "soil", "roll", "temperature", "finger", "industry", "value", "fight", "lie", "beat", "excite", "natural", "sense", "ear", "else", "quite", "broke", "case", "middle", "kill", "son", "lake", "moment", "scale", "loud", "observe", "child", "straight", "consonant", "nation", "milk", "speed", "method", "organ", "pay", "age", "section", "dress", "cloud", "surprise", "quiet", "tiny", "climb", "cool", "poor", "lot", "experiment", "bottom", "key", "iron", "single", "stick", "flat", "twenty", "skin", "smile", "crease", "hole", "trade", "melody", "trip", "office", "receive", "row", "mouth", "exact", "symbol", "die", "least", "trouble", "shout", "except", "wrote", "seed", "tone", "join", "suggest", "clean", "break", "lady", "yard", "rise", "bad", "blow", "oil", "blood", "touch", "grew", "cent", "mix", "team", "wire", "cost", "lost", "brown", "wear", "garden", "equal", "sent", "choose", "fell", "fit", "flow", "fair", "bank", "collect", "save", "control", "gentle", "woman", "captain", "practice", "separate", "difficult", "doctor", "please", "protect", "noon", "whose", "locate", "caught", "period", "spoke", "atom", "electric", "expect", "crop", "element", "hit", "student", "party", "bone", "rail", "imagine", "provide", "agree", "thus", "capital", "chair", "danger", "fruit", "rich", "thick", "soldier", "operate", "guess", "sharp", "wing", "create", "neighbor", "wash", "bat", "rather", "crowd", "compare", "depend", "meat", "rub", "tube", "famous", "dollar", "stream", "fear", "thin", "planet", "hurry", "chief", "colony", "clock", "mine", "tie", "major", "fresh", "yellow", "gun", "allow", "dead", "spot", "desert", "suit", "lift", "rose", "continue", "hat", "sell", "success", "company", "subtract", "particular", "deal", "swim", "term", "opposite", "wife", "shoulder", "spread", "invent", "cotton", "born", "determine", "quart", "nine", "truck", "noise", "level", "chance", "gather", "shop", "stretch", "throw", "shine", "property", "column", "molecule", "select", "wrong", "gray", "repeat", "require", "broad", "prepare", "salt", "nose", "plural", "claim", "continent", "oxygen", "sugar", "death", "pretty", "skill", "season", "solution", "magnet", "silver", "thank", "branch", "match", "suffix", "especially", "huge", "sister", "steel", "discuss", "forward", "similar", "guide", "bought", "led", "coat", "mass", "card", "rope", "slip", "win", "dream", "evening", "feed", "tool", "basic", "smell", "nor", "seat", "arrive", "master", "parent", "shore", "sheet", "substance", "favor", "connect", "spend", "chord", "fat", "glad", "original", "share", "dad", "bread", "charge", "proper", "offer", "segment", "duck", "instant", "degree", "populate", "chick", "dear", "enemy", "reply", "drink", "occur", "speech", "steam", "motion", "liquid", "meant", "quotient", "shell", "neck", "public", "universe", "web", "services", "click", "service", "date", "email", "health", "policy", "available", "copyright", "info", "privacy", "items", "research", "mail", "management", "united", "hotel", "comments", "member", "because", "local", "using", "education", "national", "posted", "internet", "address", "community", "within", "phone", "shipping", "reserved", "code", "index", "being", "file", "link", "today", "technology", "project", "sports", "related", "security", "county", "photo", "network", "following", "download", "without", "per", "access", "resources", "posts", "media", "pictures", "personal", "including", "directory", "board", "location", "rating", "government", "return", "students", "shopping", "account", "sites", "digital", "profile", "previous", "events", "image", "another", "shall", "customer", "December", "movies", "include", "college", "article", "jobs", "author", "sale", "around", "Canada", "teen", "stock", "training", "credit", "advanced", "English", "estate", "gay", "thread", "register", "however", "June", "October", "November", "really", "action", "series", "model", "features", "human", "provided", "yes", "required", "forums", "march", "September", "better", "questions", "July", "going", "medical", "server", "cart", "staff", "articles", "feedback", "looking", "April", "never", "street", "topic", "comment", "things", "working", "against", "standard", "tax", "below", "mobile", "got", "blog", "payment", "login", "offers", "legal", "above", "recent", "park", "memory", "social", "August", "quote", "options", "rates", "America", "important", "single", "something", "Texas", "poker", "status", "browse", "issue", "range", "building", "seller", "court", "February", "audio", "given", "release", "request", "fax", "China", "making", "needs", "might", "future", "London", "become", "learning", "delivery", "popular", "welcome", "central", "notice", "god", "radio", "council", "away", "includes", "track", "archive", "further", "updated", "having", "provides", "already", "studies", "specific", "living", "arts", "powered", "means", "director", "daily", "beach", "planning", "says", "official", "weather", "technical", "France", "pro", "microsoft", "update", "early", "miles", "ago", "written", "federal", "adult", "tickets", "cheap", "kids", "finance", "Europe", "reading", "topics", "plus", "auto", "percent", "global", "tech", "meet", "economic", "player", "lyrics", "subscribe", "submit", "Germany", "amount", "watch", "included", "risk", "thanks", "deals", "various", "weight", "received", "camera", "golf", "domain", "makes", "India", "taken", "Florida", "annual", "shows", "corporate", "purchase", "hardware", "holiday", "death", "brand", "discount", "higher", "created", "political", "kingdom", "near", "doing", "shoes", "entry", "Africa", "summary", "agency", "Monday", "drug", "western", "income", "cash", "package", "album", "started", "double", "soon", "across", "benefits", "needed", "apply", "someone", "held", "anything", "Sunday", "anyone", "mature", "addition", "lower", "union", "jewelry", "homepage", "gas", "skills", "six", "bush", "career", "rental", "British", "taking", "values", "coming", "Tuesday", "logo", "actually", "nice", "score", "client", "sample", "shown", "saturday", "culture", "flash", "starting", "Thursday", "consumer", "airport", "foreign", "artist", "outside", "levels", "channel", "mode", "phones", "ideas", "Wednesday", "fund", "summer", "allow", "degree", "contract", "button", "wed", "homes", "super", "male", "custom", "almost", "took", "located", "multiple", "Asian", "inn", "cause", "focus", "late", "fall", "rooms", "female", "primary", "cancer", "browser", "friendly", "police", "physical", "unique", "survey", "prior", "regular", "secure", "favorite", "built", "improve", "larger", "impact", "owners", "disease", "paid", "Italy", "perfect", "basis", "award", "distance", "extra", "budget", "rated", "guides", "maximum", "quite", "rated", "guides", "success", "maximum", "existing", "quite", "boy", "wine", "horse", "vote", "forward", "flowers", "stars", "owner", "retail", "useful", "directly", "ways", "son", "providing", "rule", "housing", "takes", "bring", "catalog", "trying", "mother", "told", "traffic", "joined", "input", "feet", "agent", "valid", "bin", "modern", "senior", "Ireland", "teaching", "door", "grand", "testing", "trial", "charge", "units", "instead", "cool", "normal", "wrote", "ships", "entire", "metal", "positive", "fitness", "Chinese", "opinion", "Asia", "football", "abstract", "uses", "output", "funds", "greater", "likely", "develop", "guest", "seems", "pass", "trust", "van", "session", "multi", "fees", "century", "skin", "ads", "expected", "ring", "grade", "dating", "Pacific", "mountain", "pop", "filter", "mailing", "vehicle", "longer", "consider", "northern", "behind", "panel", "floor", "German", "buying", "match", "proposed", "default", "require", "Iraq", "boys", "outdoor", "deep", "morning", "allows", "rest", "protein", "plant", "reported", "hit", "pool", "politics", "partner", "authors", "boards", "faculty", "parties", "fish", "eye", "string", "sense", "pack", "released", "stage", "internal", "goods", "born", "unless", "detailed", "Japanese", "race", "approved", "target", "except", "maybe", "moving", "brands", "places", "pretty", "Spain", "southern", "winter", "battery", "youth", "pressure", "Boston", "debt", "medium", "core", "break", "sets", "dance", "wood", "itself", "defined", "papers", "playing", "awards", "fee", "studio", "reader", "virtual", "device", "answers", "rent", "remote", "dark", "external", "apple", "enjoy", "remove", "aid", "surface", "minimum", "visual", "host", "variety", "manual", "block", "agents", "repair", "fair", "civil", "steel", "songs", "fixed", "wrong", "beginning", "hands", "finally", "updates", "desktop", "Paris", "Ohio", "gets", "sector", "fully", "father", "electric", "saw", "quotes", "officer", "driver", "dead", "respect", "unknown", "trip", "worth", "poor", "teacher", "eyes", "workers", "farm", "peace", "campus", "showing", "creative", "coast", "benefit", "progress", "funding", "lord", "grant", "agree", "fiction", "hear", "sometimes", "goes", "families", "led", "museum", "fan", "transport", "wife", "ten", "hits", "zone", "complex", "cat", "die", "flat", "flow", "parent", "Spanish", "setting", "scale", "stand", "economy", "highest", "helpful", "monthly", "critical", "frame", "musical", "path", "employee", "chief", "gives", "bottom", "detail", "laws", "changed", "pet", "heard", "begin", "Colorado", "royal", "clean", "switch", "Russian", "largest", "African", "guy", "titles", "relevant", "justice", "connect", "bible", "cup", "basket", "applied", "weekly", "suite", "square", "advance", "skip", "diet", "army", "auction", "gear", "lee", "allowed", "correct", "nation", "selling", "lots", "piece", "sheet", "firm", "seven", "older", "jump", "cells", "module", "resort", "random", "pricing", "looks", "fashion", "visitors", "monitor", "trading", "forest", "calls", "whose", "couple", "giving", "chance", "vision", "ball", "ending", "clients", "actions", "listen", "discuss", "accept", "goal", "sold", "wind", "clinical", "lowest", "highly", "appear", "lives", "currency", "leather", "palm", "patient", "actual", "stone", "commerce", "perhaps", "persons", "fit", "tests", "village", "amateur", "met", "pain", "factors", "coffee", "buyer", "cultural", "easily", "oral", "ford", "poster", "edge", "root", "closed", "holidays", "ice", "pink", "balance", "shot", "initial", "label", "thinking", "league", "waste", "minute", "bus", "optional", "cold", "chair", "fishing", "effort", "phase", "fields", "bag", "fantasy", "letters", "motor", "context", "install", "shirt", "foot", "mass", "crime", "count", "quickly", "dollars", "religion", "claim", "driving", "surgery", "patch", "heat", "wild", "generation", "Kansas", "miss", "chemical", "doctor", "task", "reduce", "brought", "himself", "nor", "enable", "exercise", "bug", "santa", "leader", "diamond", "Israel", "soft", "servers", "alone", "seconds", "Arizona", "keyword", "flight", "Congress", "fuel", "username", "walk", "produced", "Italian", "wait", "pocket", "saint", "rose", "freedom", "creating", "drugs", "joint", "premium", "fresh", "attorney", "upgrade", "factor", "growing", "stream", "pick", "hearing", "eastern", "therapy", "entries", "dates", "signed", "upper", "serious", "prime", "limit", "began", "steps", "errors", "shops", "bondage", "efforts", "informed", "creek", "worked", "quantity", "urban", "sorted", "myself", "tours", "platform", "load", "affiliate", "labor", "admin", "nursing", "defense", "heavy", "covered", "recovery", "guys", "merchant", "expert", "protect", "drop", "solid", "became", "orange", "prevent", "theme", "rich", "campaign", "marine", "guitar", "finding", "saying", "spirit", "challenge", "acceptance", "strategies", "affairs", "intended", "hire", "election", "magic", "smart", "talking", "gave", "ones", "Latin", "multimedia", "avoid", "certified", "manage", "rank", "computing", "birth", "virus", "abuse", "quarter", "procedure", "leadership", "define", "racing", "religious", "breakfast", "faith", "chain", "developer", "identify", "avenue", "missing", "died", "domestic", "moved", "comparison", "mental", "viewed", "extended", "sequence", "attack", "sorry", "opening", "damage", "reserve", "recipes", "gamma", "plastic", "placed", "truth", "counter", "failure", "weekend", "bridge", "native", "movement", "printing", "baseball", "owned", "approval", "draft", "played", "adventure", "matching", "offering", "profit", "assistant", "variable", "parking", "headlines"];
@@ -566,7 +566,7 @@
         const changeUserBtn = document.getElementById('change-user-btn');
         const deleteUserBtn = document.getElementById('delete-user-btn');
 
-        // Profile Switcher Elements (added)
+        // Profile Switcher Elements
         const profileSwitcherModal = document.getElementById('profile-switcher-modal');
         const profileListContainer = document.getElementById('profile-list-container');
         const showCreateProfileBtn = document.getElementById('show-create-profile-btn');
@@ -872,7 +872,6 @@
 				if (list.length > 0) {
 					list.forEach(item => {
 						const el = document.createElement('div');
-						// This className now uses our theme variables
 						el.className = 'ui-panel-bg p-2 rounded-md flex justify-between items-center text-sm';
 						el.innerHTML = `
 							<span class="font-bold ui-bright-text">${item.ngram}</span>
@@ -919,7 +918,6 @@
             profileModal.classList.add('hidden');
             profileSwitcherModal.classList.add('hidden');
             
-            // This new line applies the theme as soon as the profile loads
             applySettings(); 
             
             renderLibrary();
@@ -1176,7 +1174,7 @@
 				const tier2MatchingWords = MASTER_WORDS_2K.filter(word => tier2Weaknesses.some(w => word.includes(w.ngram)) && !usedWords.has(word));
 				tier2MatchingWords.sort(() => 0.5 - Math.random());
 				const wordsToAdd = tier2MatchingWords.slice(0, remainingNeeded);
-				wordsToAdd.forEach(word => { // This loop correctly updates the usedWords set
+				wordsToAdd.forEach(word => { 
 					practiceSet.push(word);
 					usedWords.add(word);
 				});
@@ -1186,7 +1184,7 @@
 				const remainingNeeded = DRILL_SIZE - practiceSet.length;
 				const randomFillWords = MASTER_WORDS_2K.filter(word => !usedWords.has(word)).sort(() => 0.5 - Math.random());
 				const wordsToAdd = randomFillWords.slice(0, remainingNeeded);
-				wordsToAdd.forEach(word => { // This loop correctly updates the usedWords set
+				wordsToAdd.forEach(word => { 
 					practiceSet.push(word);
 					usedWords.add(word);
 				});
@@ -1288,7 +1286,6 @@
 					const metadata = book.packaging.metadata;
 					let coverBase64 = null; // Default the cover to null
 
-					// New: Gracefully attempt to load the cover
 					try {
 						const coverUrl = await book.coverUrl();
 						if (coverUrl) { // Only proceed if a cover URL was actually found
@@ -1382,7 +1379,6 @@
 
 		const startTypingBook = (book) => {
             currentBookIdentifier = book.identifier;
-            // The fix is in the <span> for the author on the next line
             bookTitleHeader.innerHTML = `${book.bookName}<br><span class="text-3xl font-normal ui-accent-text" style="font-family: 'Cormorant Garamond', serif;">By ${book.author}</span>`;
     
             chapterMarkers = book.chapterMarkers.filter((marker, index) => {
@@ -1474,7 +1470,6 @@
 		const renderChapter = (isResuming) => {
 			let html = '';
 			if (!isDrillActive) {
-				// The hardcoded "text-gray-400" class has been removed from this line
 				html += `<h2 class="chapter-heading text-3xl font-bold">${chapterMarkers[currentChapterIndex].title}</h2>`;
 			}
 
@@ -1494,7 +1489,6 @@
 		const renderDrill = () => {
 			const drillText = currentChapterParagraphs[0].html;
 			const chars = wrapCharsInSpans(drillText);
-			// Directly target the drill content element to avoid confusion
 			drillContentEl.innerHTML = `<div class="paragraph-block" data-paragraph-index="0">${chars}<span class="end-cursor-target"></span></div>`;
 			drillContentEl.scrollTop = 0;
 		};
@@ -1505,7 +1499,6 @@
                 .map((chapIdx, i) => ({ chapIdx, historyIndex: i }))
                 .filter(item => item.chapIdx === currentChapterIndex);
 
-		// Loop through the completed paragraphs and apply the correct style based on history
             historyIndicesForChapter.forEach((item, paraIndexInChapter) => {
                 const paragraphEl = document.querySelector(`[data-paragraph-index="${paraIndexInChapter}"]`);
                 if (paragraphEl) {
@@ -1545,17 +1538,14 @@
                 paragraphEl.querySelectorAll('.char-span').forEach(span => span.className = 'char-span skipped');
             }
 
-    // Add a placeholder record to history so we can go back to it
             history.wpm.push(null); // Using null indicates a skip
             history.accuracy.push(null);
             history.labels.push(`S${history.labels.length + 1}`); // "S" for Skipped
     
-    // Add zero values for raw stats, so "go back" works correctly
             history.rawTimes.push(0);
             history.rawCorrectChars.push(0);
             history.rawTypedChars.push(0);
 
-    // Overall stats don't change, so we carry over the previous values
             const lastOverallWpm = history.overallWpmHistory.length > 0 ? history.overallWpmHistory[history.overallWpmHistory.length - 1] : 0;
             history.overallWpmHistory.push(lastOverallWpm);
             history.cumulativeWords.push(overallStats.cumulativeWordCount); // Word count doesn't increase
@@ -1563,7 +1553,6 @@
     // Record the location
             history.chapterIndices.push(currentChapterIndex);
     
-    // For chart consistency, don't advance the word count on the x-axis for a skip
             const lastCumulativeWordsInChapter = history.cumulativeWordsInChapter.length > 0 ? history.cumulativeWordsInChapter[history.cumulativeWordsInChapter.length-1] : 0;
             history.cumulativeWordsInChapter.push(lastCumulativeWordsInChapter);
             history.paragraphWordCounts.push(0); // 0 words were contributed
@@ -2000,7 +1989,6 @@
 					plugins: { 
 						legend: { labels: { color: textColor }},
 						tooltip: { callbacks: { label: function(context) {
-							// ... (tooltip logic is unchanged)
 						}}}
 					}
 				}
@@ -2014,7 +2002,6 @@
 			const barColor = themeStyles.getPropertyValue('--theme-ui-medium').trim() || '#60a5fa';
 			const textColor = themeStyles.getPropertyValue('--theme-ui-medium').trim() || '#d1d5db';
 
-			// New: Re-apply the text colors to all chart options
 			historyChart.options.scales.x.title.color = textColor;
 			historyChart.options.scales.x.ticks.color = textColor;
 			historyChart.options.scales.y.title.color = textColor;
