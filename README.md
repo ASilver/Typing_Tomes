@@ -18,7 +18,7 @@ Your ebook will now appear in the library. A book is attached to a profile so if
 # Typing a book
 Once you open a book to start typing you will see a screen like this:
 
-<img width="868" height="571" alt="typing_area2" src="https://github.com/user-attachments/assets/5fa35c33-d0fd-4366-8702-6cb5d7074f68" />
+<img width="885" height="551" alt="image" src="https://github.com/user-attachments/assets/50b65dde-1574-410f-a69c-05c0cc89d22c" />
 
 The app will track your live typing speed as you type as well as the accuracy, it is reset for each paragraph, and the clock only starts once you start typing a new paragraph. There is a drop-down menu to change chapters/sections.
 
@@ -30,7 +30,7 @@ As you finish, each paragraph will be measured and entered into the histogram at
 
 <img width="864" height="504" alt="image" src="https://github.com/user-attachments/assets/3c5f0ddc-1d87-45c4-815d-82cbf627cbcf" />
 
-At the very bottom, you will notice three buttons. *Back to Library* returns you to the library to upload or change books, *Analysis and Drills* lets you see a report on your weaknesses (see below for more details) and train against them, and *Settings* lets you change the font and its size.
+At the very bottom, you will notice three buttons. *Back to Library* returns you to the library to upload or change books, *Analysis and Drills* lets you see a report on your weaknesses (see below for more details) and train against them, and *Settings* lets you change the font, its size and choose a visual theme.
 
 # Analysis and Drills
 
@@ -45,6 +45,26 @@ You can then drill against them by pressing *Drill My Weaknesses*. The first tim
 The drill will produce a list of 50 words, taken from a master list of the 2000 most common words in English (2 to 10 letters long), chosen to target your bigram and trigram weaknesses. You can restart a drill at any time by pressing the Tab key, just as you can restart a paragraph in the book typing area. After it is done, you can choose to redo a test on the same weaknesses by pressing *Drill More Words*, though bear in mind it will likely use many of the same words, albeit in a different order. Pressing *End Drill* will return you to the book typing area.
 
 <img width="655" height="210" alt="image" src="https://github.com/user-attachments/assets/9be32632-0cfc-4e6b-a2f4-49ee48abc4df" />
+
+# Settings
+
+In the settings panel, accessed via the settings button below the histogram, you can select the fonts, size, and even choose the type of typing you want. 
+
+<img width="604" height="158" alt="image" src="https://github.com/user-attachments/assets/3d438286-f8a3-4364-9af6-113791a425e8" />
+
+Some sites offer a bright text to start on, and as you type the letters they darken or change to indicate they are done. Others do the reverse, and start with darkened text which lights up as you type them. This app allows you to choose which you prefer.
+
+<img width="593" height="617" alt="image" src="https://github.com/user-attachments/assets/dfaf1655-ed65-4b5d-aa02-c38ec042daaa" />
+
+You can also tailor the visual experience with one of the themes for a more pleasing experience.
+
+<img width="533" height="340" alt="image" src="https://github.com/user-attachments/assets/7fe28eef-5100-4606-9ad7-ba496c3914fb" />
+
+You can change the default theme to Espresso as above, 
+
+<img width="533" height="336" alt="image" src="https://github.com/user-attachments/assets/e42c502d-b9cd-4db2-bcb2-52697983ab3d" />
+
+or Non-Conformist, or one of the others if you prefer.
 
 I hope you find the app useful and fun.
 
