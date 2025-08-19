@@ -17,142 +17,262 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Merriweather:wght@400;700&family=Source+Sans+Pro:wght@400;700&display=swap" rel="stylesheet">
-	<style>
-        /* Custom styles for the new UI */
-        body {
-            font-family: 'Noto Sans', sans-serif; /* UI Font */
-        }
-        /* More specific heading rules */
-        h1, h3, .chapter-heading {
-            font-family: 'Cormorant Garamond', serif; /* Decorative Font */
-        }
-        #book-title {
-            font-family: 'Cormorant Garamond', serif;
-            color: #818cf8; /* Tailwind's "indigo-400" color */
+<style>
+		/*
+		============================================
+		THEME DEFINITIONS (CSS VARIABLES)
+		============================================
+		*/
+		:root {
+			/* Default Theme Colors */
+			--theme-default-page-bg: #0D131F; /* gray-900 */
+			--theme-default-ui-bg: #1D2633; /* gray-800 */
+			--theme-default-untyped: #7C8599; /* gray-400 */
+			--theme-default-correct: #DFF8FF; /* gray-100 */
+			--theme-default-incorrect: #F84D6C; /* red-400 */
+			--theme-default-cursor-style: underline;
+			--theme-default-ui-bright: #B9FFFA;
+			--theme-default-ui-medium: #7E9AA1;
+			--theme-default-ui-accent: #96F7FF;
 		}
-        /* Font Options */
-        .font-roboto-mono { font-family: 'Roboto Mono', monospace; }
+
+		body[data-theme="espresso"] {
+			--theme-page-bg: #0F0000;
+			--theme-ui-bg: #2B0404; /* Solid reddish-brown for content */
+			--theme-untyped: #B36205;
+			--theme-correct: #fde68a;
+			--theme-incorrect: #ef4444;
+			--theme-cursor-style: underline;
+			--theme-ui-bright: #fde68a;
+			--theme-ui-medium: #d97706;
+			--theme-ui-accent: #f59e0b;
+		}
+
+		body[data-theme="matrix"] {
+			--theme-page-bg: #000;
+			--theme-ui-bg: #001500;
+			--theme-untyped: #018000;
+			--theme-correct: #01FF00;
+			--theme-incorrect: #f02d2d;
+			--theme-cursor-style: block;
+			--theme-ui-bright: #01FF00;
+			--theme-ui-medium: #06D400;
+			--theme-ui-accent: #05B300;
+		}
+
+		body[data-theme="dracula"] {
+			--theme-page-bg: #20222C;
+			--theme-ui-bg: #242630;
+			--theme-untyped: #6272A4;
+			--theme-correct: #F8F8F2;
+			--theme-incorrect: #FF5555;
+			--theme-cursor-style: underline;
+			--theme-ui-bright: #F579CB;
+			--theme-ui-medium: #B88FF2;
+			--theme-ui-accent: #C297FF;
+		}
+		body[data-theme="monkeytype"] {
+			--theme-page-bg: #131314;
+			--theme-ui-bg: #232426;
+			--theme-untyped: #646669;
+			--theme-correct: #EDECE0;
+			--theme-incorrect: #CA4754;
+			--theme-cursor-style: underline;
+			--theme-ui-bright: #FACA16;
+			--theme-ui-medium: #D1AA13;
+			--theme-ui-accent: #EDC015;
+		}
+		body[data-theme="pinkpower"] {
+			--theme-page-bg: #FFF0F5;
+			--theme-ui-bg: #FFF8FA;
+			--theme-untyped: #FFB2D9;
+			--theme-correct: #6D214F;
+			--theme-incorrect: #DE396A;
+			--theme-cursor-style: underline;
+			--theme-ui-bright: #FF6EBB;
+			--theme-ui-medium: #B33771;
+			--theme-ui-accent: #F74CA3;
+		}
+		body[data-theme="gruvboxdark"] {
+			--theme-page-bg: #131314;
+			--theme-ui-bg: #232426;
+			--theme-untyped: #646669;
+			--theme-correct: #FFEEC1;
+			--theme-incorrect: #FB4934;
+			--theme-cursor-style: underline;
+			--theme-ui-bright: #FFB527;
+			--theme-ui-medium: #D79921;
+			--theme-ui-accent: #F7A414;
+		}
+		body[data-theme="ryujin"] {
+			--theme-page-bg: #040E1D;
+			--theme-ui-bg: #071121;
+			--theme-untyped: #946E57;
+			--theme-correct: #FFE4BC;
+			--theme-incorrect: #C4495B;
+			--theme-cursor-style: underline;
+			--theme-ui-bright: #FFD0B0;
+			--theme-ui-medium: #D4715B;
+			--theme-ui-accent: #FFBC90;
+		}
+		body[data-theme="creamandberries"] {
+			--theme-page-bg: #FFFAF4;
+			--theme-ui-bg: #FFF8EE;
+			--theme-untyped: #EDABEC;
+			--theme-correct: #46234D;
+			--theme-incorrect: #E85576;
+			--theme-cursor-style: underline;
+			--theme-ui-bright: #802287;
+			--theme-ui-medium: #A32981;
+			--theme-ui-accent: #AE2FB8;
+		}
+		body[data-theme="terminal"] {
+			--theme-page-bg: #141516;
+			--theme-ui-bg: #191A1B;
+			--theme-untyped: #565759;
+			--theme-correct: #EFF2E8;
+			--theme-incorrect: #A61717;
+			--theme-cursor-style: underline;
+			--theme-ui-bright: #E6E9DF;
+			--theme-ui-medium: #7FAB25;
+			--theme-ui-accent: #A9E330;
+		}
+		body[data-theme="nonconformist"] {
+			--theme-page-bg: #071823;
+			--theme-ui-bg: #091F2C;
+			--theme-untyped: #8B75BA;
+			--theme-correct: #93E8D3;
+			--theme-incorrect: #E45C96;
+			--theme-cursor-style: underline;
+			--theme-ui-bright: #F5B1CC;
+			--theme-ui-medium: #FF84B7;
+			--theme-ui-accent: #FFB0CF;
+		}
+		/*
+		============================================
+		           THEME APPLICATION
+		============================================
+		*/
+		body { 
+			font-family: 'Noto Sans', sans-serif; 
+			background: var(--theme-page-bg, var(--theme-default-page-bg));
+			min-height: 100vh;
+		}
+
+		.untyped { color: var(--untyped-color); }
+		.correct { color: var(--correct-color); }
+		.incorrect-char { color: var(--theme-incorrect, var(--theme-default-incorrect)); border-bottom-color: var(--theme-incorrect, var(--theme-default-incorrect)); }
+
+		body[data-theme-inversion="false"] {
+			--untyped-color: var(--theme-untyped, var(--theme-default-untyped));
+			--correct-color: var(--theme-correct, var(--theme-default-correct));
+		}
+		body[data-theme-inversion="true"] {
+			--untyped-color: var(--theme-correct, var(--theme-default-correct));
+			--correct-color: var(--theme-untyped, var(--theme-default-untyped));
+		}
+
+		/*
+		============================================
+		     THEME APPLICATION FOR UI ELEMENTS
+		============================================
+		*/
+		.ui-chart-container, .ui-panel-bg, .typing-area-background, .ui-sticky-bar {
+			background-color: var(--theme-ui-bg, var(--theme-default-ui-bg));
+		}
+		.ui-stat-box {
+			background-color: var(--theme-page-bg, var(--theme-default-page-bg));
+		}
+		.ui-stat-label { color: var(--theme-ui-medium, var(--theme-default-ui-medium)); }
+		.ui-stat-value, .library-book-card h3, .ui-bright-text, #settings-modal label, .ui-main-title { color: var(--theme-ui-bright, var(--theme-default-ui-bright)); }
+		#book-title-header, .ui-accent-text, #analysis-modal .ui-subheading { color: var(--theme-ui-accent, var(--theme-default-ui-accent)); }
+		#welcome-message, #chapter-stats, .ui-secondary-text, .library-book-card p { color: var(--theme-ui-medium, var(--theme-default-ui-medium)); }
+		.ui-action-button-primary { background-color: var(--theme-ui-accent, var(--theme-default-ui-accent)); color: #111827; }
+		.ui-action-button-secondary { background-color: var(--theme-ui-bg, var(--theme-default-ui-bg)); color: var(--theme-ui-bright, var(--theme-default-ui-bright)); border: 1px solid var(--theme-ui-medium, var(--theme-default-ui-medium)); }
+		.ui-action-button-danger {
+			background-color: var(--theme-incorrect, var(--theme-default-incorrect));
+			color: #111827; /* Dark text for contrast */
+		}
+		kbd { background-color: var(--theme-ui-bg, var(--theme-default-ui-bg)); color: var(--theme-ui-medium, var(--theme-default-ui-medium)); border: 1px solid var(--theme-ui-medium, var(--theme-default-ui-medium)); border-bottom-width: 2px; }
+		.ui-bright-text, .ui-main-title { font-family: 'Noto Sans', sans-serif; }
+		#file-loader { background-color: var(--theme-ui-bg, var(--theme-default-ui-bg)); }
+		.drag-over { border-color: var(--theme-ui-accent, var(--theme-default-ui-accent)); }
+		.ui-file-input::file-selector-button { background-color: var(--theme-ui-bg, var(--theme-default-ui-bg)); color: var(--theme-ui-bright, var(--theme-default-ui-bright)); border: 1px solid var(--theme-ui-medium, var(--theme-default-ui-medium)); padding: 0.5rem 1rem; border-radius: 9999px; font-weight: 600; cursor: pointer; margin-right: 1rem; }
+		#chapter-selector, #theme-selector { background-color: var(--theme-ui-bg, var(--theme-default-ui-bg)); color: var(--theme-ui-medium, var(--theme-default-ui-medium)); border: 1px solid var(--theme-ui-medium, var(--theme-default-ui-medium)); }
+		#settings-modal .choice-btn { background-color: var(--theme-ui-bg, var(--theme-default-ui-bg)); border: 1px solid var(--theme-ui-medium, var(--theme-default-ui-medium)); color: var(--theme-ui-medium, var(--theme-default-ui-medium)); }
+		#settings-modal .choice-btn-active { background-color: var(--theme-ui-accent, var(--theme-default-ui-accent)); color: #111827; border-color: transparent; }
+		footer.ui-secondary-text a {
+			text-decoration: underline;
+		}
+		footer.ui-secondary-text a:hover {
+			color: var(--theme-ui-accent, var(--theme-default-ui-accent));
+		}
+		.ui-input {
+			background-color: var(--theme-ui-bg, var(--theme-default-ui-bg));
+			border: 1px solid var(--theme-ui-medium, var(--theme-default-ui-medium));
+			color: var(--theme-ui-bright, var(--theme-default-ui-bright));
+		}
+		#username-input:focus {
+			--tw-ring-color: var(--theme-ui-accent, var(--theme-default-ui-accent));
+		}
+		/*
+		============================================
+		CURSOR STYLES & GENERAL UI
+		============================================
+		*/
+		@keyframes underline-pulse { 0%, 49% { border-color: #f59e0b; } 50%, 100% { border-color: transparent; } }
+		body[data-cursor-style="underline"] .cursor { animation: underline-pulse 1.2s infinite; border-bottom: 3px solid; }
+        h1, h3, .chapter-heading { font-family: 'Cormorant Garamond', serif; }
+		.chapter-heading { color: var(--theme-ui-bright, var(--theme-default-ui-bright)); border-bottom: 2px solid var(--theme-ui-medium, var(--theme-default-ui-medium)); padding-bottom: 0.5rem; margin-bottom: 2rem; margin-top: 3rem; }
+		h2 { font-family: 'Noto Sans', sans-serif; }
+        .char-span { transition: color 0.2s, background-color 0.2s, border-color 0.2s; border-radius: 2px; padding-bottom: 2px; border-bottom: 2px solid transparent; }
+        .skipped { color: var(--correct-color); }
+        .paragraph-block { margin-bottom: 2rem; overflow-wrap: break-word; hyphens: auto; }
+        .ui-subheading { font-family: 'Noto Sans', sans-serif; }
+        .modal-backdrop { background-color: rgba(0,0,0,0.7); }
+        .choice-btn { transition: background-color 0.2s; }
+        .choice-btn-active { transform: scale(1.05); }
+        .library-book-card { transition: transform 0.2s, box-shadow 0.2s; }
+        .library-book-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.4); }
+        .library-book-card img { object-fit: cover; aspect-ratio: 2 / 3; background-color: #374151; }
+		.fanfare-char { display: inline-block; animation: color-shift 1.5s infinite; }
+		@keyframes color-shift {
+			0%, 100% { color: var(--theme-ui-bright, var(--theme-default-ui-bright)); }
+			33%      { color: var(--theme-ui-accent, var(--theme-default-ui-accent)); }
+			66%      { color: var(--theme-ui-medium, var(--theme-default-ui-medium)); }
+		}
+
+		/*
+		============================================
+		FONT FAMILY AND FONT SIZE RULES
+		============================================
+		*/
+		.font-roboto-mono { font-family: 'Roboto Mono', monospace; }
         .font-lato { font-family: 'Lato', sans-serif; }
         .font-merriweather { font-family: 'Merriweather', serif; }
         .font-noto-sans { font-family: 'Noto Sans', sans-serif; }
-
-        /* === FINAL CALIBRATED FONT SIZES === */
-        /* V. Small */
         .font-merriweather.font-size-vs { font-size: 1.0rem; line-height: 1.8rem; }
         .font-lato.font-size-vs, .font-noto-sans.font-size-vs { font-size: 1.15rem; line-height: 2.0rem; }
         .font-roboto-mono.font-size-vs { font-size: 1.2rem; line-height: 2.1rem; }
-
-        /* Small */
-       .font-merriweather.font-size-sm { font-size: 1.25rem; line-height: 2.2rem; }
-       .font-lato.font-size-sm, .font-noto-sans.font-size-sm { font-size: 1.4rem; line-height: 2.4rem; }
-       .font-roboto-mono.font-size-sm { font-size: 1.5rem; line-height: 2.5rem; }
-
-       /* Medium (New default) */
-       .font-merriweather.font-size-md { font-size: 1.5rem; line-height: 2.5rem; }
-       .font-lato.font-size-md, .font-noto-sans.font-size-md { font-size: 1.65rem; line-height: 2.7rem; }
-       .font-roboto-mono.font-size-md { font-size: 1.8rem; line-height: 2.9rem; }
-
-        /* Large */
+        .font-merriweather.font-size-sm { font-size: 1.25rem; line-height: 2.2rem; }
+        .font-lato.font-size-sm, .font-noto-sans.font-size-sm { font-size: 1.4rem; line-height: 2.4rem; }
+        .font-roboto-mono.font-size-sm { font-size: 1.5rem; line-height: 2.5rem; }
+        .font-merriweather.font-size-md { font-size: 1.5rem; line-height: 2.5rem; }
+        .font-lato.font-size-md, .font-noto-sans.font-size-md { font-size: 1.65rem; line-height: 2.7rem; }
+        .font-roboto-mono.font-size-md { font-size: 1.8rem; line-height: 2.9rem; }
         .font-merriweather.font-size-lg { font-size: 1.8rem; line-height: 2.9rem; }
         .font-lato.font-size-lg, .font-noto-sans.font-size-lg { font-size: 2.0rem; line-height: 3.1rem; }
         .font-roboto-mono.font-size-lg { font-size: 2.1rem; line-height: 3.2rem; }
-
-        /* X-Large */
         .font-merriweather.font-size-xl { font-size: 2.2rem; line-height: 3.4rem; }
         .font-lato.font-size-xl, .font-noto-sans.font-size-xl { font-size: 2.4rem; line-height: 3.6rem; }
         .font-roboto-mono.font-size-xl { font-size: 2.5rem; line-height: 3.7rem; }
-		/* Ensure UI headings use the correct font */
-        h2 {
-            font-family: 'Noto Sans', sans-serif;
-        }
-        /* Underline cursor effect */
-        .cursor {
-            border-bottom: 3px solid #f59e0b; /* amber-500 */
-            animation: underline-pulse 1.5s ease-in-out infinite;
-        }
-        @keyframes underline-pulse {
-            0%, 100% { border-color: #f59e0b; } /* amber-500 */
-            50% { border-color: #fcd34d; } /* amber-300 */
-        }
-		
-        /* Character styling */
-        .char-span {
-            transition: color 0.2s ease-in-out, background-color 0.2s ease-in-out, border-color 0.2s ease-in-out;
-            border-radius: 2px;
-            padding-bottom: 2px; /* Add padding for the underline */
-            border-bottom: 2px solid transparent;
-        }
-        .correct { color: #f3f4f6; } /* gray-100 */
-        .incorrect-char {
-            color: #f87171; /* red-400 text */
-            border-bottom-color: #ef4444; /* red-500 underline */
-        }
-        .untyped { color: #9ca3af; } /* gray-400 */
-        .skipped { color: #f3f4f6; } /* gray-100, for skipped paragraphs */
-        /* Paragraph styling */
-        .paragraph-block {
-            margin-bottom: 2rem;
-            overflow-wrap: break-word;
-            hyphens: auto;
-        }
-        .chapter-heading {
-            border-bottom: 2px solid #374151; /* gray-700 */
-            padding-bottom: 0.5rem;
-            margin-bottom: 2rem;
-            margin-top: 3rem;
-        }
-        .ui-subheading {
-            font-family: 'Noto Sans', sans-serif;
-        }
-		/* Modal styles */
-        .modal-backdrop {
-            background-color: rgba(0,0,0,0.7);
-        }
-        /* Chapter selection button styles */
-        .choice-btn {
-            transition: background-color 0.2s;
-        }
-        .choice-btn-active {
-            transform: scale(1.05);
-            box-shadow: 0 0 15px rgba(99, 102, 241, 0.5);
-        }
-        /* Library book card style */
-        .library-book-card {
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-        .library-book-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.4);
-        }
-        .library-book-card img {
-            object-fit: cover;
-            aspect-ratio: 2 / 3;
-            background-color: #374151;
-        }
-        /* Drag-and-drop visual feedback */
-        .drag-over {
-            border-color: #f59e0b; /* amber-500 */
-            background-color: rgba(245, 158, 11, 0.1);
-        }
-		/* Drill Completion Animation */
-		.fanfare-char {
-			display: inline-block;
-			animation: color-shift 1.5s infinite;
-		}
-		@keyframes color-shift {
-			0%   { color: #4ade80; } /* green-400 */
-			25%  { color: #38bdf8; } /* sky-400 */
-			50%  { color: #818cf8; } /* indigo-400 */
-			75%  { color: #c084fc; } /* purple-400 */
-			100% { color: #4ade80; } /* cycle back to green */
-		}
-    </style>
+	</style>
 </head>
-<body class="bg-gray-900 text-gray-200 flex flex-col items-center min-h-screen p-4 md:p-8">
+<body class="text-gray-200 flex flex-col items-center min-h-screen p-4 md:p-8">
 
     <div id="settings-modal" class="fixed inset-0 z-50 flex items-center justify-center modal-backdrop hidden">
-        <div class="bg-gray-800 rounded-lg shadow-xl p-8 w-full max-w-lg">
-            <h2 class="text-2xl font-bold text-white mb-6">Typing Settings</h2>
+        <div class="rounded-lg shadow-xl p-8 w-full max-w-lg ui-panel-bg">
+            <h2 class="text-2xl font-bold mb-6 ui-main-title">Typing Settings</h2>
         
             <div class="mb-6">
                 <label class="block text-lg font-medium text-gray-300 mb-3">Font Family</label>
@@ -165,17 +285,28 @@
                 <div id="font-size-selector" class="grid grid-cols-2 sm:grid-cols-4 gap-4">
                     </div>
             </div>
+
+			<div class="mb-6">
+                <label for="theme-selector" class="block text-lg font-medium text-gray-300 mb-3">Theme</label>
+                <select id="theme-selector" class="w-full rounded-md p-3"></select>
+            </div>
+
+			<div class="mb-8">
+				<label class="block text-lg font-medium text-gray-300 mb-3">Typing Colors</label>
+				<div id="inversion-selector" class="grid grid-cols-2 gap-4">
+					 </div>
+			</div>
         
             <div class="mt-8 flex justify-end">
-                <button id="close-settings-btn" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-md">Done</button>
+                <button id="close-settings-btn" class="font-bold py-2 px-4 rounded-md ui-action-button-primary">Done</button>
             </div>
         </div>
     </div>
 
 	<div id="analysis-modal" class="fixed inset-0 z-50 flex items-center justify-center modal-backdrop hidden">
-		<div class="bg-gray-800 rounded-lg shadow-xl p-4 sm:p-8 w-full max-w-2xl max-h-[90vh] flex flex-col">
-			<h2 class="text-2xl font-bold text-white mb-4">Your Typing Analysis</h2>
-			<p class="text-gray-400 mb-6">Here are your slowest letter combinations based on your typing history. Use the drill button to practice them.</p>
+		<div class="rounded-lg shadow-xl p-4 sm:p-8 w-full max-w-2xl max-h-[90vh] flex flex-col ui-panel-bg">
+			<h2 class="text-2xl font-bold mb-4 ui-main-title">Your Typing Analysis</h2>
+			<p class="mb-6 ui-secondary-text">Here are your slowest letter combinations based on your typing history. Use the drill button to practice them.</p>
 
 			<div class="flex-grow overflow-y-auto pr-4 grid grid-cols-1 md:grid-cols-2 gap-8 min-h-0">
 				<div>
@@ -191,165 +322,164 @@
 			</div>
 
 			<div class="mt-8 pt-4 border-t border-gray-700 flex justify-between items-center">
-				<button id="close-analysis-btn" class="bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-md">Close</button>
-				<button id="drill-weaknesses-btn" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-md">Drill My Weaknesses</button>
+				<button id="close-analysis-btn" class="font-bold py-2 px-4 rounded-md ui-action-button-secondary">Close</button>
+				<button id="drill-weaknesses-btn" class="font-bold py-2 px-4 rounded-md ui-action-button-primary">Drill My Weaknesses</button>
 			</div>
 		</div>
 	</div>
 
     <div id="profile-modal" class="fixed inset-0 z-50 flex items-center justify-center modal-backdrop hidden">
-        <div class="bg-gray-800 rounded-lg shadow-xl p-8 w-full max-w-md">
-            <h2 id="profile-modal-title" class="text-2xl font-bold text-white mb-4">Create Your Profile</h2>
-            <p class="text-gray-400 mb-6">Enter a username to save your progress and track your results.</p>
+        <div class="rounded-lg shadow-xl p-8 w-full max-w-md ui-panel-bg">
+            <h2 id="profile-modal-title" class="text-2xl font-bold mb-4 ui-main-title">Create Your Profile</h2>
+            <p class="mb-6 ui-secondary-text">Enter a username to save your progress and track your results.</p>
             <div>
-                <label for="username-input" class="block text-sm font-medium text-gray-300 mb-1">Username</label>
-                <input type="text" id="username-input" class="w-full bg-gray-700 border border-gray-600 rounded-md p-2 focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                <label for="username-input" class="block text-sm font-medium mb-1 ui-bright-text">Username</label>
+                <input type="text" id="username-input" class="w-full rounded-md p-2 focus:ring-2 focus:outline-none ui-input">
             </div>
             <div class="mt-6">
-                <button id="save-profile-btn" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-md">Save and Start</button>
+                <button id="save-profile-btn" class="w-full font-bold py-2 px-4 rounded-md ui-action-button-primary">Save and Start</button>
             </div>
         </div>
     </div>
 
     <div id="profile-switcher-modal" class="fixed inset-0 z-50 flex items-center justify-center modal-backdrop hidden">
-        <div class="bg-gray-800 rounded-lg shadow-xl p-8 w-full max-w-md">
-            <h2 class="text-2xl font-bold text-white mb-6">Profile Manager</h2>
+        <div class="rounded-lg shadow-xl p-8 w-full max-w-md ui-panel-bg">
+            <h2 class="text-2xl font-bold mb-6 ui-main-title">Profile Manager</h2>
             <div id="profile-list-container" class="space-y-3 mb-6 max-h-64 overflow-y-auto">
                 </div>
             <div class="pt-4 border-t border-gray-700">
-                <button id="show-create-profile-btn" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-md">Add New Profile</button>
+                <button id="show-create-profile-btn" class="w-full font-bold py-2 px-4 rounded-md ui-action-button-primary">Add New Profile</button>
             </div>
         </div>
     </div>
     
-    <div id="chapter-selection-modal" class="fixed inset-0 z-50 flex items-center justify-center modal-backdrop hidden">
-        <div class="bg-gray-800 rounded-lg shadow-xl p-8 w-full max-w-2xl max-h-[90vh] flex flex-col">
-            <h2 class="text-2xl font-bold text-white mb-2">Select Chapters to Type</h2>
-            <p class="text-gray-400 mb-6">Choose which sections of the book you want to include in your typing practice.</p>
+	<div id="chapter-selection-modal" class="fixed inset-0 z-50 flex items-center justify-center modal-backdrop hidden">
+        <div class="rounded-lg shadow-xl p-8 w-full max-w-2xl max-h-[90vh] flex flex-col ui-panel-bg">
+            <h2 class="text-2xl font-bold mb-2 ui-main-title">Select Chapters to Type</h2>
+            <p class="mb-6 ui-secondary-text">Choose which sections of the book you want to include in your typing practice.</p>
             <div id="chapter-list-container" class="overflow-y-auto flex-grow pr-4 min-h-0">
                 </div>
             <div class="mt-6 pt-4 border-t border-gray-700 flex justify-end space-x-4">
-                 <button id="cancel-add-book-btn" class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded-md">Cancel</button>
-                <button id="save-chapters-btn" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-md">Save Book to Library</button>
+                 <button id="cancel-add-book-btn" class="font-bold py-2 px-4 rounded-md ui-action-button-secondary">Cancel</button>
+                <button id="save-chapters-btn" class="font-bold py-2 px-4 rounded-md ui-action-button-primary">Save Book to Library</button>
             </div>
         </div>
     </div>
 
 
     <div class="w-full max-w-5xl mx-auto"> <header class="text-center mb-8">
-            <h1 id="app-title-header" class="text-5xl md:text-6xl font-bold text-white">Typing Tomes</h1>
-             <h1 id="book-title-header" class="text-5xl md:text-6xl font-bold hidden text-indigo-400"></h1>
-            <p id="welcome-message" class="text-gray-400 mt-2 hidden">Welcome, <span id="username-display" class="font-bold text-white"></span>!
-                <button id="change-user-btn" class="text-indigo-400 text-sm">(Change)</button>
+            <h1 id="app-title-header" class="text-5xl md:text-6xl font-bold ui-main-title">Typing Tomes</h1>
+			 <h1 id="book-title-header" class="text-5xl md:text-6xl font-bold hidden ui-main-title"></h1>
+            <p id="welcome-message" class="text-gray-400 mt-2 hidden ui-secondary-text">Welcome, <span id="username-display" class="font-bold ui-bright-text"></span>!
+                <button id="change-user-btn" class="text-sm ui-secondary-text">(Change)</button>
             </p>
         </header>
 
         <div id="library-view" class="w-full">
             <div class="flex justify-between items-center mb-6">
-                <h2 class="text-3xl font-bold text-white">My Library</h2>
-                <button id="add-new-book-btn" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-md">Add New Book</button>
+                <h2 class="text-3xl font-bold ui-bright-text">My Library</h2>
+                <button id="add-new-book-btn" class="font-bold py-2 px-4 rounded-md ui-action-button-primary">Add New Book</button>
             </div>
             <div id="library-list" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
                 </div>
         </div>
 
 
-        <div id="file-loader" class="bg-gray-800 p-6 rounded-lg shadow-lg mb-8 hidden">
-            <h2 class="text-xl font-semibold mb-4 text-white">Load a Book (.epub)</h2>
-            <div id="drop-zone" class="flex flex-col items-center justify-center p-8 border-2 border-dashed border-gray-600 rounded-lg transition-colors">
-                 <label for="local-file" class="block text-lg font-medium text-gray-300 mb-4 text-center">Drag & Drop EPUB file here<br>or click to select</label>
-                 <input type="file" id="local-file" accept=".epub" class="block w-full max-w-xs text-sm text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 cursor-pointer"/>
+		<div id="file-loader" class="p-6 rounded-lg shadow-lg mb-8 hidden ui-panel-bg">
+            <h2 class="text-xl font-semibold mb-4 ui-bright-text">Load a Book (.epub)</h2>
+			<div id="drop-zone" class="flex flex-col items-center justify-center p-8 border-2 border-dashed border-gray-600 rounded-lg transition-colors">
+                 <label for="local-file" class="block text-lg font-medium mb-4 text-center ui-secondary-text">Drag & Drop EPUB file here<br>or click to select</label>
+                 <input type="file" id="local-file" accept=".epub" class="block w-full max-w-xs text-sm ui-secondary-text ui-file-input"/>
             </div>
             <div id="loading-status" class="text-center mt-4 text-amber-400"></div>
-            <button id="back-to-library-btn" class="mt-4 w-full bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded-md">Back to Library</button>
+            <button id="back-to-library-btn" class="mt-4 w-full font-bold py-2 px-4 rounded-md ui-action-button-secondary">Back to Library</button>
         </div>
 
         <main id="typing-app" class="hidden flex-col">
-            <div class="sticky top-0 bg-gray-900 py-4 z-10">
-                <div class="grid grid-cols-2 lg:grid-cols-5 gap-4 text-center">
-                    <div class="bg-gray-800 p-4 rounded-lg shadow">
-                        <p class="text-sm text-gray-400">Live WPM</p>
-                        <div id="live-wpm-display" class="text-3xl font-bold text-green-400">0</div>
+            <div class="sticky top-0 py-4 px-4 z-10 ui-sticky-bar">
+				<div class="grid grid-cols-2 lg:grid-cols-5 gap-4 text-center">
+                    <div class="p-4 rounded-lg shadow ui-stat-box">
+                        <p class="text-sm ui-stat-label">Live WPM</p>
+                        <div id="live-wpm-display" class="text-3xl font-bold ui-stat-value">0</div>
                     </div>
-                   <div class="bg-gray-800 p-4 rounded-lg shadow">
-                        <p class="text-sm text-gray-400">Live Accuracy</p>
-                        <div id="live-accuracy-display" class="text-3xl font-bold text-sky-400">100%</div>
+                   <div class="p-4 rounded-lg shadow ui-stat-box">
+                        <p class="text-sm ui-stat-label">Live Accuracy</p>
+                        <div id="live-accuracy-display" class="text-3xl font-bold ui-stat-value">100%</div>
                    </div>
-                   <div class="bg-gray-800 p-4 rounded-lg shadow">
-                        <p class="text-sm text-gray-400">Overall WPM</p>
-                        <div id="overall-wpm-display" class="text-3xl font-bold text-gray-300">0.0</div>
+                   <div class="p-4 rounded-lg shadow ui-stat-box">
+                        <p class="text-sm ui-stat-label">Overall WPM</p>
+                        <div id="overall-wpm-display" class="text-3xl font-bold ui-stat-value">0.0</div>
                     </div>
-                    <div class="bg-gray-800 p-4 rounded-lg shadow">
-                        <p class="text-sm text-gray-400">Overall Accuracy</p>
-                        <div id="overall-accuracy-display" class="text-3xl font-bold text-blue-400">100%</div>
+                    <div class="p-4 rounded-lg shadow ui-stat-box">
+                        <p class="text-sm ui-stat-label">Overall Accuracy</p>
+                        <div id="overall-accuracy-display" class="text-3xl font-bold ui-stat-value">100%</div>
                     </div>
-                    <div class="bg-gray-800 p-4 rounded-lg shadow col-span-2 lg:col-span-1">
-                        <p class="text-sm text-gray-400">Paragraphs Done</p>
-                        <div id="paragraph-count" class="text-3xl font-bold text-purple-400">0 / 0</div>
+                    <div class="p-4 rounded-lg shadow col-span-2 lg:col-span-1 ui-stat-box">
+                        <p class="text-sm ui-stat-label">Paragraphs Done</p>
+                        <div id="paragraph-count" class="text-3xl font-bold ui-stat-value">0 / 0</div>
                     </div>
                 </div>
             </div>
 
             <div class="mt-6">
                  <div id="chapter-selector-container" class="mb-4 hidden">
-                    <label for="chapter-selector" class="block text-sm font-medium text-gray-300 mb-1">Jump to Chapter</label>
-                    <select id="chapter-selector" class="w-full bg-gray-700 border border-gray-600 rounded-md p-2 focus:ring-2 focus:ring-indigo-500 focus:outline-none"></select>
+                    <select id="chapter-selector" class="w-full border rounded-md p-2 focus:ring-2 focus:outline-none"></select>
                 </div>
 
-                <div id="chapter-stats" class="text-center text-gray-400 mb-4"></div>
-                <div class="bg-gray-800 p-6 rounded-lg shadow-lg relative">
+                <div id="chapter-stats" class="text-center text-gray-400 mb-4 ui-secondary-text"></div>
+                <div class="p-6 rounded-lg shadow-lg relative typing-area-background">
                      <div id="book-content" class="select-none overflow-y-auto focus:outline-none" style="max-height: 70vh;">
                          </div>
-                     <div class="text-right text-gray-400 text-sm mt-4">
-                         <span>Press <kbd class="font-sans bg-gray-600 text-gray-200 rounded px-2 py-1">Tab</kbd> to restart paragraph.</span>
-                         <span>Press <kbd class="font-sans bg-gray-600 text-gray-200 rounded px-2 py-1">Enter</kbd> to finish.<span> Press <kbd class="font-sans bg-gray-600 text-gray-200 rounded px-2 py-1">Shift+Enter</kbd> to skip.</span><span> Press <kbd class="font-sans bg-gray-600 text-gray-200 rounded px-2 py-1">Shift+Tab</kbd> to redo previous.</span></span>
+                     <div class="text-right text-sm mt-4 ui-bright-text">
+                         <span>Press <kbd class="font-bold rounded px-2 py-1 rounded-md text-sm ui-action-button-secondary">Tab</kbd> to restart paragraph.</span>
+                         <span>Press <kbd class="font-bold rounded px-2 py-1 rounded-md text-sm ui-action-button-secondary">Enter</kbd> to finish.<span> Press <kbd class="font-bold rounded px-2 py-1 rounded-md text-sm ui-action-button-secondary">Shift+Enter</kbd> to skip.</span><span> Press <kbd class="font-bold rounded px-2 py-1 rounded-md text-sm ui-action-button-secondary">Shift+Tab</kbd> to redo previous.</span></span>
                      </div>
                 </div>
 
-                <div class="bg-gray-800 p-6 rounded-lg shadow-lg mt-8">
+				<div class="p-6 rounded-lg shadow-lg mt-8 ui-chart-container">
                     <div class="flex justify-between items-center mb-4">
-                        <h3 class="text-xl font-semibold text-white ui-subheading">Performance History</h3>
-						    <button id="chart-toggle-btn" class="bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-md text-sm">Show Entire Book</button>
+                        <h3 class="text-xl font-semibold ui-bright-text">Performance History</h3>
+						<button id="chart-toggle-btn" class="font-bold py-2 px-4 rounded-md text-sm ui-action-button-secondary">Show Entire Book</button>
                     </div>
                     <canvas id="history-chart"></canvas>
                 </div>
             </div>
         
             <div class="mt-8 flex justify-between items-center">
-                <button id="exit-to-library-btn" class="bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-md">← Back to Library</button>
-				<button id="analysis-btn" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-md">Analysis and Drills</button>
-                <button id="settings-btn" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-md">Settings</button>
+                <button id="exit-to-library-btn" class="font-bold py-2 px-4 rounded-md ui-action-button-secondary">← Back to Library</button>
+				<button id="analysis-btn" class="font-bold py-2 px-4 rounded-md ui-action-button-primary">Analysis and Drills</button>
+                <button id="settings-btn" class="font-bold py-2 px-4 rounded-md ui-action-button-primary">Settings</button>
             </div>		
 		
 		</main>
 		
 		<main id="drill-mode" class="hidden flex-col">
             <div class="py-4 z-10">
-                <h2 class="text-3xl font-bold text-center text-green-400 mb-4">Practice Drill</h2>
-                <div class="grid grid-cols-3 gap-4 text-center">
-                    <div class="bg-gray-800 p-4 rounded-lg shadow">
-                        <p class="text-sm text-gray-400">Drill WPM</p>
-                        <div id="drill-wpm-display" class="text-3xl font-bold text-green-400">0</div>
+                <h2 class="text-3xl font-bold text-center mb-4 ui-main-title">Practice Drill</h2>
+				<div class="grid grid-cols-3 gap-4 text-center">
+                    <div class="p-4 rounded-lg shadow ui-stat-box">
+                        <p class="text-sm ui-stat-label">Drill WPM</p>
+                        <div id="drill-wpm-display" class="text-3xl font-bold ui-stat-value">0</div>
                     </div>
-                    <div class="bg-gray-800 p-4 rounded-lg shadow">
-                        <p class="text-sm text-gray-400">Drill Accuracy</p>
-                        <div id="drill-accuracy-display" class="text-3xl font-bold text-sky-400">100%</div>
+                    <div class="p-4 rounded-lg shadow ui-stat-box">
+                        <p class="text-sm ui-stat-label">Drill Accuracy</p>
+                        <div id="drill-accuracy-display" class="text-3xl font-bold ui-stat-value">100%</div>
                     </div>
-                    <div class="bg-gray-800 p-4 rounded-lg shadow">
-                        <p class="text-sm text-gray-400">Words Typed</p>
-                        <div id="drill-word-count" class="text-3xl font-bold text-purple-400">0 / 50</div>
+                    <div class="p-4 rounded-lg shadow ui-stat-box">
+                        <p class="text-sm ui-stat-label">Words Typed</p>
+                        <div id="drill-word-count" class="text-3xl font-bold ui-stat-value">0 / 50</div>
                     </div>
                 </div>
             </div>
     
-            <div class="mt-6 bg-gray-800 p-6 rounded-lg shadow-lg relative">
+            <div class="mt-6 p-6 rounded-lg shadow-lg relative typing-area-background">
                 <div id="drill-content" class="select-none overflow-y-auto text-3xl leading-loose focus:outline-none" style="max-height: 50vh;" tabindex="-1">
                 </div>
             </div>
     
             <div class="mt-8 flex justify-between items-center">
-                <button id="end-drill-btn" class="bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-md">End Drill</button>
-                <button id="drill-more-btn" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-md">Drill More Words</button>
+                <button id="end-drill-btn" class="font-bold py-2 px-4 rounded-md ui-action-button-secondary">End Drill</button>
+                <button id="drill-more-btn" class="font-bold py-2 px-4 rounded-md ui-action-button-primary">Drill More Words</button>
             </div>
         </main>
 		
@@ -389,7 +519,7 @@
         // --- MASTER LISTS FOR ADAPTIVE TRAINING ---
 
         // Top 2000 most common English words (2-10 letters long)
-        const MASTER_WORDS_2K = ["the", "of", "to", "and", "in", "is", "it", "you", "that", "he", "was", "for", "on", "are", "with", "as", "his", "they", "be", "at", "one", "have", "this", "from", "or", "had", "by", "not", "word", "but", "what", "some", "we", "can", "out", "other", "were", "all", "there", "when", "up", "use", "your", "how", "said", "an", "each", "she", "which", "do", "their", "time", "if", "will", "way", "about", "many", "then", "them", "write", "would", "like", "so", "these", "her", "long", "make", "thing", "see", "him", "two", "has", "look", "more", "day", "could", "go", "come", "did", "number", "sound", "no", "most", "people", "my", "over", "know", "water", "than", "call", "first", "who", "may", "down", "side", "been", "now", "find", "any", "new", "work", "part", "take", "get", "place", "made", "live", "where", "after", "back", "little", "only", "round", "man", "year", "came", "show", "every", "good", "me", "give", "our", "under", "name", "very", "through", "just", "form", "sentence", "great", "think", "say", "help", "low", "line", "differ", "turn", "cause", "much", "mean", "before", "move", "right", "boy", "old", "too", "same", "tell", "does", "set", "three", "want", "air", "well", "also", "play", "small", "end", "put", "home", "read", "hand", "port", "large", "spell", "add", "even", "land", "here", "must", "big", "high", "such", "follow", "act", "why", "ask", "men", "change", "went", "light", "kind", "off", "need", "house", "picture", "try", "us", "again", "animal", "point", "mother", "world", "near", "build", "self", "earth", "father", "head", "stand", "own", "page", "should", "country", "found", "answer", "school", "grow", "study", "still", "learn", "plant", "cover", "food", "sun", "four", "between", "state", "keep", "eye", "never", "last", "let", "thought", "city", "tree", "cross", "farm", "hard", "start", "might", "story", "saw", "far", "sea", "draw", "left", "late", "run", "while", "press", "close", "night", "real", "life", "few", "north", "open", "seem", "together", "next", "white", "children", "begin", "got", "walk", "example", "ease", "paper", "group", "always", "music", "those", "both", "mark", "often", "letter", "until", "mile", "river", "car", "feet", "care", "second", "book", "carry", "took", "science", "eat", "room", "friend", "began", "idea", "fish", "mountain", "stop", "once", "base", "hear", "horse", "cut", "sure", "watch", "color", "face", "wood", "main", "enough", "plain", "girl", "usual", "young", "ready", "above", "ever", "red", "list", "though", "feel", "talk", "bird", "soon", "body", "dog", "family", "direct", "pose", "leave", "song", "measure", "door", "product", "black", "short", "numeral", "class", "wind", "question", "happen", "complete", "ship", "area", "half", "rock", "order", "fire", "south", "problem", "piece", "told", "knew", "pass", "since", "top", "whole", "king", "space", "heard", "best", "hour", "better", "true", "during", "hundred", "five", "remember", "step", "early", "hold", "west", "ground", "interest", "reach", "fast", "verb", "sing", "listen", "six", "table", "travel", "less", "morning", "ten", "simple", "several", "vowel", "toward", "war", "lay", "against", "pattern", "slow", "center", "love", "person", "money", "serve", "appear", "road", "map", "rain", "rule", "govern", "pull", "cold", "notice", "voice", "unit", "power", "town", "fine", "certain", "fly", "fall", "lead", "cry", "dark", "machine", "note", "wait", "plan", "figure", "star", "box", "noun", "field", "rest", "correct", "able", "pound", "done", "beauty", "drive", "stood", "contain", "front", "teach", "week", "final", "gave", "green", "oh", "quick", "develop", "ocean", "warm", "free", "minute", "strong", "special", "mind", "behind", "clear", "tail", "produce", "fact", "street", "inch", "multiply", "nothing", "course", "stay", "wheel", "full", "force", "blue", "object", "decide", "surface", "deep", "moon", "island", "foot", "system", "busy", "test", "record", "boat", "common", "gold", "possible", "plane", "stead", "dry", "wonder", "laugh", "thousand", "ago", "ran", "check", "game", "shape", "equate", "hot", "miss", "brought", "heat", "snow", "tire", "bring", "yes", "distant", "fill", "east", "paint", "language", "among", "grand", "ball", "yet", "wave", "drop", "heart", "am", "present", "heavy", "dance", "engine", "position", "arm", "wide", "sail", "material", "size", "vary", "settle", "speak", "weight", "general", "ice", "matter", "circle", "pair", "include", "divide", "syllable", "felt", "perhaps", "pick", "sudden", "count", "square", "reason", "length", "represent", "art", "subject", "region", "energy", "hunt", "probable", "bed", "brother", "egg", "ride", "cell", "believe", "fraction", "forest", "sit", "race", "window", "store", "summer", "train", "sleep", "prove", "lone", "leg", "exercise", "wall", "catch", "mount", "wish", "sky", "board", "joy", "winter", "sat", "written", "wild", "instrument", "kept", "glass", "grass", "cow", "job", "edge", "sign", "visit", "past", "soft", "fun", "bright", "gas", "weather", "month", "million", "bear", "finish", "happy", "hope", "flower", "clothes", "strange", "gone", "jump", "baby", "eight", "village", "meet", "root", "buy", "raise", "solve", "metal", "whether", "push", "seven", "paragraph", "third", "shall", "held", "hair", "describe", "cook", "floor", "either", "result", "burn", "hill", "safe", "cat", "century", "consider", "type", "law", "bit", "coast", "copy", "phrase", "silent", "tall", "sand", "soil", "roll", "temperature", "finger", "industry", "value", "fight", "lie", "beat", "excite", "natural", "view", "sense", "ear", "else", "quite", "broke", "case", "middle", "kill", "son", "lake", "moment", "scale", "loud", "spring", "observe", "child", "straight", "consonant", "nation", "dictionary", "milk", "speed", "method", "organ", "pay", "age", "section", "dress", "cloud", "surprise", "quiet", "stone", "tiny", "climb", "cool", "design", "poor", "lot", "experiment", "bottom", "key", "iron", "single", "stick", "flat", "twenty", "skin", "smile", "crease", "hole", "trade", "melody", "trip", "office", "receive", "row", "mouth", "exact", "symbol", "die", "least", "trouble", "shout", "except", "wrote", "seed", "tone", "join", "suggest", "clean", "break", "lady", "yard", "rise", "bad", "blow", "oil", "blood", "touch", "grew", "cent", "mix", "team", "wire", "cost", "lost", "brown", "wear", "garden", "equal", "sent", "choose", "fell", "fit", "flow", "fair", "bank", "collect", "save", "control", "decimal", "gentle", "woman", "captain", "practice", "separate", "difficult", "doctor", "please", "protect", "noon", "whose", "locate", "ring", "character", "insect", "caught", "period", "indicate", "radio", "spoke", "atom", "human", "history", "effect", "electric", "expect", "crop", "modern", "element", "hit", "student", "corner", "party", "supply", "bone", "rail", "imagine", "provide", "agree", "thus", "capital", "chair", "danger", "fruit", "rich", "thick", "soldier", "process", "operate", "guess", "necessary", "sharp", "wing", "create", "neighbor", "wash", "bat", "rather", "crowd", "corn", "compare", "poem", "string", "bell", "depend", "meat", "rub", "tube", "famous", "dollar", "stream", "fear", "sight", "thin", "triangle", "planet", "hurry", "chief", "colony", "clock", "mine", "tie", "enter", "major", "fresh", "search", "send", "yellow", "gun", "allow", "print", "dead", "spot", "desert", "suit", "current", "lift", "rose", "continue", "block", "chart", "hat", "sell", "success", "company", "subtract", "event", "particular", "deal", "swim", "term", "opposite", "wife", "shoe", "shoulder", "spread", "arrange", "camp", "invent", "cotton", "born", "determine", "quart", "nine", "truck", "noise", "level", "chance", "gather", "shop", "stretch", "throw", "shine", "property", "column", "molecule", "select", "wrong", "gray", "repeat", "require", "broad", "prepare", "salt", "nose", "plural", "anger", "claim", "continent", "oxygen", "sugar", "death", "pretty", "skill", "women", "season", "solution", "magnet", "silver", "thank", "branch", "match", "suffix", "especially", "fig", "afraid", "huge", "sister", "steel", "discuss", "forward", "similar", "guide", "experience", "score", "apple", "bought", "led", "pitch", "coat", "mass", "card", "band", "rope", "slip", "win", "dream", "evening", "condition", "feed", "tool", "total", "basic", "smell", "valley", "nor", "double", "seat", "arrive", "master", "track", "parent", "shore", "division", "sheet", "substance", "favor", "connect", "post", "spend", "chord", "fat", "glad", "original", "share", "station", "dad", "bread", "charge", "proper", "bar", "offer", "segment", "duck", "instant", "market", "degree", "populate", "chick", "dear", "enemy", "reply", "drink", "occur", "support", "speech", "nature", "range", "steam", "motion", "path", "liquid", "log", "meant", "quotient", "teeth", "shell", "neck", "program", "public", "universe", "site", "contact", "business", "web", "online", "services", "click", "service", "price", "date", "into", "email", "health", "used", "data", "policy", "available", "copyright", "message", "software", "video", "info", "links", "review", "privacy", "items", "user", "research", "university", "mail", "management", "united", "hotel", "item", "comments", "report", "member", "details", "because", "local", "using", "education", "national", "posted", "internet", "address", "community", "within", "phone", "shipping", "reserved", "forum", "based", "code", "website", "index", "being", "file", "link", "today", "technology", "project", "version", "sports", "related", "security", "county", "photo", "network", "computer", "following", "download", "without", "per", "access", "think", "resources", "posts", "media", "law", "control", "pictures", "personal", "including", "directory", "board", "location", "rating", "government", "during", "return", "students", "shopping", "account", "sites", "digital", "profile", "previous", "events", "image", "title", "another", "shall", "class", "customer", "December", "compare", "movies", "include", "college", "article", "jobs", "author", "press", "learn", "sale", "around", "Canada", "teen", "stock", "training", "credit", "point", "science", "advanced", "sales", "look", "English", "estate", "select", "windows", "photos", "gay", "thread", "category", "gallery", "table", "register", "however", "June", "October", "November", "library", "really", "action", "series", "model", "features", "industry", "human", "provided", "yes", "required", "hot", "cost", "movie", "forums", "march", "September", "better", "questions", "July", "going", "medical", "server", "study", "cart", "staff", "articles", "feedback", "looking", "April", "never", "complete", "street", "topic", "comment", "things", "working", "against", "standard", "tax", "below", "mobile", "less", "got", "blog", "party", "payment", "login", "student", "let", "offers", "legal", "above", "recent", "park", "side", "act", "red", "give", "memory", "social", "August", "quote", "sell", "options", "rates", "create", "key", "body", "young", "America", "important", "field", "few", "east", "paper", "single", "age", "club", "girls", "password", "latest", "something", "gift", "question", "night", "hard", "Texas", "pay", "four", "poker", "status", "browse", "issue", "range", "building", "seller", "court", "February", "always", "result", "audio", "light", "write", "offer", "blue", "easy", "given", "event", "release", "analysis", "request", "fax", "China", "making", "needs", "possible", "might", "yet", "month", "major", "star", "areas", "future", "space", "hand", "sun", "cards", "London", "meeting", "become", "interest", "child", "keep", "enter", "share", "similar", "garden", "million", "added", "learning", "energy", "run", "delivery", "net", "popular", "term", "film", "put", "journal", "try", "welcome", "central", "images", "notice", "god", "head", "radio", "until", "cell", "color", "self", "council", "away", "includes", "track", "once", "archive", "further", "updated", "able", "having", "provides", "fun", "already", "green", "studies", "close", "common", "drive", "specific", "several", "gold", "living", "called", "arts", "lot", "ask", "display", "limited", "powered", "means", "director", "daily", "beach", "past", "natural", "whether", "due", "five", "upon", "period", "planning", "says", "official", "weather", "mar", "land", "average", "done", "technical", "window", "France", "pro", "region", "island", "record", "direct", "update", "parts", "ever", "early", "miles", "sound", "resource", "present", "either", "ago", "document", "works", "material", "bill", "written", "talk", "federal", "rules", "final", "adult", "tickets", "thing", "via", "cheap", "kids", "finance", "true", "minutes", "else", "mark", "third", "rock", "gifts", "Europe", "reading", "topics", "bad", "tips", "plus", "auto", "cover", "usually", "edit", "together", "videos", "percent", "fast", "function", "fact", "unit", "getting", "global", "tech", "meet", "far", "economic", "player", "lyrics", "often", "subscribe", "submit", "Germany", "amount", "watch", "included", "feel", "though", "bank", "risk", "thanks", "deals", "various", "words", "weight", "town", "heart", "received", "choose", "camera", "girl", "clear", "golf", "receive", "domain", "methods", "chapter", "makes", "loan", "wide", "beauty", "manager", "India", "position", "taken", "sort", "known", "half", "cases", "step", "simple", "quick", "none", "license", "Friday", "lake", "whole", "annual", "later", "basic", "shows", "church", "method", "purchase", "active", "response", "practice", "hardware", "figure", "fire", "holiday", "chat", "enough", "along", "among", "death", "writing", "speed", "loss", "face", "brand", "discount", "higher", "created", "remember", "oil", "bit", "yellow", "increase", "kingdom", "base", "near", "thought", "stuff", "French", "storage", "Japan", "doing", "shoes", "entry", "stay", "nature", "orders", "Africa", "summary", "turn", "mean", "growth", "notes", "agency", "king", "Monday", "copy", "although", "drug", "pics", "western", "income", "force", "cash", "overall", "bay", "river", "ad", "package", "seen", "engine", "port", "album", "stop", "started", "bar", "views", "plans", "double", "dog", "build", "screen", "exchange", "types", "soon", "lines", "continue", "across", "benefits", "needed", "season", "apply", "someone", "held", "anything", "printer", "effect", "asked", "mind", "Sunday", "lost", "tour", "menu", "volume", "cross", "anyone", "hope", "silver", "wish", "inside", "mature", "role", "rather", "weeks", "addition", "came", "supply", "nothing", "certain", "running", "lower", "union", "jewelry", "fine", "names", "homepage", "hour", "gas", "skills", "six", "bush", "advice", "career", "military", "rental", "leave", "British", "teens", "huge", "sat", "woman", "zip", "bid", "kind", "middle", "move", "cable", "taking", "values", "coming", "Tuesday", "object", "machine", "logo", "length", "actually", "nice", "score", "client", "capital", "follow", "sample", "sent", "shown", "saturday", "England", "culture", "band", "flash", "lead", "choice", "went", "starting", "Thursday", "consumer", "hi", "airport", "foreign", "artist", "outside", "levels", "channel", "letter", "mode", "phones", "ideas", "Wednesday", "fund", "summer", "allow", "degree", "contract", "button", "wed", "homes", "super", "male", "matter", "custom", "almost", "took", "located", "multiple", "Asian", "editor", "inn", "cause", "song", "focus", "late", "fall", "idea", "rooms", "female", "win", "primary", "cancer", "reason", "tool", "browser", "spring", "answer", "voice", "friendly", "bed", "comes", "police", "everyone", "brown", "physical", "hill", "maps", "medicine", "deal", "hold", "Chicago", "forms", "glass", "happy", "smith", "wanted", "thank", "safe", "unique", "survey", "prior", "sport", "ready", "feed", "animal", "Mexico", "regular", "secure", "station", "round", "favorite", "option", "master", "valley", "sea", "built", "blood", "cut", "improve", "larger", "earth", "parents", "impact", "ship", "owners", "disease", "paid", "Italy", "perfect", "hair", "kit", "classic", "basis", "command", "cities", "express", "award", "distance", "tree", "wall", "involved", "extra", "budget", "rated", "guides", "success", "maximum", "existing", "quite", "boy", "wine", "horse", "vote", "forward", "flowers", "stars", "owner", "retail", "useful", "directly", "ways", "son", "providing", "rule", "housing", "takes", "bring", "catalog", "trying", "mother", "told", "traffic", "joined", "input", "feet", "agent", "valid", "bin", "modern", "senior", "Ireland", "teaching", "door", "grand", "testing", "trial", "charge", "units", "instead", "cool", "normal", "wrote", "ships", "entire", "metal", "positive", "fitness", "Chinese", "opinion", "Asia", "football", "abstract", "uses", "output", "funds", "greater", "likely", "develop", "guest", "seems", "pass", "trust", "van", "session", "multi", "fees", "century", "skin", "ads", "expected", "ring", "grade", "dating", "Pacific", "mountain", "pop", "filter", "mailing", "vehicle", "longer", "consider", "northern", "behind", "panel", "floor", "German", "buying", "match", "proposed", "default", "require", "Iraq", "boys", "outdoor", "deep", "morning", "allows", "rest", "protein", "plant", "reported", "hit", "pool", "politics", "partner", "authors", "boards", "faculty", "parties", "fish", "eye", "string", "sense", "pack", "released", "stage", "internal", "goods", "born", "unless", "detailed", "Japanese", "race", "approved", "target", "except", "maybe", "moving", "brands", "places", "pretty", "Spain", "southern", "winter", "battery", "youth", "pressure", "Boston", "debt", "medium", "core", "break", "sets", "dance", "wood", "itself", "defined", "papers", "playing", "awards", "fee", "studio", "reader", "virtual", "device", "answers", "rent", "remote", "dark", "external", "apple", "enjoy", "remove", "aid", "surface", "minimum", "visual", "host", "variety", "manual", "block", "agents", "repair", "fair", "civil", "steel", "songs", "fixed", "wrong", "beginning", "hands", "finally", "updates", "desktop", "Paris", "Ohio", "gets", "sector", "fully", "father", "electric", "saw", "quotes", "officer", "driver", "dead", "respect", "unknown", "trip", "worth", "poor", "teacher", "eyes", "workers", "farm", "peace", "campus", "showing", "creative", "coast", "benefit", "progress", "funding", "lord", "grant", "agree", "fiction", "hear", "sometimes", "goes", "families", "led", "museum", "fan", "transport", "wife", "ten", "hits", "zone", "complex", "cat", "die", "flat", "flow", "parent", "Spanish", "setting", "scale", "stand", "economy", "highest", "helpful", "monthly", "critical", "frame", "musical", "path", "employee", "chief", "gives", "bottom", "detail", "laws", "changed", "pet", "heard", "begin", "Colorado", "royal", "clean", "switch", "Russian", "largest", "African", "guy", "titles", "relevant", "justice", "connect", "bible", "cup", "basket", "applied", "weekly", "suite", "square", "advance", "skip", "diet", "army", "auction", "gear", "lee", "allowed", "correct", "nation", "selling", "lots", "piece", "sheet", "firm", "seven", "older", "jump", "cells", "module", "resort", "random", "pricing", "looks", "fashion", "visitors", "monitor", "trading", "forest", "calls", "whose", "couple", "giving", "chance", "vision", "ball", "ending", "clients", "actions", "listen", "discuss", "accept", "goal", "sold", "wind", "clinical", "lowest", "highly", "appear", "lives", "currency", "leather", "palm", "patient", "actual", "stone", "commerce", "perhaps", "persons", "fit", "tests", "village", "amateur", "met", "pain", "factors", "coffee", "buyer", "cultural", "easily", "oral", "ford", "poster", "edge", "root", "closed", "holidays", "ice", "pink", "balance", "shot", "initial", "label", "thinking", "league", "waste", "minute", "bus", "optional", "cold", "chair", "fishing", "effort", "phase", "fields", "bag", "fantasy", "letters", "motor", "context", "install", "shirt", "foot", "mass", "crime", "count", "quickly", "dollars", "religion", "claim", "driving", "surgery", "patch", "heat", "wild", "generation", "Kansas", "miss", "chemical", "doctor", "task", "reduce", "brought", "himself", "nor", "enable", "exercise", "bug", "santa", "leader", "diamond", "Israel", "soft", "servers", "alone", "seconds", "Arizona", "keyword", "flight", "Congress", "fuel", "username", "walk", "produced", "Italian", "wait", "pocket", "saint", "rose", "freedom", "creating", "drugs", "joint", "premium", "fresh", "attorney", "upgrade", "factor", "growing", "stream", "pick", "hearing", "eastern", "therapy", "entries", "dates", "signed", "upper", "serious", "prime", "limit", "began", "steps", "errors", "shops", "bondage", "efforts", "informed", "creek", "worked", "quantity", "urban", "sorted", "myself", "tours", "platform", "load", "affiliate", "labor", "admin", "nursing", "defense", "heavy", "covered", "recovery", "guys", "merchant", "expert", "protect", "drop", "solid", "became", "orange", "prevent", "theme", "rich", "campaign", "marine", "guitar", "finding", "saying", "spirit", "challenge", "acceptance", "strategies", "affairs", "intended", "hire", "election", "magic", "smart", "talking", "gave", "ones", "Latin", "multimedia", "avoid", "certified", "manage", "rank", "computing", "birth", "virus", "abuse", "quarter", "procedure", "leadership", "define", "racing", "religious", "breakfast", "faith", "chain", "developer", "identify", "avenue", "missing", "died", "domestic", "moved", "comparison", "mental", "viewed", "extended", "sequence", "attack", "sorry", "opening", "damage", "reserve", "recipes", "gamma", "plastic", "placed", "truth", "counter", "failure", "weekend", "bridge", "native", "movement", "printing", "baseball", "owned", "approval", "draft", "played", "adventure", "matching", "offering", "profit", "assistant", "variable", "parking", "headlines"];
+		const MASTER_WORDS_2K = ["the", "of", "to", "and", "in", "is", "it", "you", "that", "he", "was", "for", "on", "are", "with", "as", "his", "they", "be", "at", "one", "have", "this", "from", "or", "had", "by", "not", "word", "but", "what", "some", "we", "can", "out", "other", "were", "all", "there", "when", "up", "use", "your", "how", "said", "an", "each", "she", "which", "do", "their", "time", "if", "will", "way", "about", "many", "then", "them", "write", "would", "like", "so", "these", "her", "long", "make", "thing", "see", "him", "two", "has", "look", "more", "day", "could", "go", "come", "did", "number", "sound", "no", "most", "people", "my", "over", "know", "water", "than", "call", "first", "who", "may", "down", "side", "been", "now", "find", "any", "new", "work", "part", "take", "get", "place", "made", "live", "where", "after", "back", "little", "only", "round", "man", "year", "came", "show", "every", "good", "me", "give", "our", "under", "name", "very", "through", "just", "form", "sentence", "great", "think", "say", "help", "low", "line", "differ", "turn", "cause", "much", "mean", "before", "move", "right", "boy", "old", "too", "same", "tell", "does", "set", "three", "want", "air", "well", "also", "play", "small", "end", "put", "home", "read", "hand", "port", "large", "spell", "add", "even", "land", "here", "must", "big", "high", "such", "follow", "act", "why", "ask", "men", "change", "went", "light", "kind", "off", "need", "house", "picture", "try", "us", "again", "animal", "point", "mother", "world", "near", "build", "self", "earth", "father", "head", "stand", "own", "page", "should", "country", "found", "answer", "school", "grow", "study", "still", "learn", "plant", "cover", "food", "sun", "four", "between", "state", "keep", "eye", "never", "last", "let", "thought", "city", "tree", "cross", "farm", "hard", "start", "might", "story", "saw", "far", "sea", "draw", "left", "late", "run", "while", "press", "close", "night", "real", "life", "few", "north", "open", "seem", "together", "next", "white", "children", "begin", "got", "walk", "example", "ease", "paper", "group", "always", "music", "those", "both", "mark", "often", "letter", "until", "mile", "river", "car", "feet", "care", "second", "book", "carry", "took", "science", "eat", "room", "friend", "began", "idea", "fish", "mountain", "stop", "once", "base", "hear", "horse", "cut", "sure", "watch", "color", "face", "wood", "main", "enough", "plain", "girl", "usual", "young", "ready", "above", "ever", "red", "list", "though", "feel", "talk", "bird", "soon", "body", "dog", "family", "direct", "pose", "leave", "song", "measure", "door", "product", "black", "short", "numeral", "class", "wind", "question", "happen", "complete", "ship", "area", "half", "rock", "order", "fire", "south", "problem", "piece", "told", "knew", "pass", "since", "top", "whole", "king", "space", "heard", "best", "hour", "better", "true", "during", "hundred", "five", "remember", "step", "early", "hold", "west", "ground", "interest", "reach", "fast", "verb", "sing", "listen", "six", "table", "travel", "less", "morning", "ten", "simple", "several", "vowel", "toward", "war", "lay", "against", "pattern", "slow", "center", "love", "person", "money", "serve", "appear", "road", "map", "rain", "rule", "govern", "pull", "cold", "notice", "voice", "unit", "power", "town", "fine", "certain", "fly", "fall", "lead", "cry", "dark", "machine", "note", "wait", "plan", "figure", "star", "box", "noun", "field", "rest", "correct", "able", "pound", "done", "beauty", "drive", "stood", "contain", "front", "teach", "week", "final", "gave", "green", "oh", "quick", "develop", "ocean", "warm", "free", "minute", "strong", "special", "mind", "behind", "clear", "tail", "produce", "fact", "street", "inch", "multiply", "nothing", "course", "stay", "wheel", "full", "force", "blue", "object", "decide", "surface", "deep", "moon", "island", "foot", "system", "busy", "test", "record", "boat", "common", "gold", "possible", "plane", "stead", "dry", "wonder", "laugh", "thousand", "ago", "ran", "check", "game", "shape", "equate", "hot", "miss", "brought", "heat", "snow", "tire", "bring", "yes", "distant", "fill", "east", "paint", "language", "among", "grand", "ball", "yet", "wave", "drop", "heart", "am", "present", "heavy", "dance", "engine", "position", "arm", "wide", "sail", "material", "size", "vary", "settle", "speak", "weight", "general", "ice", "matter", "circle", "pair", "include", "divide", "syllable", "felt", "perhaps", "pick", "sudden", "count", "square", "reason", "length", "represent", "art", "subject", "region", "energy", "hunt", "probable", "bed", "brother", "egg", "ride", "cell", "believe", "fraction", "forest", "sit", "race", "window", "store", "summer", "train", "sleep", "prove", "lone", "leg", "exercise", "wall", "catch", "mount", "wish", "sky", "board", "joy", "winter", "sat", "written", "wild", "kept", "glass", "grass", "cow", "job", "edge", "sign", "visit", "past", "soft", "fun", "bright", "gas", "weather", "month", "million", "bear", "finish", "happy", "hope", "flower", "clothes", "strange", "gone", "jump", "baby", "eight", "village", "meet", "root", "buy", "raise", "solve", "metal", "whether", "push", "seven", "third", "shall", "held", "hair", "describe", "cook", "floor", "either", "result", "burn", "hill", "safe", "cat", "century", "consider", "type", "law", "bit", "coast", "copy", "phrase", "silent", "tall", "sand", "soil", "roll", "temperature", "finger", "industry", "value", "fight", "lie", "beat", "excite", "natural", "sense", "ear", "else", "quite", "broke", "case", "middle", "kill", "son", "lake", "moment", "scale", "loud", "observe", "child", "straight", "consonant", "nation", "milk", "speed", "method", "organ", "pay", "age", "section", "dress", "cloud", "surprise", "quiet", "tiny", "climb", "cool", "poor", "lot", "experiment", "bottom", "key", "iron", "single", "stick", "flat", "twenty", "skin", "smile", "crease", "hole", "trade", "melody", "trip", "office", "receive", "row", "mouth", "exact", "symbol", "die", "least", "trouble", "shout", "except", "wrote", "seed", "tone", "join", "suggest", "clean", "break", "lady", "yard", "rise", "bad", "blow", "oil", "blood", "touch", "grew", "cent", "mix", "team", "wire", "cost", "lost", "brown", "wear", "garden", "equal", "sent", "choose", "fell", "fit", "flow", "fair", "bank", "collect", "save", "control", "gentle", "woman", "captain", "practice", "separate", "difficult", "doctor", "please", "protect", "noon", "whose", "locate", "caught", "period", "spoke", "atom", "electric", "expect", "crop", "element", "hit", "student", "party", "bone", "rail", "imagine", "provide", "agree", "thus", "capital", "chair", "danger", "fruit", "rich", "thick", "soldier", "operate", "guess", "sharp", "wing", "create", "neighbor", "wash", "bat", "rather", "crowd", "compare", "depend", "meat", "rub", "tube", "famous", "dollar", "stream", "fear", "thin", "planet", "hurry", "chief", "colony", "clock", "mine", "tie", "major", "fresh", "yellow", "gun", "allow", "dead", "spot", "desert", "suit", "lift", "rose", "continue", "hat", "sell", "success", "company", "subtract", "particular", "deal", "swim", "term", "opposite", "wife", "shoulder", "spread", "invent", "cotton", "born", "determine", "quart", "nine", "truck", "noise", "level", "chance", "gather", "shop", "stretch", "throw", "shine", "property", "column", "molecule", "select", "wrong", "gray", "repeat", "require", "broad", "prepare", "salt", "nose", "plural", "claim", "continent", "oxygen", "sugar", "death", "pretty", "skill", "season", "solution", "magnet", "silver", "thank", "branch", "match", "suffix", "especially", "huge", "sister", "steel", "discuss", "forward", "similar", "guide", "bought", "led", "coat", "mass", "card", "rope", "slip", "win", "dream", "evening", "feed", "tool", "basic", "smell", "nor", "seat", "arrive", "master", "parent", "shore", "sheet", "substance", "favor", "connect", "spend", "chord", "fat", "glad", "original", "share", "dad", "bread", "charge", "proper", "offer", "segment", "duck", "instant", "degree", "populate", "chick", "dear", "enemy", "reply", "drink", "occur", "speech", "steam", "motion", "liquid", "meant", "quotient", "shell", "neck", "public", "universe", "web", "services", "click", "service", "date", "email", "health", "policy", "available", "copyright", "info", "privacy", "items", "research", "mail", "management", "united", "hotel", "comments", "member", "because", "local", "using", "education", "national", "posted", "internet", "address", "community", "within", "phone", "shipping", "reserved", "code", "index", "being", "file", "link", "today", "technology", "project", "sports", "related", "security", "county", "photo", "network", "following", "download", "without", "per", "access", "resources", "posts", "media", "pictures", "personal", "including", "directory", "board", "location", "rating", "government", "return", "students", "shopping", "account", "sites", "digital", "profile", "previous", "events", "image", "another", "shall", "customer", "December", "movies", "include", "college", "article", "jobs", "author", "sale", "around", "Canada", "teen", "stock", "training", "credit", "advanced", "English", "estate", "gay", "thread", "register", "however", "June", "October", "November", "really", "action", "series", "model", "features", "human", "provided", "yes", "required", "forums", "march", "September", "better", "questions", "July", "going", "medical", "server", "cart", "staff", "articles", "feedback", "looking", "April", "never", "street", "topic", "comment", "things", "working", "against", "standard", "tax", "below", "mobile", "got", "blog", "payment", "login", "offers", "legal", "above", "recent", "park", "memory", "social", "August", "quote", "options", "rates", "America", "important", "single", "something", "Texas", "poker", "status", "browse", "issue", "range", "building", "seller", "court", "February", "audio", "given", "release", "request", "fax", "China", "making", "needs", "might", "future", "London", "become", "learning", "delivery", "popular", "welcome", "central", "notice", "god", "radio", "council", "away", "includes", "track", "archive", "further", "updated", "having", "provides", "already", "studies", "specific", "living", "arts", "powered", "means", "director", "daily", "beach", "planning", "says", "official", "weather", "technical", "France", "pro", "microsoft", "update", "early", "miles", "ago", "written", "federal", "adult", "tickets", "cheap", "kids", "finance", "Europe", "reading", "topics", "plus", "auto", "percent", "global", "tech", "meet", "economic", "player", "lyrics", "subscribe", "submit", "Germany", "amount", "watch", "included", "risk", "thanks", "deals", "various", "weight", "received", "camera", "golf", "domain", "makes", "India", "taken", "Florida", "annual", "shows", "corporate", "purchase", "hardware", "holiday", "death", "brand", "discount", "higher", "created", "political", "kingdom", "near", "doing", "shoes", "entry", "Africa", "summary", "agency", "Monday", "drug", "western", "income", "cash", "package", "album", "started", "double", "soon", "across", "benefits", "needed", "apply", "someone", "held", "anything", "Sunday", "anyone", "mature", "addition", "lower", "union", "jewelry", "homepage", "gas", "skills", "six", "bush", "career", "rental", "British", "taking", "values", "coming", "Tuesday", "logo", "actually", "nice", "score", "client", "sample", "shown", "saturday", "culture", "flash", "starting", "Thursday", "consumer", "airport", "foreign", "artist", "outside", "levels", "channel", "mode", "phones", "ideas", "Wednesday", "fund", "summer", "allow", "degree", "contract", "button", "wed", "homes", "super", "male", "custom", "almost", "took", "located", "multiple", "Asian", "inn", "cause", "focus", "late", "fall", "rooms", "female", "primary", "cancer", "browser", "friendly", "police", "physical", "unique", "survey", "prior", "regular", "secure", "favorite", "built", "improve", "larger", "impact", "owners", "disease", "paid", "Italy", "perfect", "basis", "award", "distance", "extra", "budget", "rated", "guides", "maximum", "quite", "rated", "guides", "success", "maximum", "existing", "quite", "boy", "wine", "horse", "vote", "forward", "flowers", "stars", "owner", "retail", "useful", "directly", "ways", "son", "providing", "rule", "housing", "takes", "bring", "catalog", "trying", "mother", "told", "traffic", "joined", "input", "feet", "agent", "valid", "bin", "modern", "senior", "Ireland", "teaching", "door", "grand", "testing", "trial", "charge", "units", "instead", "cool", "normal", "wrote", "ships", "entire", "metal", "positive", "fitness", "Chinese", "opinion", "Asia", "football", "abstract", "uses", "output", "funds", "greater", "likely", "develop", "guest", "seems", "pass", "trust", "van", "session", "multi", "fees", "century", "skin", "ads", "expected", "ring", "grade", "dating", "Pacific", "mountain", "pop", "filter", "mailing", "vehicle", "longer", "consider", "northern", "behind", "panel", "floor", "German", "buying", "match", "proposed", "default", "require", "Iraq", "boys", "outdoor", "deep", "morning", "allows", "rest", "protein", "plant", "reported", "hit", "pool", "politics", "partner", "authors", "boards", "faculty", "parties", "fish", "eye", "string", "sense", "pack", "released", "stage", "internal", "goods", "born", "unless", "detailed", "Japanese", "race", "approved", "target", "except", "maybe", "moving", "brands", "places", "pretty", "Spain", "southern", "winter", "battery", "youth", "pressure", "Boston", "debt", "medium", "core", "break", "sets", "dance", "wood", "itself", "defined", "papers", "playing", "awards", "fee", "studio", "reader", "virtual", "device", "answers", "rent", "remote", "dark", "external", "apple", "enjoy", "remove", "aid", "surface", "minimum", "visual", "host", "variety", "manual", "block", "agents", "repair", "fair", "civil", "steel", "songs", "fixed", "wrong", "beginning", "hands", "finally", "updates", "desktop", "Paris", "Ohio", "gets", "sector", "fully", "father", "electric", "saw", "quotes", "officer", "driver", "dead", "respect", "unknown", "trip", "worth", "poor", "teacher", "eyes", "workers", "farm", "peace", "campus", "showing", "creative", "coast", "benefit", "progress", "funding", "lord", "grant", "agree", "fiction", "hear", "sometimes", "goes", "families", "led", "museum", "fan", "transport", "wife", "ten", "hits", "zone", "complex", "cat", "die", "flat", "flow", "parent", "Spanish", "setting", "scale", "stand", "economy", "highest", "helpful", "monthly", "critical", "frame", "musical", "path", "employee", "chief", "gives", "bottom", "detail", "laws", "changed", "pet", "heard", "begin", "Colorado", "royal", "clean", "switch", "Russian", "largest", "African", "guy", "titles", "relevant", "justice", "connect", "bible", "cup", "basket", "applied", "weekly", "suite", "square", "advance", "skip", "diet", "army", "auction", "gear", "lee", "allowed", "correct", "nation", "selling", "lots", "piece", "sheet", "firm", "seven", "older", "jump", "cells", "module", "resort", "random", "pricing", "looks", "fashion", "visitors", "monitor", "trading", "forest", "calls", "whose", "couple", "giving", "chance", "vision", "ball", "ending", "clients", "actions", "listen", "discuss", "accept", "goal", "sold", "wind", "clinical", "lowest", "highly", "appear", "lives", "currency", "leather", "palm", "patient", "actual", "stone", "commerce", "perhaps", "persons", "fit", "tests", "village", "amateur", "met", "pain", "factors", "coffee", "buyer", "cultural", "easily", "oral", "ford", "poster", "edge", "root", "closed", "holidays", "ice", "pink", "balance", "shot", "initial", "label", "thinking", "league", "waste", "minute", "bus", "optional", "cold", "chair", "fishing", "effort", "phase", "fields", "bag", "fantasy", "letters", "motor", "context", "install", "shirt", "foot", "mass", "crime", "count", "quickly", "dollars", "religion", "claim", "driving", "surgery", "patch", "heat", "wild", "generation", "Kansas", "miss", "chemical", "doctor", "task", "reduce", "brought", "himself", "nor", "enable", "exercise", "bug", "santa", "leader", "diamond", "Israel", "soft", "servers", "alone", "seconds", "Arizona", "keyword", "flight", "Congress", "fuel", "username", "walk", "produced", "Italian", "wait", "pocket", "saint", "rose", "freedom", "creating", "drugs", "joint", "premium", "fresh", "attorney", "upgrade", "factor", "growing", "stream", "pick", "hearing", "eastern", "therapy", "entries", "dates", "signed", "upper", "serious", "prime", "limit", "began", "steps", "errors", "shops", "bondage", "efforts", "informed", "creek", "worked", "quantity", "urban", "sorted", "myself", "tours", "platform", "load", "affiliate", "labor", "admin", "nursing", "defense", "heavy", "covered", "recovery", "guys", "merchant", "expert", "protect", "drop", "solid", "became", "orange", "prevent", "theme", "rich", "campaign", "marine", "guitar", "finding", "saying", "spirit", "challenge", "acceptance", "strategies", "affairs", "intended", "hire", "election", "magic", "smart", "talking", "gave", "ones", "Latin", "multimedia", "avoid", "certified", "manage", "rank", "computing", "birth", "virus", "abuse", "quarter", "procedure", "leadership", "define", "racing", "religious", "breakfast", "faith", "chain", "developer", "identify", "avenue", "missing", "died", "domestic", "moved", "comparison", "mental", "viewed", "extended", "sequence", "attack", "sorry", "opening", "damage", "reserve", "recipes", "gamma", "plastic", "placed", "truth", "counter", "failure", "weekend", "bridge", "native", "movement", "printing", "baseball", "owned", "approval", "draft", "played", "adventure", "matching", "offering", "profit", "assistant", "variable", "parking", "headlines"];
 
         // Top 200 most common English bigrams (letter pairs)
         const MASTER_BIGRAMS_200 = ["th", "he", "in", "er", "an", "re", "on", "at", "en", "nd", "ti", "es", "or", "te", "of", "ed", "is", "it", "al", "ar", "st", "to", "nt", "ng", "se", "ha", "as", "ou", "io", "le", "ve", "co", "me", "de", "hi", "ri", "ro", "ic", "ne", "ea", "ra", "ce", "li", "ch", "ll", "be", "ma", "si", "om", "ur", "ca", "el", "ta", "la", "ns", "di", "fo", "ho", "pe", "ec", "pr", "no", "ct", "us", "ac", "ot", "il", "tr", "ly", "nc", "et", "ut", "ss", "so", "rs", "un", "lo", "wa", "ge", "ie", "wh", "ee", "wi", "em", "ad", "ol", "rt", "po", "we", "na", "ul", "ni", "ts", "mo", "ow", "pa", "im", "mi", "ai", "sh", "ir", "su", "id", "os", "iv", "ia", "am", "fi", "ci", "vi", "pl", "ig", "tu", "ev", "ld", "ry", "mp", "fe", "bl", "ab", "gh", "ty", "op", "wo", "sa", "ay", "ex", "ke", "fr", "oo", "av", "ag", "if", "ap", "gr", "od", "bo", "sp", "rd", "do", "uc", "bu", "ei", "ov", "by", "rm", "ep", "tt", "oc", "fa", "ef", "cu", "rn", "sc", "gi", "da", "yo", "cr", "cl", "du", "ga", "qu", "ue", "ff", "ba", "ey", "ls", "va", "um", "pp", "ua", "up", "lu", "go", "ht", "ru", "ug", "ds", "lt", "pi", "rc", "rr", "eg", "au", "ck", "ew", "mu", "br", "bi", "pt", "ak", "pu", "ui", "rg", "ib", "tl", "ny", "ki", "rk", "ys", "ob", "mm", "fu", "ph", "og", "ms", "ye", "ud", "mb", "ip", "ub", "oi", "rl", "gu", "dr", "hr", "cc", "tw", "ft", "wn", "nu", "af", "hu", "nn", "eo", "vo", "rv", "nf", "xp", "gn", "sm", "fl", "iz", "ok", "nl", "my", "gl", "aw", "ju", "oa", "eq", "sy", "sl", "ps", "jo", "lf", "nv", "je", "nk", "kn"];
@@ -401,7 +531,7 @@
         const FONT_OPTIONS = {
             'roboto-mono': 'Roboto Mono',
             'lato': 'Lato',
-            'merriweather': 'Merriweather',
+            'merriweather': 'Merri weather',
             'noto-sans': 'Noto Sans'
         };
         const FONT_SIZES = {
@@ -479,48 +609,79 @@
         let history = { wpm: [], accuracy: [], labels: [], overallWpmHistory: [], cumulativeWords: [], chapterIndices: [], paragraphWordCounts: [], cumulativeWordsInChapter: [], rawTimes: [], rawCorrectChars: [], rawTypedChars: [] };
         let historyChart;
         let isShowingAllHistory = false;
-        let overallStats = {
+		let overallStats = {
             totalCorrectChars: 0,
             totalTypedChars: 0,
             totalTime: 0,
             cumulativeWordCount: 0,
         };
 
+		const THEMES = {
+            'default': 'Default',
+            'espresso': 'Espresso',
+            'matrix': 'Matrix', 
+            'dracula': 'Dracula',
+			'monkeytype': 'Monkeytype',
+			'pinkpower': 'Pink Power',
+			'gruvboxdark': 'Gruvbox Dark',
+			'ryujin': 'Ryujin',
+			'creamandberries': 'Cream & Berries',
+			'terminal': 'Terminal',
+			'nonconformist': 'Non-conformist'
+        };
+
         const getSettingsKey = () => `typingSettings_${currentUsername}`;
 
-        const saveSettings = (settings) => {
+		const saveSettings = (settings) => {
             if (!currentUsername) return;
             localStorage.setItem(getSettingsKey(), JSON.stringify(settings));
         };
 
         const loadSettings = () => {
             const saved = localStorage.getItem(getSettingsKey());
-            const defaults = { fontFamily: 'roboto-mono', fontSize: 'md' };
+            const defaults = { 
+                fontFamily: 'roboto-mono', 
+                fontSize: 'md',
+                theme: 'earthsea',
+                inversion: false 
+            };
             if (saved) {
                 return { ...defaults, ...JSON.parse(saved) };
             }
             return defaults;
         };
 
-        const applySettings = () => {
-            const settings = loadSettings();
-            const fontClass = `font-${settings.fontFamily}`;
-            const sizeClass = `font-size-${settings.fontSize}`;
+		const applySettings = () => {
+			const settings = loadSettings();
+			const body = document.body;
 
-    // Remove any existing font/size classes
-            bookContentEl.className.split(' ').forEach(c => {
-                if (c.startsWith('font-')) {
-                    bookContentEl.classList.remove(c);
-                }
-            });
+			// 1. Apply Font & Size
+			const fontClass = `font-${settings.fontFamily}`;
+			const sizeClass = `font-size-${settings.fontSize}`;
+			bookContentEl.className.split(' ').forEach(c => {
+				if (c.startsWith('font-')) bookContentEl.classList.remove(c);
+			});
+			bookContentEl.classList.add(fontClass, sizeClass);
 
-    // Add the new classes
-            bookContentEl.classList.add(fontClass);
-            bookContentEl.classList.add(sizeClass);
-        };
+			// 2. Apply Theme
+			body.dataset.theme = settings.theme;
+			body.dataset.themeInversion = settings.inversion;
 
-        const populateSettingsModal = () => {
+			// 3. Apply Cursor Style (derived from theme)
+			const themeStyles = window.getComputedStyle(body);
+			const cursorStyle = themeStyles.getPropertyValue('--theme-cursor-style').trim() || 'underline';
+			body.dataset.cursorStyle = cursorStyle;
+			
+			// 4. Redraw the chart with new colors if it exists
+			if (historyChart) {
+				updateChart();
+			}
+		};
+		
+		const populateSettingsModal = () => {
             const currentSettings = loadSettings();
+			const themeSelector = document.getElementById('theme-selector');
+			const inversionSelector = document.getElementById('inversion-selector');
 
             // Populate Font Family Buttons
             fontFamilySelector.innerHTML = '';
@@ -530,10 +691,9 @@
                 btn.dataset.font = key;
                 btn.className = `p-3 rounded-md text-white transition-colors choice-btn ${currentSettings.fontFamily === key ? 'bg-indigo-600 choice-btn-active' : 'bg-gray-700 hover:bg-gray-600'}`;
                 btn.addEventListener('click', () => {
-                    const newSettings = { ...loadSettings(), fontFamily: key };
-                    saveSettings(newSettings);
+                    saveSettings({ ...loadSettings(), fontFamily: key });
                     applySettings();
-                    populateSettingsModal(); // Repopulate to update active styles
+                    populateSettingsModal();
                 });
                 fontFamilySelector.appendChild(btn);
             }
@@ -546,15 +706,50 @@
                 btn.dataset.size = key;
                 btn.className = `p-3 rounded-md text-white transition-colors choice-btn ${currentSettings.fontSize === key ? 'bg-indigo-600 choice-btn-active' : 'bg-gray-700 hover:bg-gray-600'}`;
                 btn.addEventListener('click', () => {
-                    const newSettings = { ...loadSettings(), fontSize: key };
-                    saveSettings(newSettings);
+                    saveSettings({ ...loadSettings(), fontSize: key });
                     applySettings();
                     populateSettingsModal();
                 });
                 fontSizeSelector.appendChild(btn);
             }
-        };
 
+			// Populate Theme Dropdown
+			themeSelector.innerHTML = '';
+			for (const key in THEMES) {
+				const option = document.createElement('option');
+                option.value = key;
+                option.textContent = THEMES[key];
+                if (currentSettings.theme === key) {
+                    option.selected = true;
+                }
+                themeSelector.appendChild(option);
+			}
+			themeSelector.onchange = null; 
+			themeSelector.onchange = (e) => {
+				saveSettings({ ...loadSettings(), theme: e.target.value });
+                applySettings();
+                populateSettingsModal();
+			};
+
+			// Populate Inversion Buttons
+			inversionSelector.innerHTML = '';
+			// This line contains the updated text
+			const inversionOptions = { false: "Dark → Bright", true: "Bright → Dark"};
+			for (const key in inversionOptions) {
+				const btn = document.createElement('button');
+				btn.textContent = inversionOptions[key];
+				btn.dataset.inversion = key;
+				const isActive = String(currentSettings.inversion) === key;
+				btn.className = `p-3 rounded-md text-white transition-colors choice-btn ${isActive ? 'bg-indigo-600 choice-btn-active' : 'bg-gray-700 hover:bg-gray-600'}`;
+				btn.addEventListener('click', () => {
+					saveSettings({ ...loadSettings(), inversion: key === 'true' });
+					applySettings();
+					populateSettingsModal();
+				});
+				inversionSelector.appendChild(btn);
+			}
+        };
+		
         const getAnalysisKey = () => `typingAnalysis_${currentUsername}`;
 
         const loadAnalysis = () => {
@@ -635,11 +830,10 @@
 		const displayAnalysis = () => {
 			const analysis = loadAnalysis();
 			
-			// Check for minimum word count
 			const totalWordsTyped = analysis.metadata?.totalWordsTyped || 0;
 			if (totalWordsTyped < 200) {
-				weakBigramsList.innerHTML = `<p class="text-gray-500 text-sm">Type at least 200 words in your books to generate an analysis.</p>`;
-				weakTrigramsList.innerHTML = `<p class="text-gray-500 text-sm">Keep practicing!</p>`;
+				weakBigramsList.innerHTML = `<p class="ui-bright-text text-sm">Type at least 200 words in your books to generate an analysis.</p>`;
+				weakTrigramsList.innerHTML = `<p class="ui-bright-text text-sm">Keep practicing!</p>`;
 				drillWeaknessesBtn.disabled = true;
 				drillWeaknessesBtn.classList.add('opacity-50', 'cursor-not-allowed');
 				return;
@@ -673,36 +867,26 @@
 			const weakBigrams = getWeakestNgrams(analysis.bigrams);
 			const weakTrigrams = getWeakestNgrams(analysis.trigrams);
 
-			weakBigramsList.innerHTML = '';
-			weakTrigramsList.innerHTML = '';
+			const renderList = (element, list) => {
+				element.innerHTML = '';
+				if (list.length > 0) {
+					list.forEach(item => {
+						const el = document.createElement('div');
+						// This className now uses our theme variables
+						el.className = 'ui-panel-bg p-2 rounded-md flex justify-between items-center text-sm';
+						el.innerHTML = `
+							<span class="font-bold ui-bright-text">${item.ngram}</span>
+							<span class="ui-secondary-text">${Math.round(item.averageDelay)}ms score, ${item.errors} err</span>
+						`;
+						element.appendChild(el);
+					});
+				} else {
+					element.innerHTML = `<p class="ui-secondary-text text-sm">Not enough recent data. Keep typing!</p>`;
+				}
+			};
 
-			if (weakBigrams.length > 0) {
-				weakBigrams.forEach(item => {
-					const el = document.createElement('div');
-					el.className = 'bg-gray-700 p-2 rounded-md flex justify-between items-center text-sm';
-					el.innerHTML = `
-						<span class="font-bold text-white">${item.ngram}</span>
-						<span class="text-gray-400">${Math.round(item.averageDelay)}ms score, ${item.errors} err</span>
-					`;
-					weakBigramsList.appendChild(el);
-				});
-			} else {
-				weakBigramsList.innerHTML = `<p class="text-gray-500 text-sm">Not enough recent data. Keep typing!</p>`;
-			}
-			
-			if (weakTrigrams.length > 0) {
-				weakTrigrams.forEach(item => {
-					const el = document.createElement('div');
-					el.className = 'bg-gray-700 p-2 rounded-md flex justify-between items-center text-sm';
-					el.innerHTML = `
-						<span class="font-bold text-white">${item.ngram}</span>
-						<span class="text-gray-400">${Math.round(item.averageDelay)}ms score, ${item.errors} err</span>
-					`;
-					weakTrigramsList.appendChild(el);
-				});
-			} else {
-				weakTrigramsList.innerHTML = `<p class="text-gray-500 text-sm">Not enough recent data. Keep typing!</p>`;
-			}
+			renderList(weakBigramsList, weakBigrams);
+			renderList(weakTrigramsList, weakTrigrams);
 		};
 
         // --- PROFILE MANAGEMENT ---
@@ -727,13 +911,17 @@
             }
         };
 
-        const loadProfile = (username) => {
+		const loadProfile = (username) => {
             currentUsername = username;
             localStorage.setItem(LAST_USER_KEY, username);
             usernameDisplay.textContent = currentUsername;
             welcomeMessage.classList.remove('hidden');
             profileModal.classList.add('hidden');
             profileSwitcherModal.classList.add('hidden');
+            
+            // This new line applies the theme as soon as the profile loads
+            applySettings(); 
+            
             renderLibrary();
         };
 
@@ -771,7 +959,7 @@
             }
         };
 
-        const showProfileSwitcher = () => {
+		const showProfileSwitcher = () => {
             const profiles = getProfiles();
             profileListContainer.innerHTML = '';
             if (profiles.length === 0) {
@@ -779,12 +967,12 @@
             } else {
                 profiles.forEach(username => {
                     const profileItem = document.createElement('div');
-                    profileItem.className = 'flex justify-between items-center bg-gray-700 p-3 rounded-md';
+                    profileItem.className = 'flex justify-between items-center p-3 rounded-md ui-panel-bg';
                     profileItem.innerHTML = `
-                        <span class="font-medium text-white">${username}</span>
+                        <span class="font-medium ui-bright-text">${username}</span>
                         <div class="space-x-2">
-                            <button data-username="${username}" class="load-profile-btn bg-blue-600 hover:bg-blue-700 text-white font-bold py-1 px-3 rounded-md text-sm">Load</button>
-                            <button data-username="${username}" class="delete-profile-btn bg-red-600 hover:bg-red-700 text-white font-bold py-1 px-3 rounded-md text-sm">Delete</button>
+                            <button data-username="${username}" class="load-profile-btn font-bold py-1 px-3 rounded-md text-sm ui-action-button-primary">Load</button>
+                            <button data-username="${username}" class="delete-profile-btn font-bold py-1 px-3 rounded-md text-sm ui-action-button-danger">Delete</button>
                         </div>
                     `;
                     profileListContainer.appendChild(profileItem);
@@ -792,7 +980,7 @@
             }
             profileSwitcherModal.classList.remove('hidden');
         };
-
+		
         const getProgressSaveKey = () => `typingProgress_${currentUsername}_${currentBookIdentifier}`;
         const getLibrarySaveKey = () => `typingLibrary_${currentUsername}`;
 
@@ -846,19 +1034,18 @@
 				libraryList.className = 'grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6';
 				library.forEach((book, index) => {
 					const bookElement = document.createElement('div');
-					bookElement.className = 'library-book-card bg-gray-800 rounded-lg flex flex-col text-center shadow-lg overflow-hidden';
+					bookElement.className = 'library-book-card rounded-lg flex flex-col text-center shadow-lg overflow-hidden';
 					
-					// This is the updated HTML for each book card
 					bookElement.innerHTML = `
 						<img src="${book.cover || 'https://via.placeholder.com/300x450.png?text=No+Cover'}" alt="Cover for ${book.bookName}" class="w-full h-auto">
 						
 						<div class="p-4 flex flex-col flex-grow w-full">
-							<h3 class="font-bold text-white text-md leading-tight mb-1 truncate" title="${book.bookName}">${book.bookName}</h3>
-							<p class="text-gray-400 text-sm mb-4 truncate" title="${book.author}">${book.author}</p>
+							<h3 class="font-bold text-md leading-tight mb-1 truncate" title="${book.bookName}">${book.bookName}</h3>
+							<p class="text-sm mb-4 truncate" title="${book.author}">${book.author}</p>
 							
 							<div class="mt-auto space-y-2 w-full">
-								<button data-index="${index}" class="start-typing-btn w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-3 rounded-md text-sm">Type</button>
-								<button data-index="${index}" class="delete-book-btn w-full bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-3 rounded-md text-sm">Delete</button>
+								<button data-index="${index}" class="start-typing-btn w-full font-bold py-2 px-3 rounded-md text-sm ui-action-button-primary">Type</button>
+								<button data-index="${index}" class="delete-book-btn w-full font-bold py-2 px-3 rounded-md text-sm ui-action-button-danger">Delete</button>
 							</div>
 						</div>
 					`;
@@ -974,7 +1161,6 @@
 				tier1Weaknesses.forEach(weakness => {
 					const wordCountForThisNgram = Math.round((weakness.weaknessScore / totalTier1Score) * DRILL_SIZE);
 					if (wordCountForThisNgram < 1) return;
-					// Use the new 2k list
 					const matchingWords = MASTER_WORDS_2K.filter(word => word.includes(weakness.ngram) && !usedWords.has(word));
 					matchingWords.sort(() => 0.5 - Math.random());
 					const wordsToAdd = matchingWords.slice(0, wordCountForThisNgram);
@@ -987,17 +1173,23 @@
 
 			if (practiceSet.length < DRILL_SIZE && tier2Weaknesses.length > 0) {
 				const remainingNeeded = DRILL_SIZE - practiceSet.length;
-				// Use the new 2k list
 				const tier2MatchingWords = MASTER_WORDS_2K.filter(word => tier2Weaknesses.some(w => word.includes(w.ngram)) && !usedWords.has(word));
 				tier2MatchingWords.sort(() => 0.5 - Math.random());
-				practiceSet.push(...tier2MatchingWords.slice(0, remainingNeeded));
+				const wordsToAdd = tier2MatchingWords.slice(0, remainingNeeded);
+				wordsToAdd.forEach(word => { // This loop correctly updates the usedWords set
+					practiceSet.push(word);
+					usedWords.add(word);
+				});
 			}
 
 			if (practiceSet.length < DRILL_SIZE) {
 				const remainingNeeded = DRILL_SIZE - practiceSet.length;
-				// Use the new 2k list
-				const randomFillWords = MASTER_WORDS_2K.filter(word => !usedWords.has(word)).sort(() => 0.5 - Math.random()).slice(0, remainingNeeded);
-				practiceSet.push(...randomFillWords);
+				const randomFillWords = MASTER_WORDS_2K.filter(word => !usedWords.has(word)).sort(() => 0.5 - Math.random());
+				const wordsToAdd = randomFillWords.slice(0, remainingNeeded);
+				wordsToAdd.forEach(word => { // This loop correctly updates the usedWords set
+					practiceSet.push(word);
+					usedWords.add(word);
+				});
 			}
 			
 			practiceSet.sort(() => 0.5 - Math.random());
@@ -1017,7 +1209,7 @@
 			renderDrill();
 			activateNextParagraph(true);
 		};
-
+		
 		const createFanfareText = (text) => {
 			return text.split('').map(char => {
 				if (char === ' ') { return ' '; } // Keep spaces as normal characters
@@ -1052,15 +1244,15 @@
 
 			drillContentEl.innerHTML = `
 				<div class="text-center p-8 rounded-lg">
-					<h2 class="text-3xl font-bold text-green-400 mb-4 ui-subheading">${fanfareText}</h2>
+					<h2 class="text-3xl font-bold mb-4 ui-subheading">${fanfareText}</h2>
 					<div class="flex justify-center space-x-8 mt-4">
 						<div>
-							<p class="text-sm text-gray-400">WPM</p>
-							<div class="text-3xl font-bold text-green-400">${finalWPM.toFixed(1)}</div>
+							<p class="text-sm ui-stat-label">WPM</p>
+							<div class="text-3xl font-bold ui-stat-value">${finalWPM.toFixed(1)}</div>
 						</div>
 						<div>
-							<p class="text-sm text-gray-400">Accuracy</p>
-							<div class="text-3xl font-bold text-sky-400">${finalAccuracy.toFixed(0)}%</div>
+							<p class="text-sm ui-stat-label">Accuracy</p>
+							<div class="text-3xl font-bold ui-stat-value">${finalAccuracy.toFixed(0)}%</div>
 						</div>
 					</div>
 				</div>
@@ -1147,24 +1339,22 @@
 			}
 		};
 		
-        const prepareBookForSelection = (metadata, cover, allSections) => {
-            // Store all extracted data temporarily
+		const prepareBookForSelection = (metadata, cover, allSections) => {
             tempBookData.title = metadata.title;
             tempBookData.author = metadata.creator;
-            tempBookData.cover = cover; // Storing Base64 string
-            tempBookData.identifier = `${metadata.title}-${metadata.creator}`.replace(/\s+/g, '-'); // Create a unique ID
+            tempBookData.cover = cover;
+            tempBookData.identifier = `${metadata.title}-${metadata.creator}`.replace(/\s+/g, '-');
             tempBookData.chapterMarkers = allSections;
 
-            // Populate and show the modal
             chapterListContainer.innerHTML = '';
             tempBookData.chapterMarkers.forEach((marker, index) => {
                 const item = document.createElement('div');
-                item.className = 'flex justify-between items-center p-3 bg-gray-700 rounded-md mb-2';
+                item.className = 'flex justify-between items-center p-3 rounded-md mb-2 ui-panel-bg';
                 item.innerHTML = `
-                    <span class="text-gray-300 truncate">${marker.title}</span>
+                    <span class="truncate ui-bright-text">${marker.title}</span>
                     <div class="flex space-x-2" data-index="${index}">
-                        <button class="choice-btn bg-green-600 hover:bg-green-700 text-white font-bold py-1 px-3 rounded-md text-sm choice-btn-active" data-choice="type">Type</button>
-                        <button class="choice-btn bg-gray-500 hover:bg-gray-600 text-white font-bold py-1 px-3 rounded-md text-sm" data-choice="skip">Skip</button>
+                        <button class="choice-btn font-bold py-1 px-3 rounded-md text-sm ui-action-button-primary choice-btn-active" data-choice="type">Type</button>
+                        <button class="choice-btn font-bold py-1 px-3 rounded-md text-sm ui-action-button-secondary" data-choice="skip">Skip</button>
                     </div>
                 `;
                 chapterListContainer.appendChild(item);
@@ -1190,9 +1380,10 @@
                 .replace(/\.\s\.\s\./g, '...');    // Spaced Ellipsis: . . . → ...
         };
 
-        const startTypingBook = (book) => {
+		const startTypingBook = (book) => {
             currentBookIdentifier = book.identifier;
-            bookTitleHeader.innerHTML = `${book.bookName}<br><span class="text-3xl text-indigo-300 font-normal" style="font-family: 'Cormorant Garamond', serif;">By ${book.author}</span>`;
+            // The fix is in the <span> for the author on the next line
+            bookTitleHeader.innerHTML = `${book.bookName}<br><span class="text-3xl font-normal ui-accent-text" style="font-family: 'Cormorant Garamond', serif;">By ${book.author}</span>`;
     
             chapterMarkers = book.chapterMarkers.filter((marker, index) => {
                 const choice = book.userChapterChoices[index];
@@ -1210,12 +1401,11 @@
             
 			showTypingView();
 			
-            applySettings(); // Apply user's font/size settings
+            applySettings();
 
             const resumed = loadProgress();
 
             if (!resumed) {
-        // If not resuming, it's a fresh start. Reset position indices.
                 currentChapterIndex = 0;
                 currentParagraphIndexInChapter = -1;
                 bookContentEl.scrollTop = 0;
@@ -1283,9 +1473,9 @@
 
 		const renderChapter = (isResuming) => {
 			let html = '';
-			// Only render the chapter heading if we are NOT in a drill
 			if (!isDrillActive) {
-				html += `<h2 class="chapter-heading text-3xl font-bold text-gray-400">${chapterMarkers[currentChapterIndex].title}</h2>`;
+				// The hardcoded "text-gray-400" class has been removed from this line
+				html += `<h2 class="chapter-heading text-3xl font-bold">${chapterMarkers[currentChapterIndex].title}</h2>`;
 			}
 
 			currentChapterParagraphs.forEach((p, index) => {
@@ -1787,91 +1977,98 @@
             return `hsla(${hue}, 60%, 50%, 0.6)`;
         };
 
-        const initializeChart = () => {
-            const ctx = document.getElementById('history-chart').getContext('2d');
-            if (historyChart) {
-                historyChart.destroy();
-            }
-            historyChart = new Chart(ctx, {
-                data: { labels: [], datasets: [{ type: 'bar', label: 'Paragraph WPM', data: [], yAxisID: 'y' }] },
-                options: {
-                    responsive: true,
-                    interaction: { mode: 'index', intersect: false },
-                    scales: {
-                        x: { title: { display: true, text: 'Words Typed', color: '#d1d5db' }, grid: { color: 'rgba(255, 255, 255, 0.1)' }, ticks: { color: '#d1d5db' } },
-                        y: { type: 'linear', display: true, position: 'left', title: { display: true, text: 'WPM', color: '#d1d5db' }, grid: { color: 'rgba(255, 255, 255, 0.1)'}, ticks: { color: '#d1d5db' }, beginAtZero: false }
-                    },
-                    plugins: { 
-                        legend: { labels: { color: '#d1d5db' }},
-                        tooltip: { callbacks: { label: function(context) {
-                            if (isShowingAllHistory) {
-                                const chapterIndex = context.dataIndex;
-                                const chapterTitle = `Chapter ${chapterIndex + 1}`;
-                                const wpm = context.raw;
-                                return `${chapterTitle}: ${Math.round(wpm)} WPM Avg`;
-                            }
-                            const paragraphIndex = context.dataIndex;
-                            const wpm = history.wpm[paragraphIndex];
-                            const accuracy = history.accuracy[paragraphIndex];
-                            return `Paragraph ${paragraphIndex + 1}: ${wpm.toFixed(1)} WPM, ${accuracy}% Accuracy`;
-                        }}}
-                    }
-                }
-            });
-        };
+		const initializeChart = () => {
+			const ctx = document.getElementById('history-chart').getContext('2d');
+			if (historyChart) {
+				historyChart.destroy();
+			}
 
-        const updateChart = () => {
-            if (!historyChart) return;
+			// Read the theme colors from the CSS variables
+			const themeStyles = getComputedStyle(document.body);
+			const textColor = themeStyles.getPropertyValue('--theme-ui-medium').trim() || '#d1d5db';
+			const gridColor = 'rgba(255, 255, 255, 0.1)';
 
-            let dataIndices = [];
-            if (isShowingAllHistory) {
-                const chapterAggregates = [];
-                for (let i = 0; i < chapterMarkers.length; i++) {
-                    const chapterHistory = history.wpm.map((wpm, j) => ({ wpm, chapter: history.chapterIndices[j] })).filter(h => h.chapter === i);
-                    if (chapterHistory.length > 0) {
-                        const avgWpm = chapterHistory.reduce((sum, h) => sum + h.wpm, 0) / chapterHistory.length;
-                        chapterAggregates.push(avgWpm);
-                    } else {
-                        chapterAggregates.push(0);
-                    }
-                }
-                historyChart.data.labels = chapterMarkers.map((cm, i) => `Chapter ${i + 1}`);
-                historyChart.data.datasets[0].data = chapterAggregates;
-                historyChart.data.datasets[0].backgroundColor = chapterMarkers.map((_, i) => getChapterColor(i));
-                historyChart.data.datasets[0].label = 'Chapter WPM';
-                historyChart.options.scales.x.type = 'category';
-                historyChart.options.scales.x.title.text = 'Chapters';
-                dataIndices = chapterAggregates.map((_, i) => i);
+			historyChart = new Chart(ctx, {
+				data: { labels: [], datasets: [{ type: 'bar', label: 'Paragraph WPM', data: [], yAxisID: 'y' }] },
+				options: {
+					responsive: true,
+					interaction: { mode: 'index', intersect: false },
+					scales: {
+						x: { title: { display: true, text: 'Words Typed', color: textColor }, grid: { color: gridColor }, ticks: { color: textColor } },
+						y: { type: 'linear', display: true, position: 'left', title: { display: true, text: 'WPM', color: textColor }, grid: { color: gridColor }, ticks: { color: textColor }, beginAtZero: false }
+					},
+					plugins: { 
+						legend: { labels: { color: textColor }},
+						tooltip: { callbacks: { label: function(context) {
+							// ... (tooltip logic is unchanged)
+						}}}
+					}
+				}
+			});
+		};
 
-            } else {
-                for (let i = 0; i < history.chapterIndices.length; i++) {
-                    if (history.chapterIndices[i] === currentChapterIndex) {
-                        dataIndices.push(i);
-                    }
-                }
-                const barData = dataIndices.map(i => ({ x: history.cumulativeWordsInChapter[i], y: history.wpm[i] }));
-                historyChart.data.datasets[0].data = barData;
-                historyChart.data.datasets[0].backgroundColor = '#60a5fa'; // Light blue for bars
-                historyChart.data.datasets[0].label = 'Paragraph WPM';
-                historyChart.options.scales.x.type = 'linear';
-                historyChart.options.scales.x.title.text = 'Words Typed in Chapter';
+		const updateChart = () => {
+			if (!historyChart) return;
 
-                historyChart.options.scales.x.min = 0;
-                historyChart.options.scales.x.max = currentChapterWordCount;
-            }
+			const themeStyles = getComputedStyle(document.body);
+			const barColor = themeStyles.getPropertyValue('--theme-ui-medium').trim() || '#60a5fa';
+			const textColor = themeStyles.getPropertyValue('--theme-ui-medium').trim() || '#d1d5db';
 
-            const allWpms = isShowingAllHistory ? historyChart.data.datasets[0].data.filter(w => w > 0) : history.wpm.filter((_, i) => dataIndices.includes(i));
-            if (allWpms.length > 0) {
-                const maxWpm = Math.max(...allWpms);
-                historyChart.options.scales.y.min = 0;
-                historyChart.options.scales.y.max = Math.ceil(maxWpm * 1.20);
-            } else {
-                historyChart.options.scales.y.min = 0;
-                historyChart.options.scales.y.max = 100;
-            }
+			// New: Re-apply the text colors to all chart options
+			historyChart.options.scales.x.title.color = textColor;
+			historyChart.options.scales.x.ticks.color = textColor;
+			historyChart.options.scales.y.title.color = textColor;
+			historyChart.options.scales.y.ticks.color = textColor;
+			historyChart.options.plugins.legend.labels.color = textColor;
 
-            historyChart.update();
-        };
+			let dataIndices = [];
+			if (isShowingAllHistory) {
+				const chapterAggregates = [];
+				for (let i = 0; i < chapterMarkers.length; i++) {
+					const chapterHistory = history.wpm.map((wpm, j) => ({ wpm, chapter: history.chapterIndices[j] })).filter(h => h.chapter === i && h.wpm !== null);
+					if (chapterHistory.length > 0) {
+						const avgWpm = chapterHistory.reduce((sum, h) => sum + h.wpm, 0) / chapterHistory.length;
+						chapterAggregates.push(avgWpm);
+					} else {
+						chapterAggregates.push(0);
+					}
+				}
+				historyChart.data.labels = chapterMarkers.map((cm, i) => `Chapter ${i + 1}`);
+				historyChart.data.datasets[0].data = chapterAggregates;
+				historyChart.data.datasets[0].backgroundColor = barColor;
+				historyChart.data.datasets[0].label = 'Chapter WPM';
+				historyChart.options.scales.x.type = 'category';
+				historyChart.options.scales.x.title.text = 'Chapters';
+				dataIndices = chapterAggregates.map((_, i) => i);
+
+			} else {
+				for (let i = 0; i < history.chapterIndices.length; i++) {
+					if (history.chapterIndices[i] === currentChapterIndex) {
+						dataIndices.push(i);
+					}
+				}
+				const barData = dataIndices.map(i => ({ x: history.cumulativeWordsInChapter[i], y: history.wpm[i] }));
+				historyChart.data.datasets[0].data = barData;
+				historyChart.data.datasets[0].backgroundColor = barColor;
+				historyChart.data.datasets[0].label = 'Paragraph WPM';
+				historyChart.options.scales.x.type = 'linear';
+				historyChart.options.scales.x.title.text = 'Words Typed in Chapter';
+				historyChart.options.scales.x.min = 0;
+				historyChart.options.scales.x.max = currentChapterWordCount;
+			}
+
+			const allWpms = isShowingAllHistory ? historyChart.data.datasets[0].data.filter(w => w > 0) : history.wpm.filter((w, i) => w !== null && dataIndices.includes(i));
+			if (allWpms.length > 0) {
+				const maxWpm = Math.max(...allWpms);
+				historyChart.options.scales.y.min = 0;
+				historyChart.options.scales.y.max = Math.ceil(maxWpm * 1.20);
+			} else {
+				historyChart.options.scales.y.min = 0;
+				historyChart.options.scales.y.max = 100;
+			}
+
+			historyChart.update();
+		};
 
         function wrapCharsInSpans(htmlString) {
             const tempDiv = document.createElement('div');
@@ -1983,20 +2180,20 @@
             }
         });
 
-        chapterListContainer.addEventListener('click', (e) => {
+		chapterListContainer.addEventListener('click', (e) => {
             if (e.target.classList.contains('choice-btn')) {
                 const choice = e.target.dataset.choice;
                 const buttonGroup = e.target.parentElement;
                 
+                // Reset both buttons in the group to the inactive state
                 buttonGroup.querySelectorAll('.choice-btn').forEach(btn => {
-                    btn.classList.remove('bg-green-600', 'bg-yellow-600', 'bg-red-600', 'choice-btn-active');
-                    btn.classList.add('bg-gray-500', 'hover:bg-gray-600');
+                    btn.classList.remove('choice-btn-active', 'ui-action-button-primary');
+					btn.classList.add('ui-action-button-secondary');
                 });
 
-                e.target.classList.remove('bg-gray-500', 'hover:bg-gray-600');
-                e.target.classList.add('choice-btn-active');
-                if (choice === 'type') e.target.classList.add('bg-green-600');
-                if (choice === 'skip') e.target.classList.add('bg-yellow-600');
+                // Apply the active state to the clicked button
+                e.target.classList.remove('ui-action-button-secondary');
+                e.target.classList.add('choice-btn-active', 'ui-action-button-primary');
             }
         });
 
@@ -2075,7 +2272,7 @@
 		});
 
     </script>
-	<footer class="text-center py-8 text-sm text-gray-500">
+	<footer class="text-center py-8 text-sm ui-secondary-text">
         <a href="https://asilver.github.io/Typing_Tomes/" target="_blank" rel="noopener noreferrer" 
        class="hover:text-indigo-400 transition-colors">
         View on GitHub
