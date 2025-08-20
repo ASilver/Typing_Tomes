@@ -17,6 +17,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Merriweather:wght@400;700&family=Source+Sans+Pro:wght@400;700&display=swap" rel="stylesheet">
+	<link rel="icon" type="image/x-icon" href="/favicon.ico">
 <style>
 		/*
 		============================================
@@ -134,19 +135,52 @@
 			--theme-incorrect: #A61717;
 			--theme-cursor-style: underline;
 			--theme-ui-bright: #E6E9DF;
-			--theme-ui-medium: #7FAB25;
-			--theme-ui-accent: #A9E330;
+			--theme-ui-medium: #94C72B;
+			--theme-ui-accent: #ABE631;
+		}		
+		body[data-theme="olivegarden"] {
+			--theme-page-bg: #282E17;
+			--theme-ui-bg: #19210F;
+			--theme-untyped: #9C591F;
+			--theme-correct: #FEFAE0;
+			--theme-incorrect: #FB4934;
+			--theme-cursor-style: underline;
+			--theme-ui-bright: #FEFCCF;
+			--theme-ui-medium: #DB7E2B;
+			--theme-ui-accent: #FCB86B;
 		}
 		body[data-theme="nonconformist"] {
 			--theme-page-bg: #071823;
 			--theme-ui-bg: #091F2C;
 			--theme-untyped: #8B75BA;
-			--theme-correct: #93E8D3;
+			--theme-correct: #A0FCE6;
 			--theme-incorrect: #E45C96;
 			--theme-cursor-style: underline;
 			--theme-ui-bright: #F5B1CC;
 			--theme-ui-medium: #FF84B7;
 			--theme-ui-accent: #FFB0CF;
+		}
+		body[data-theme="boravia"] {
+			--theme-page-bg: #16524A;
+			--theme-ui-bg: #192D36;
+			--theme-untyped: #B0553E;
+			--theme-correct: #FFDC89;
+			--theme-incorrect: #FB4934;
+			--theme-cursor-style: underline;
+			--theme-ui-bright: #FFBC93;
+			--theme-ui-medium: #FC7959;
+			--theme-ui-accent: #FFCD98;
+		}
+		body[data-theme="plumpudding"] {
+			--theme-page-bg: #42022E;
+			--theme-ui-bg: #21000F;
+			--theme-untyped: #8A0E47;
+			--theme-correct: #EEF4D4;
+			--theme-incorrect: #FB4934;
+			--theme-cursor-style: underline;
+			--theme-ui-bright: #FFED92;
+			--theme-ui-medium: #DBCC7D;
+			--theme-ui-accent: #FFED92;
 		}
 		/*
 		============================================
@@ -627,7 +661,10 @@
 			'ryujin': 'Ryujin',
 			'creamandberries': 'Cream & Berries',
 			'terminal': 'Terminal',
-			'nonconformist': 'Non-conformist'
+			'nonconformist': 'Non-conformist',
+			'olivegarden': 'Olive Garden',
+			'boravia': 'Boravia',
+			'plumpudding': 'Plum Pudding'
         };
 
         const getSettingsKey = () => `typingSettings_${currentUsername}`;
