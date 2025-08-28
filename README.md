@@ -1,7 +1,18 @@
 # Typing Tomes
 Typing Tomes is a single-page HTML app to practice typing on books and target your typing weaknesses. It is meant to help you improve and stay motivated, while enjoying a cool book at the same time. Win-win-win IMHO. You create a profile, and then upload a book (an ePub) and you are good to go. It is designed to be as easy as possible to use and install.
 
-*(Note: The addition of visual themes and now metrics to help you track your progress and time spent practicing may break your profile from previous versions. My apologies if this happens, but with all the extras now added, there was no way around it. If this happens, just delete it and create a new one.)*
+*(Note: The addition of visual themes and now metrics to help you track your progress and time spent practicing may break your profile from previous versions. If this happens, just delete it and create a new one.)*
+
+# List of features
+
+- Import any epub to type on
+- Live WPM and accuracy
+- Daily Goal bar to keep you motivated (and on track)
+- Histogram with bar charts of your performance in the book (WPM and accuracy)
+- Single page report with various stats (WPM in last 30days, number of words, conecutive days of practce, etc), chart of your daily practice, bar chart of your weekly performance
+- n-gram analysis of your typing: it identifies your weakest bigrams (2-letter sequences like th, st, etc.) and trigrams (3-letter sequences)
+- Drills so you can train your weaknesses and improve
+- Lot of colorful themes/skins
 
 # How to install or use
 To use it you can simply click on this link: **_[Typing Tomes](asilver.github.io/Typing_Tomes/)_**, or you can just download the single HTML file (156 kb as of this writing) and open it in the browser of your choice.
