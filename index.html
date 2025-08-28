@@ -988,6 +988,10 @@
 			if (historyChart) {
 				updateChart();
 			}
+			const fullReportViewEl = document.getElementById('full-report-view');
+			if (fullReportViewEl && !fullReportViewEl.classList.contains('hidden')) {
+				displayFullReport();
+			}
 		};
 		
 		const populateSettingsModal = () => {
