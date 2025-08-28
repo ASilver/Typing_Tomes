@@ -15,7 +15,7 @@ Typing Tomes is a single-page HTML app to practice typing on books and target yo
 - Lot of colorful themes/skins
 
 # How to install or use
-To use it you can simply click on this link: **_[Typing Tomes](asilver.github.io/Typing_Tomes/)_**, or you can just download the single HTML file (156 kb as of this writing) and open it in the browser of your choice.
+To use it you can simply click on this link: **_[Typing Tomes](https://asilver.github.io/Typing_Tomes/)_**, or you can just download the single HTML file (156 kb as of this writing) and open it in the browser of your choice.
 
 # Creating a profile and adding books
 It is really pretty self-explanatory. When you first start it, you are asked to create a profile. Just enter a name and press *Save and Start*. 
