@@ -9,8 +9,8 @@ Typing Tomes is a single-page HTML app to practice typing on books and target yo
 - Live WPM and accuracy
 - Daily Goal bar to keep you motivated (and on track)
 - Histogram with bar charts of your performance in the book (WPM and accuracy)
-- Single page report with various stats (WPM in last 30days, number of words, conecutive days of practce, etc), chart of your daily practice, bar chart of your weekly performance
-- n-gram analysis of your typing: it identifies your weakest bigrams (2-letter sequences like th, st, etc.) and trigrams (3-letter sequences)
+- Single page report with various stats (WPM in last 30 days, number of words, consecutive days of practice, etc), chart of your daily practice, bar chart of your weekly performance
+- n-gram analysis of your typing: it identifies your weakest bigrams (2-letter sequences like _th_, _st_, etc.) and trigrams (3-letter sequences)
 - Drills so you can train your weaknesses and improve
 - Lot of colorful themes/skins
 
