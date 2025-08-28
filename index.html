@@ -18,6 +18,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Merriweather:wght@400;700&family=Source+Sans+Pro:wght@400;700&display=swap" rel="stylesheet">
 	<link rel="icon" type="image/x-icon" href="favicon.ico">
+	<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
 <style>
 		/*
 		============================================
@@ -26,15 +27,15 @@
 		*/
 		:root {
 			/* Default Theme Colors */
-			--theme-default-page-bg: #0D131F;
-			--theme-default-ui-bg: #1D2633;
-			--theme-default-untyped: #7C8599;
-			--theme-default-correct: #DFF8FF;
-			--theme-default-incorrect: #F84D6C;
-			--theme-default-cursor-style: underline;
-			--theme-default-ui-bright: #B9FFFA;
-			--theme-default-ui-medium: #7E9AA1;
-			--theme-default-ui-accent: #96F7FF;
+			--theme-page-bg: #0D131F;
+			--theme-ui-bg: #1D2633;
+			--theme-untyped: #7C8599;
+			--theme-correct: #FFF6BC;
+			--theme-incorrect: #F84D6C;
+			--theme-cursor-style: underline;
+			--theme-ui-bright: #F5D67A;
+			--theme-ui-medium: #C75910;
+			--theme-ui-accent: #FFA40B;
 		}
 
 		body[data-theme="espresso"] {
@@ -44,9 +45,9 @@
 			--theme-correct: #fde68a;
 			--theme-incorrect: #ef4444;
 			--theme-cursor-style: underline;
-			--theme-ui-bright: #fde68a;
-			--theme-ui-medium: #d97706;
-			--theme-ui-accent: #f59e0b;
+			--theme-ui-bright: #F5D67A;
+			--theme-ui-medium: #C75910;
+			--theme-ui-accent: #FFA40B;
 		}
 
 		body[data-theme="matrix"] {
@@ -57,8 +58,8 @@
 			--theme-incorrect: #f02d2d;
 			--theme-cursor-style: block;
 			--theme-ui-bright: #01FF00;
-			--theme-ui-medium: #06D400;
-			--theme-ui-accent: #05B300;
+			--theme-ui-medium: #05BD00;
+			--theme-ui-accent: #07FF00;
 		}
 
 		body[data-theme="dracula"] {
@@ -70,7 +71,7 @@
 			--theme-cursor-style: underline;
 			--theme-ui-bright: #F579CB;
 			--theme-ui-medium: #B88FF2;
-			--theme-ui-accent: #C297FF;
+			--theme-ui-accent: #E3C6FF;
 		}
 		body[data-theme="monkeytype"] {
 			--theme-page-bg: #131314;
@@ -80,13 +81,13 @@
 			--theme-incorrect: #CA4754;
 			--theme-cursor-style: underline;
 			--theme-ui-bright: #FACA16;
-			--theme-ui-medium: #D1AA13;
-			--theme-ui-accent: #EDC015;
+			--theme-ui-medium: #C79A00;
+			--theme-ui-accent: #FFDF4C;
 		}
 		body[data-theme="pinkpower"] {
 			--theme-page-bg: #FFF0F5;
 			--theme-ui-bg: #FFF8FA;
-			--theme-untyped: #FFB2D9;
+			--theme-untyped: #F2A9CE;
 			--theme-correct: #6D214F;
 			--theme-incorrect: #DE396A;
 			--theme-cursor-style: underline;
@@ -101,9 +102,9 @@
 			--theme-correct: #FFEEC1;
 			--theme-incorrect: #FB4934;
 			--theme-cursor-style: underline;
-			--theme-ui-bright: #FFB527;
-			--theme-ui-medium: #D79921;
-			--theme-ui-accent: #F7A414;
+			--theme-ui-bright: #FFE095;
+			--theme-ui-medium: #CC8711;
+			--theme-ui-accent: #FFC454;
 		}
 		body[data-theme="ryujin"] {
 			--theme-page-bg: #040E1D;
@@ -125,7 +126,7 @@
 			--theme-cursor-style: underline;
 			--theme-ui-bright: #802287;
 			--theme-ui-medium: #A32981;
-			--theme-ui-accent: #AE2FB8;
+			--theme-ui-accent: #DB3BE8;
 		}
 		body[data-theme="terminal"] {
 			--theme-page-bg: #141516;
@@ -135,8 +136,8 @@
 			--theme-incorrect: #A61717;
 			--theme-cursor-style: underline;
 			--theme-ui-bright: #E6E9DF;
-			--theme-ui-medium: #94C72B;
-			--theme-ui-accent: #ABE631;
+			--theme-ui-medium: #79A617;
+			--theme-ui-accent: #ADED21;
 		}		
 		body[data-theme="olivegarden"] {
 			--theme-page-bg: #282E17;
@@ -146,8 +147,8 @@
 			--theme-incorrect: #FB4934;
 			--theme-cursor-style: underline;
 			--theme-ui-bright: #FEFCCF;
-			--theme-ui-medium: #DB7E2B;
-			--theme-ui-accent: #FCB86B;
+			--theme-ui-medium: #EB872E;
+			--theme-ui-accent: #FFCB7A;
 		}
 		body[data-theme="nonconformist"] {
 			--theme-page-bg: #071823;
@@ -157,12 +158,12 @@
 			--theme-incorrect: #E45C96;
 			--theme-cursor-style: underline;
 			--theme-ui-bright: #F5B1CC;
-			--theme-ui-medium: #FF84B7;
+			--theme-ui-medium: #FF64AF;
 			--theme-ui-accent: #FFB0CF;
 		}
 		body[data-theme="boravia"] {
-			--theme-page-bg: #16524A;
-			--theme-ui-bg: #192D36;
+			--theme-page-bg: #12423C;
+			--theme-ui-bg: #132229;
 			--theme-untyped: #B0553E;
 			--theme-correct: #FFDC89;
 			--theme-incorrect: #FB4934;
@@ -179,8 +180,8 @@
 			--theme-incorrect: #FB4934;
 			--theme-cursor-style: underline;
 			--theme-ui-bright: #FFED92;
-			--theme-ui-medium: #DBCC7D;
-			--theme-ui-accent: #FFED92;
+			--theme-ui-medium: #DBB048;
+			--theme-ui-accent: #FFF5B3;
 		}
 		/*
 		============================================
@@ -300,9 +301,45 @@
         .font-merriweather.font-size-xl { font-size: 2.2rem; line-height: 3.4rem; }
         .font-lato.font-size-xl, .font-noto-sans.font-size-xl { font-size: 2.4rem; line-height: 3.6rem; }
         .font-roboto-mono.font-size-xl { font-size: 2.5rem; line-height: 3.7rem; }
+
+		#typing-app {
+		  flex: 1 1 auto;       /* take available space */
+		  min-height: 0;        /* allow internal scroll */
+		  max-height: 100vh;    /* never bigger than viewport */
+		}
+
+		/* The card holding stats + typing area */
+		.typing-area-background {
+		  flex: 1;
+		  min-height: 0;
+		  display: flex;
+		  flex-direction: column;
+		  max-height: calc(100vh - 200px); /* adjust this value */
+		}
+
+		/* The actual text container */
+		#book-content {
+		  flex: 1;
+		  min-height: 0;
+		  overflow-y: auto;      /* scrolling inside this only */
+		}
+		.nav-btn-active {
+			color: var(--theme-ui-accent, #96F7FF);
+		}
+		/* Firefox-only: disable blinking cursor */
+		@supports (-moz-appearance: none) {
+		  .typing-area-background .cursor,
+		  #book-content .cursor,
+		  #drill-content .cursor {
+			animation: none !important;              /* stop the blink */
+			border-bottom-color: var(--theme-ui-bright) !important;
+		  }
+		}
+
+
 	</style>
 </head>
-<body class="text-gray-200 flex flex-col items-center min-h-screen p-4 md:p-8">
+<body class="text-gray-200 flex flex-col items-center min-h-screen p-2 md:p-4">
 
     <div id="settings-modal" class="fixed inset-0 z-50 flex items-center justify-center modal-backdrop hidden">
         <div class="rounded-lg shadow-xl p-8 w-full max-w-lg ui-panel-bg">
@@ -316,7 +353,7 @@
 
             <div class="mb-8">
                 <label class="block text-lg font-medium text-gray-300 mb-3">Font Size</label>
-                <div id="font-size-selector" class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                <div id="font-size-selector" class="grid grid-cols-5 gap-2 sm:gap-4">
                     </div>
             </div>
 
@@ -329,6 +366,10 @@
 				<label class="block text-lg font-medium text-gray-300 mb-3">Typing Colors</label>
 				<div id="inversion-selector" class="grid grid-cols-2 gap-4">
 					 </div>
+			</div>
+						<div class="mb-8">
+				<label for="daily-goal-input" class="block text-lg font-medium text-gray-300 mb-3">Daily Practice Goal (minutes)</label>
+				<input type="number" id="daily-goal-input" min="1" max="300" class="w-full rounded-md p-2 focus:ring-2 focus:outline-none ui-input">
 			</div>
         
             <div class="mt-8 flex justify-end">
@@ -400,8 +441,114 @@
         </div>
     </div>
 
+	<header id="main-nav-bar" class="w-full max-w-5xl mx-auto p-3 rounded-lg items-center justify-between ui-sticky-bar hidden">
+        <div class="flex items-center space-x-4">
+            <span id="nav-username" class="font-bold ui-bright-text">Hi Albert!</span>
+            <button id="nav-change-user-btn" class="text-sm ui-secondary-text">(change)</button>
+        </div>
+		<div class="flex items-center space-x-6 text-lg">
+			<button id="nav-library-btn" class="flex items-center gap-1 font-semibold ui-secondary-text hover:text-[--theme-ui-accent]">
+				<svg xmlns="http://www.w3.org/2000/svg"
+					 viewBox="0 0 24 24"
+					 class="w-6 h-6 fill-current" aria-hidden="true">
+				  <!-- Shelf -->
+				  <rect x="2" y="20" width="20" height="2" rx="1"/>
 
-    <div class="w-full max-w-5xl mx-auto"> <header class="text-center mb-8">
+				  <!-- Left upright book (taller) -->
+				  <rect x="3" y="4.5" width="4" height="15.5" rx="1"/>
+				  <!-- Left book spine bands -->
+				  <rect x="3.6" y="8"  width="2.8" height="0.9" rx="0.45"/>
+				  <rect x="3.6" y="12" width="2.8" height="0.9" rx="0.45"/>
+				  <rect x="3.6" y="16" width="2.8" height="0.9" rx="0.45"/>
+
+				  <!-- Middle upright book (taller) -->
+				  <rect x="9" y="3.5" width="4" height="17.5" rx="1"/>
+				  <!-- Middle book spine bands -->
+				  <rect x="9.6" y="7"  width="2.8" height="0.9" rx="0.45"/>
+				  <rect x="9.6" y="11" width="2.8" height="0.9" rx="0.45"/>
+				  <rect x="9.6" y="15" width="2.8" height="0.9" rx="0.45"/>
+				  <rect x="9.6" y="18" width="2.8" height="0.9" rx="0.45"/>
+
+				  <!-- Right tilted book (unchanged) -->
+				  <g transform="rotate(-15 18 12)">
+					<rect x="16" y="5" width="4" height="14" rx="1"/>
+					<!-- Tilted book spine bands -->
+					<rect x="16.6" y="8"  width="2.8" height="0.9" rx="0.45"/>
+					<rect x="16.6" y="12" width="2.8" height="0.9" rx="0.45"/>
+					<rect x="16.6" y="16" width="2.8" height="0.9" rx="0.45"/>
+				  </g>
+				</svg>
+				<span>Library</span>
+			</button>
+			<button id="nav-typing-btn" class="flex items-center gap-2 font-semibold ui-secondary-text hover:text-[--theme-ui-accent]">
+				<svg xmlns="http://www.w3.org/2000/svg"
+					 viewBox="0 0 24 24"
+					 class="w-6 h-6 fill-current">
+				  <defs>
+					<mask id="kbd-hole">
+					  <rect x="0" y="0" width="24" height="24" fill="white"/>
+					  <rect x="3.5" y="5.5" width="17" height="13" rx="2.8" ry="2.8" fill="black"/>
+					</mask>
+				  </defs>
+				  <rect x="1.5" y="3.5" width="21" height="17" rx="4" ry="4" mask="url(#kbd-hole)"/>
+				  <rect x="6"   y="8.5" width="2" height="2" rx="0.6"/>
+				  <rect x="9.5" y="8.5" width="2" height="2" rx="0.6"/>
+				  <rect x="13"  y="8.5" width="2" height="2" rx="0.6"/>
+				  <rect x="16.5" y="8.5" width="2" height="2" rx="0.6"/>
+				  <rect x="6"   y="11.5" width="2" height="2" rx="0.6"/>
+				  <rect x="9.5" y="11.5" width="2" height="2" rx="0.6"/>
+				  <rect x="13"  y="11.5" width="2" height="2" rx="0.6"/>
+				  <rect x="16.5" y="11.5" width="2" height="2" rx="0.6"/>
+				  <rect x="7" y="14.5" width="10" height="2" rx="1"/>
+				</svg>
+				<span>Typing</span>
+			</button>
+			<button id="nav-reports-btn" class="flex items-center gap-1 font-semibold ui-secondary-text hover:text-[--theme-ui-accent]">
+				<svg xmlns="http://www.w3.org/2000/svg"
+					 viewBox="0 0 24 24"
+					 class="w-6 h-6 fill-current" aria-hidden="true">
+				  <!-- Shortest left bar -->
+				  <rect x="4" y="14" width="3" height="5" rx="1"/>
+				  <!-- Next bar -->
+				  <rect x="9" y="11" width="3" height="8" rx="1"/>
+				  <!-- Next bar -->
+				  <rect x="14" y="7"  width="3" height="12" rx="1"/>
+				  <!-- Tallest bar -->
+				  <rect x="19" y="4"  width="3" height="15" rx="1"/>
+				</svg>
+
+				<span>Reports</span>
+			</button>
+			<button id="nav-settings-btn" class="flex items-center gap-1 font-semibold ui-secondary-text hover:text-[--theme-ui-accent]">
+			<svg xmlns="http://www.w3.org/2000/svg" 
+				 viewBox="0 0 24 24" 
+				 class="w-6 h-6 fill-current">
+			  <path d="M19.14 12.94c.04-.31.06-.63.06-.94s-.02-.63-.06-.94l2.03-1.58a.5.5 
+					   0 00.11-.65l-1.92-3.32a.5.5 0 00-.61-.22l-2.39.96a7.014 
+					   7.014 0 00-1.63-.94l-.36-2.54A.488.488 0 0014.39 2h-4.78c-.24 
+					   0-.44.17-.48.41l-.36 2.54c-.59.24-1.14.56-1.63.94l-2.39-.96a.5.5 
+					   0 00-.61.22L2.22 8.83c-.14.22-.1.51.11.65l2.03 1.58c-.04.31-.06.63-.06.94 
+					   0 .31.02.63.06.94l-2.03 1.58a.5.5 0 00-.11.65l1.92 3.32c.14.22.4.3.61.22l2.39-.96c.49.39 
+					   1.04.7 1.63.94l.36 2.54c.04.24.24.41.48.41h4.78c.24 0 .44-.17.48-.41l.36-2.54c.59-.24 
+					   1.14-.56 1.63-.94l2.39.96c.22.08.47 0 .61-.22l1.92-3.32a.5.5 0 00-.11-.65l-2.03-1.58zM12 
+					   15.5c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 
+					   3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5z"/>
+			</svg>
+
+				<span>Settings</span>
+			</button>
+		</div>
+		<div class="relative">
+			<button id="nav-book-title-btn" class="flex items-center space-x-2 text-lg font-bold text-right ui-accent-text">
+				<span id="nav-book-title"></span>
+				<span>▼</span>
+			</button>
+			<div id="nav-chapter-menu" class="absolute top-full right-0 mt-2 p-2 w-72 rounded-lg shadow-xl ui-panel-bg z-20 hidden">
+				</div>
+		</div>
+    </header>
+
+    <div class="w-full max-w-5xl mx-auto flex-1 flex flex-col min-h-0"> <header id="legacy-header" class="text-center mb-8">
             <h1 id="app-title-header" class="text-5xl md:text-6xl font-bold ui-main-title">Typing Tomes</h1>
 			 <h1 id="book-title-header" class="text-5xl md:text-6xl font-bold hidden ui-main-title"></h1>
             <p id="welcome-message" class="text-gray-400 mt-2 hidden ui-secondary-text">Welcome, <span id="username-display" class="font-bold ui-bright-text"></span>!
@@ -430,60 +577,40 @@
         </div>
 
         <main id="typing-app" class="hidden flex-col">
-            <div class="sticky top-0 py-4 px-4 z-10 ui-sticky-bar">
+			<div class="sticky top-0 pb-2 px-4 z-10 ui-sticky-bar">
 				<div class="grid grid-cols-2 lg:grid-cols-5 gap-4 text-center">
-                    <div class="p-4 rounded-lg shadow ui-stat-box">
-                        <p class="text-sm ui-stat-label">Live WPM</p>
-                        <div id="live-wpm-display" class="text-3xl font-bold ui-stat-value">0</div>
-                    </div>
-                   <div class="p-4 rounded-lg shadow ui-stat-box">
-                        <p class="text-sm ui-stat-label">Live Accuracy</p>
-                        <div id="live-accuracy-display" class="text-3xl font-bold ui-stat-value">100%</div>
-                   </div>
-                   <div class="p-4 rounded-lg shadow ui-stat-box">
-                        <p class="text-sm ui-stat-label">Overall WPM</p>
-                        <div id="overall-wpm-display" class="text-3xl font-bold ui-stat-value">0.0</div>
-                    </div>
-                    <div class="p-4 rounded-lg shadow ui-stat-box">
-                        <p class="text-sm ui-stat-label">Overall Accuracy</p>
-                        <div id="overall-accuracy-display" class="text-3xl font-bold ui-stat-value">100%</div>
-                    </div>
-                    <div class="p-4 rounded-lg shadow col-span-2 lg:col-span-1 ui-stat-box">
-                        <p class="text-sm ui-stat-label">Paragraphs Done</p>
-                        <div id="paragraph-count" class="text-3xl font-bold ui-stat-value">0 / 0</div>
-                    </div>
-                </div>
-            </div>
+					<div class="p-4 rounded-lg shadow ui-stat-box">
+						<p class="text-sm ui-stat-label">Live WPM</p>
+						<div id="live-wpm-display" class="text-3xl font-bold ui-stat-value">0</div>
+					</div>
+					<div class="p-4 rounded-lg shadow ui-stat-box">
+						<p class="text-sm ui-stat-label">Live Accuracy</p>
+						<div id="live-accuracy-display" class="text-3xl font-bold ui-stat-value">100%</div>
+					</div>
+					<div class="p-4 rounded-lg shadow col-span-2 lg:col-span-2 ui-stat-box flex flex-col justify-center space-y-2">
+						<div class="flex justify-between items-baseline">
+							<p class="text-sm ui-stat-label">Daily Goal</p>
+							<div id="daily-goal-text" class="text-lg font-semibold ui-stat-value">0/30 min</div>
+						</div>
+						<div class="w-full ui-panel-bg rounded-full h-2.5 border-2 border-gray-600">
+							<div id="daily-progress-bar" class="bg-amber-400 h-full rounded-full transition-all duration-500" style="width: 0%; background-color: var(--theme-ui-accent, #96F7FF);"></div>
+						</div>
+					</div>
+					<div class="p-4 rounded-lg shadow ui-stat-box">
+						<p class="text-sm ui-stat-label">Paragraphs Done</p>
+						<div id="paragraph-count" class="text-3xl font-bold ui-stat-value">0 / 0</div>
+					</div>
+				</div>
+			</div>
 
-            <div class="mt-6">
-                 <div id="chapter-selector-container" class="mb-4 hidden">
-                    <select id="chapter-selector" class="w-full border rounded-md p-2 focus:ring-2 focus:outline-none"></select>
-                </div>
-
-                <div id="chapter-stats" class="text-center text-gray-400 mb-4 ui-secondary-text"></div>
-                <div class="p-6 rounded-lg shadow-lg relative typing-area-background">
-                     <div id="book-content" class="select-none overflow-y-auto focus:outline-none" style="max-height: 70vh;">
+                <div class="pt-6 px-6 pb-2 rounded-lg shadow-lg relative typing-area-background mt-2">
+                     <div id="book-content" class="select-none overflow-y-auto focus:outline-none">
                          </div>
                      <div class="text-right text-sm mt-4 ui-bright-text">
                          <span>Press <kbd class="font-bold rounded px-2 py-1 rounded-md text-sm ui-action-button-secondary">Tab</kbd> to restart paragraph.</span>
                          <span>Press <kbd class="font-bold rounded px-2 py-1 rounded-md text-sm ui-action-button-secondary">Enter</kbd> to finish.<span> Press <kbd class="font-bold rounded px-2 py-1 rounded-md text-sm ui-action-button-secondary">Shift+Enter</kbd> to skip.</span><span> Press <kbd class="font-bold rounded px-2 py-1 rounded-md text-sm ui-action-button-secondary">Shift+Tab</kbd> to redo previous.</span></span>
                      </div>
                 </div>
-
-				<div class="p-6 rounded-lg shadow-lg mt-8 ui-chart-container">
-                    <div class="flex justify-between items-center mb-4">
-                        <h3 class="text-xl font-semibold ui-bright-text">Performance History</h3>
-						<button id="chart-toggle-btn" class="font-bold py-2 px-4 rounded-md text-sm ui-action-button-secondary">Show Entire Book</button>
-                    </div>
-                    <canvas id="history-chart"></canvas>
-                </div>
-            </div>
-        
-            <div class="mt-8 flex justify-between items-center">
-                <button id="exit-to-library-btn" class="font-bold py-2 px-4 rounded-md ui-action-button-secondary">← Back to Library</button>
-				<button id="analysis-btn" class="font-bold py-2 px-4 rounded-md ui-action-button-primary">Analysis and Drills</button>
-                <button id="settings-btn" class="font-bold py-2 px-4 rounded-md ui-action-button-primary">Settings</button>
-            </div>		
 		
 		</main>
 		
@@ -517,7 +644,89 @@
             </div>
         </main>
 		
+		<main id="reports-view" class="hidden flex-col">
+				<div class="p-6 rounded-lg shadow-lg ui-chart-container">
+					<div class="flex justify-between items-center mb-4">
+						<button id="chart-toggle-btn" class="font-bold py-2 px-4 rounded-md text-sm ui-action-button-secondary">Show Entire Book</button>
+						<h3 class="text-xl font-semibold ui-bright-text text-center">Performance History</h3>
+						<button id="full-report-btn" class="font-bold py-2 px-4 rounded-md text-sm ui-action-button-primary">Full Report</button>
+					</div>
+
+					<div id="history-chart-container">
+						<canvas id="history-chart"></canvas>
+					</div>
+					<div id="full-report-view" class="hidden">
+						<div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-center mb-6">
+							<div class="p-3 rounded-lg ui-stat-box">
+								<p class="text-sm ui-stat-label">Current Streak</p>
+								<div id="stats-current-streak" class="text-2xl font-bold ui-stat-value">--</div>
+							</div>
+							<div class="p-3 rounded-lg ui-stat-box">
+								<p class="text-sm ui-stat-label">Longest Streak</p>
+								<div id="stats-longest-streak" class="text-2xl font-bold ui-stat-value">--</div>
+							</div>
+							<div class="p-3 rounded-lg ui-stat-box">
+								<p class="text-sm ui-stat-label">Avg WPM (Last 30d)</p>
+								<div id="stats-avg-wpm" class="text-2xl font-bold ui-stat-value">--</div>
+							</div>
+							<div class="p-3 rounded-lg ui-stat-box">
+								<p class="text-sm ui-stat-label">Avg Acc (Last 30d)</p>
+								<div id="stats-avg-acc" class="text-2xl font-bold ui-stat-value">--%</div>
+							</div>
+						</div>
+						
+						<div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-center mb-6">
+							<div class="p-3 rounded-lg ui-stat-box">
+								<p class="text-xs ui-stat-label">Time Practiced (30d)</p>
+								<div id="report-stats-time-30d" class="text-2xl font-bold ui-stat-value">--</div>
+							</div>
+							<div class="p-3 rounded-lg ui-stat-box">
+								<p class="text-xs ui-stat-label">Words Typed (30d)</p>
+								<div id="report-stats-words-30d" class="text-2xl font-bold ui-stat-value">--</div>
+							</div>
+							<div class="p-3 rounded-lg ui-stat-box">
+								<p class="text-xs ui-stat-label">Time Practiced (All Time)</p>
+								<div id="report-stats-time-all" class="text-2xl font-bold ui-stat-value">--</div>
+							</div>
+							<div class="p-3 rounded-lg ui-stat-box">
+								<p class="text-xs ui-stat-label">Words Typed (All Time)</p>
+								<div id="report-stats-words-all" class="text-2xl font-bold ui-stat-value">--</div>
+							</div>
+						</div>
+
+						<div class="grid grid-cols-1 gap-8 mt-8">
+							<div>
+								<h4 class="text-lg font-semibold ui-bright-text mb-3 text-center">Daily Activity</h4>
+								<div id="heatmap-months-container" class="flex justify-between text-xs ui-secondary-text mb-1 px-1"></div>
+								<div id="heatmap-container" class="w-full"></div>
+							</div>
+							<div>
+								<h4 class="text-lg font-semibold ui-bright-text mb-3 text-center">WPM Trend</h4>
+								<canvas id="wpm-trend-chart"></canvas>
+							</div>
+						</div>
+					</div>
+				</div>
+
+			<div class="mt-4 flex justify-center items-center">
+				<button id="analysis-btn" class="font-bold py-2 px-4 rounded-md ui-action-button-primary">Analysis and Drills</button>
+			</div>
+			</div>
+
+            </main>
+
     </div>
+
+	<footer id="main-footer" class="text-center py-8 text-sm ui-secondary-text">
+        <a href="https://asilver.github.io/Typing_Tomes/" target="_blank" rel="noopener noreferrer" 
+       class="hover:text-indigo-400 transition-colors">
+        View on GitHub
+        </a>
+        <span class="mx-2">|</span>
+        <span>
+        Released under the <a href="https://github.com/asilver/Typing_Tomes/blob/main/LICENSE" target="_blank" rel="noopener noreferrer" class="underline hover:text-indigo-400 transition-colors">MIT License</a>.
+        </span>
+    </footer>
 
     <script>
         // DOM Elements
@@ -549,6 +758,19 @@
         const closeSettingsBtn = document.getElementById('close-settings-btn');
         const fontFamilySelector = document.getElementById('font-family-selector');
         const fontSizeSelector = document.getElementById('font-size-selector');
+		const mainNavBar = document.getElementById('main-nav-bar');
+        const reportsView = document.getElementById('reports-view');
+        const navUsername = document.getElementById('nav-username');
+        const navChangeUserBtn = document.getElementById('nav-change-user-btn');
+        const navLibraryBtn = document.getElementById('nav-library-btn');
+        const navReportsBtn = document.getElementById('nav-reports-btn');
+        const navSettingsBtn = document.getElementById('nav-settings-btn');
+        const navBookTitle = document.getElementById('nav-book-title');
+		const navBookTitleBtn = document.getElementById('nav-book-title-btn');
+		const navChapterMenu = document.getElementById('nav-chapter-menu');
+		const mainFooter = document.getElementById('main-footer');
+		const legacyHeader = document.getElementById('legacy-header');
+		const navTypingBtn = document.getElementById('nav-typing-btn');
 
         // --- MASTER LISTS FOR ADAPTIVE TRAINING (with thanks to Monkeytype) ---
 
@@ -582,13 +804,8 @@
 		let currentContentEl = bookContentEl; // This will track the active typing area
         const liveWpmDisplay = document.getElementById('live-wpm-display');
         const liveAccuracyDisplay = document.getElementById('live-accuracy-display');
-        const overallWpmDisplay = document.getElementById('overall-wpm-display');
-        const overallAccuracyDisplay = document.getElementById('overall-accuracy-display');
         const paragraphCountDisplay = document.getElementById('paragraph-count');
-        const chapterStatsDisplay = document.getElementById('chapter-stats');
         const chartToggleButton = document.getElementById('chart-toggle-btn');
-        const chapterSelectorContainer = document.getElementById('chapter-selector-container');
-        const chapterSelector = document.getElementById('chapter-selector');
         
         // Profile Modal Elements
         const profileModal = document.getElementById('profile-modal');
@@ -631,6 +848,11 @@
         let currentUserInput = '';
         let isTestActive = false;
         let isBookLoading = false;
+		let currentParagraphSpans = [];
+		let currentCursorSpan = null;
+		let paragraphStartTime = 0;
+		let dailyProgressTimer = null;
+		let secondsPracticedToday = 0;
         
         // Temporary state for book being added
         let tempBookData = {};
@@ -666,6 +888,58 @@
 			'boravia': 'Boravia',
 			'plumpudding': 'Plum Pudding'
         };
+	
+	
+		function checkAndScrollCursorIntoView() {
+			if (!currentCursorSpan) return;
+
+			const container = currentContentEl;
+			const containerRect = container.getBoundingClientRect();
+			const cursorRect = currentCursorSpan.getBoundingClientRect();
+			const containerMidpoint = containerRect.top + (containerRect.height / 2);
+
+			if (cursorRect.top > containerMidpoint) {
+				const scrollOffset = cursorRect.top - containerMidpoint;
+				container.scrollTo({
+					top: container.scrollTop + scrollOffset,
+					behavior: 'smooth'
+				});
+			}
+		}	
+
+		function getThemeColorWithOpacity(variableName, opacity) {
+			const color = getComputedStyle(document.body).getPropertyValue(variableName).trim();
+			const tempEl = document.createElement('div');
+			tempEl.style.color = color;
+			document.body.appendChild(tempEl);
+			const rgbColor = getComputedStyle(tempEl).color;
+			document.body.removeChild(tempEl);
+			// Extract the r, g, b values from the "rgb(r, g, b)" string
+			const [r, g, b] = rgbColor.match(/\d+/g);
+			return `rgba(${r}, ${g}, ${b}, ${opacity})`;
+		}
+		
+		function triggerFullscreenConfetti() {
+			const duration = 3 * 1000; // 3 seconds for a nice burst
+			const animationEnd = Date.now() + duration;
+			const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 100 };
+
+			function randomInRange(min, max) {
+				return Math.random() * (max - min) + min;
+			}
+
+			const interval = setInterval(function() {
+				const timeLeft = animationEnd - Date.now();
+
+				if (timeLeft <= 0) {
+					return clearInterval(interval);
+				}
+
+				const particleCount = 50 * (timeLeft / duration);
+				confetti({ ...defaults, particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } });
+				confetti({ ...defaults, particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } });
+			}, 250);
+		}
 
         const getSettingsKey = () => `typingSettings_${currentUsername}`;
 
@@ -679,8 +953,9 @@
             const defaults = { 
                 fontFamily: 'roboto-mono', 
                 fontSize: 'md',
-                theme: 'earthsea',
-                inversion: false 
+                theme: 'default',
+                inversion: false,
+				dailyGoalInMinutes: 30
             };
             if (saved) {
                 return { ...defaults, ...JSON.parse(saved) };
@@ -716,39 +991,44 @@
 		};
 		
 		const populateSettingsModal = () => {
-            const currentSettings = loadSettings();
+			const currentSettings = loadSettings();
 			const themeSelector = document.getElementById('theme-selector');
 			const inversionSelector = document.getElementById('inversion-selector');
+			const dailyGoalInput = document.getElementById('daily-goal-input');
+			const fontFamilySelector = document.getElementById('font-family-selector');
+			const fontSizeSelector = document.getElementById('font-size-selector');
 
-            // Populate Font Family Buttons
-            fontFamilySelector.innerHTML = '';
-            for (const key in FONT_OPTIONS) {
-                const btn = document.createElement('button');
-                btn.textContent = FONT_OPTIONS[key];
-                btn.dataset.font = key;
-                btn.className = `p-3 rounded-md text-white transition-colors choice-btn ${currentSettings.fontFamily === key ? 'bg-indigo-600 choice-btn-active' : 'bg-gray-700 hover:bg-gray-600'}`;
-                btn.addEventListener('click', () => {
-                    saveSettings({ ...loadSettings(), fontFamily: key });
-                    applySettings();
-                    populateSettingsModal();
-                });
-                fontFamilySelector.appendChild(btn);
-            }
+			// --- Font Family Buttons ---
+			fontFamilySelector.innerHTML = '';
+			for (const key in FONT_OPTIONS) {
+				const btn = document.createElement('button');
+				btn.textContent = FONT_OPTIONS[key];
+				btn.dataset.font = key;
+				btn.className = `flex items-center justify-center p-3 rounded-md text-white transition-colors choice-btn ${currentSettings.fontFamily === key ? 'ui-action-button-primary choice-btn-active' : 'ui-action-button-secondary'}`;
+				
+				btn.addEventListener('click', () => {
+					saveSettings({ ...loadSettings(), fontFamily: key });
+					applySettings();
+					populateSettingsModal();
+				});
 
-            // Populate Font Size Buttons
-            fontSizeSelector.innerHTML = '';
-            for (const key in FONT_SIZES) {
-                const btn = document.createElement('button');
-                btn.textContent = FONT_SIZES[key];
-                btn.dataset.size = key;
-                btn.className = `p-3 rounded-md text-white transition-colors choice-btn ${currentSettings.fontSize === key ? 'bg-indigo-600 choice-btn-active' : 'bg-gray-700 hover:bg-gray-600'}`;
-                btn.addEventListener('click', () => {
-                    saveSettings({ ...loadSettings(), fontSize: key });
-                    applySettings();
-                    populateSettingsModal();
-                });
-                fontSizeSelector.appendChild(btn);
-            }
+				fontFamilySelector.appendChild(btn);
+			}
+
+			// --- Font Size Buttons ---
+			fontSizeSelector.innerHTML = '';
+			for (const key in FONT_SIZES) {
+				const btn = document.createElement('button');
+				btn.textContent = FONT_SIZES[key];
+				btn.dataset.size = key;
+				btn.className = `flex items-center justify-center p-3 rounded-md text-white transition-colors choice-btn ${currentSettings.fontSize === key ? 'ui-action-button-primary choice-btn-active' : 'ui-action-button-secondary'}`;
+				btn.addEventListener('click', () => {
+					saveSettings({ ...loadSettings(), fontSize: key });
+					applySettings();
+					populateSettingsModal();
+				});
+				fontSizeSelector.appendChild(btn);
+			}
 
 			// Populate Theme Dropdown
 			themeSelector.innerHTML = '';
@@ -770,20 +1050,35 @@
 
 			// Populate Inversion Buttons
 			inversionSelector.innerHTML = '';
-			// This line contains the updated text
 			const inversionOptions = { false: "Dark → Bright", true: "Bright → Dark"};
 			for (const key in inversionOptions) {
 				const btn = document.createElement('button');
 				btn.textContent = inversionOptions[key];
 				btn.dataset.inversion = key;
 				const isActive = String(currentSettings.inversion) === key;
-				btn.className = `p-3 rounded-md text-white transition-colors choice-btn ${isActive ? 'bg-indigo-600 choice-btn-active' : 'bg-gray-700 hover:bg-gray-600'}`;
+				btn.className = `flex items-center justify-center p-3 rounded-md text-white transition-colors choice-btn ${isActive ? 'ui-action-button-primary choice-btn-active' : 'ui-action-button-secondary'}`;
 				btn.addEventListener('click', () => {
 					saveSettings({ ...loadSettings(), inversion: key === 'true' });
 					applySettings();
 					populateSettingsModal();
 				});
 				inversionSelector.appendChild(btn);
+			}
+			if (dailyGoalInput) {
+				dailyGoalInput.value = currentSettings.dailyGoalInMinutes;
+
+				// 2. Add a listener to save the value when it's changed by the user
+				dailyGoalInput.addEventListener('input', () => {
+					let goal = parseInt(dailyGoalInput.value);
+					if (goal < 1) goal = 1;
+					if (goal > 300) goal = 300;
+					
+					// 4. Save the new setting
+					saveSettings({ ...loadSettings(), dailyGoalInMinutes: goal });
+					
+					// 5. Instantly update the progress bar on the main screen
+					updateDailyGoalDisplay(); 
+				});
 			}
         };
 		
@@ -816,25 +1111,29 @@
 			if (!analysis.metadata) analysis.metadata = {};
 
 			// 1. Add new events from the just-completed paragraph
-			for (const bigram in paragraphData.bigrams) {
-				if (MASTER_BIGRAMS_200.includes(bigram)) {
-					if (!analysis.bigrams[bigram]) analysis.bigrams[bigram] = { events: [] };
-					paragraphData.bigrams[bigram].delays.forEach(delay => {
-						analysis.bigrams[bigram].events.push({ type: 'delay', value: delay, wordCount: currentWordCount });
-					});
-					for (let i = 0; i < paragraphData.bigrams[bigram].errors; i++) {
-						analysis.bigrams[bigram].events.push({ type: 'error', wordCount: currentWordCount });
+			if (paragraphData.bigrams) {
+				for (const bigram in paragraphData.bigrams) {
+					if (MASTER_BIGRAMS_200.includes(bigram)) {
+						if (!analysis.bigrams[bigram]) analysis.bigrams[bigram] = { events: [] };
+						paragraphData.bigrams[bigram].delays.forEach(delay => {
+							analysis.bigrams[bigram].events.push({ type: 'delay', value: delay, wordCount: currentWordCount });
+						});
+						for (let i = 0; i < paragraphData.bigrams[bigram].errors; i++) {
+							analysis.bigrams[bigram].events.push({ type: 'error', wordCount: currentWordCount });
+						}
 					}
 				}
 			}
-			for (const trigram in paragraphData.trigrams) {
-				if (MASTER_TRIGRAMS_200.includes(trigram)) {
-					if (!analysis.trigrams[trigram]) analysis.trigrams[trigram] = { events: [] };
-					paragraphData.trigrams[trigram].delays.forEach(delay => {
-						analysis.trigrams[trigram].events.push({ type: 'delay', value: delay, wordCount: currentWordCount });
-					});
-					for (let i = 0; i < paragraphData.trigrams[trigram].errors; i++) {
-						analysis.trigrams[trigram].events.push({ type: 'error', wordCount: currentWordCount });
+			if (paragraphData.trigrams) {	
+				for (const trigram in paragraphData.trigrams) {
+					if (MASTER_TRIGRAMS_200.includes(trigram)) {
+						if (!analysis.trigrams[trigram]) analysis.trigrams[trigram] = { events: [] };
+						paragraphData.trigrams[trigram].delays.forEach(delay => {
+							analysis.trigrams[trigram].events.push({ type: 'delay', value: delay, wordCount: currentWordCount });
+						});
+						for (let i = 0; i < paragraphData.trigrams[trigram].errors; i++) {
+							analysis.trigrams[trigram].events.push({ type: 'error', wordCount: currentWordCount });
+						}
 					}
 				}
 			}
@@ -924,6 +1223,18 @@
 			renderList(weakBigramsList, weakBigrams);
 			renderList(weakTrigramsList, weakTrigrams);
 		};
+		
+		const getDailyProgressKey = () => `typingDailyProgress_${currentUsername}`;
+
+		const loadDailyProgress = () => {
+			const saved = localStorage.getItem(getDailyProgressKey());
+			return saved ? JSON.parse(saved) : {};
+		};
+
+		const saveDailyProgress = (progress) => {
+			console.log("Attempting to save DAILY progress...");
+			localStorage.setItem(getDailyProgressKey(), JSON.stringify(progress));
+		};
 
         // --- PROFILE MANAGEMENT ---
 		
@@ -990,7 +1301,7 @@
                 localStorage.removeItem(LAST_USER_KEY);
                 location.reload();
             } else {
-                showProfileSwitcher(); // Refresh the list
+                showProfileSwitcher();
             }
         };
 
@@ -1020,6 +1331,7 @@
         const getLibrarySaveKey = () => `typingLibrary_${currentUsername}`;
 
         const saveProgress = () => {
+			console.log("Attempting to save MAIN progress...");
             if (!currentUsername || !currentBookIdentifier) return;
             const progress = {
                 currentChapterIndex,
@@ -1031,7 +1343,7 @@
             localStorage.setItem(getProgressSaveKey(), JSON.stringify(progress));
         };
 
-        const loadProgress = () => {
+		const loadProgress = () => {
             const savedData = localStorage.getItem(getProgressSaveKey());
             if (savedData) {
                 const progress = JSON.parse(savedData);
@@ -1045,12 +1357,13 @@
                 if (!history.rawTimes) history.rawTimes = [];
                 if (!history.rawCorrectChars) history.rawCorrectChars = [];
                 if (!history.rawTypedChars) history.rawTypedChars = [];
+                if (!history.timestamps) history.timestamps = [];
         
                 return true;
             }
 
             // If no saved data is found, reset stats as normal
-            history = { wpm: [], accuracy: [], labels: [], overallWpmHistory: [], cumulativeWords: [], chapterIndices: [], paragraphWordCounts: [], cumulativeWordsInChapter: [], rawTimes: [], rawCorrectChars: [], rawTypedChars: [] };
+            history = { wpm: [], accuracy: [], labels: [], overallWpmHistory: [], cumulativeWords: [], chapterIndices: [], paragraphWordCounts: [], cumulativeWordsInChapter: [], rawTimes: [], rawCorrectChars: [], rawTypedChars: [], timestamps: [] };
             overallStats = { totalCorrectChars: 0, totalTypedChars: 0, totalTime: 0, cumulativeWordCount: 0 };
             return false;
         };
@@ -1093,40 +1406,303 @@
              let library = getLibrary();
              const bookToDelete = library[index];
             if (!confirm(`Are you sure you want to delete "${bookToDelete.bookName}" from your library?`)) return;
-            // Remove progress file
             localStorage.removeItem(`typingProgress_${currentUsername}_${bookToDelete.identifier}`);
-            // Remove from library
             library.splice(index, 1);
             saveLibrary(library);
             renderLibrary();
         };
 
+		function formatSeconds(totalSeconds) {
+				if (isNaN(totalSeconds) || totalSeconds === 0) return '0m';
+				const hours = Math.floor(totalSeconds / 3600);
+				const minutes = Math.floor((totalSeconds % 3600) / 60);
+
+				let result = '';
+				if (hours > 0) {
+					result += `${hours}h `;
+				}
+				result += `${minutes}m`;
+				return result.trim();
+			}
+
+			function calculateAndDisplayLifetimeStats() {
+				let timeAll = 0, wordsAll = 0, time30d = 0, words30d = 0;
+				const thirtyDaysAgo = Date.now() - 30 * 24 * 60 * 60 * 1000;
+
+				// 1. Calculate Time Practiced from daily progress logs
+				const dailyProgress = loadDailyProgress();
+				for (const dateStr in dailyProgress) {
+					const practiceDate = new Date(dateStr + "T00:00:00");
+					const seconds = dailyProgress[dateStr];
+					timeAll += seconds;
+					if (practiceDate.getTime() >= thirtyDaysAgo) {
+						time30d += seconds;
+					}
+				}
+
+				// 2. Calculate Words Typed from all books in the library
+				const library = getLibrary();
+				library.forEach(book => {
+					const progress = JSON.parse(localStorage.getItem(`typingProgress_${currentUsername}_${book.identifier}`));
+					if (progress && progress.history && progress.history.paragraphWordCounts) {
+						progress.history.paragraphWordCounts.forEach((wordCount, i) => {
+							wordsAll += wordCount;
+							const timestamp = progress.history.timestamps ? progress.history.timestamps[i] : null;
+							if (timestamp && timestamp >= thirtyDaysAgo) {
+								words30d += wordCount;
+							}
+						});
+					}
+				});
+
+				// 3. Update the DOM in the report view
+				document.getElementById('report-stats-time-all').textContent = formatSeconds(timeAll);
+				document.getElementById('report-stats-words-all').textContent = wordsAll.toLocaleString('en-US');
+				document.getElementById('report-stats-time-30d').textContent = formatSeconds(time30d);
+				document.getElementById('report-stats-words-30d').textContent = words30d.toLocaleString('en-US');
+			}
+
         // --- UI NAVIGATION ---
-        const showLibraryView = () => {
-            libraryView.classList.remove('hidden');
-            fileLoaderSection.classList.add('hidden');
-            typingAppSection.classList.add('hidden');
-            typingAppSection.classList.remove('flex');
-            appTitleHeader.classList.remove('hidden');
-            bookTitleHeader.classList.add('hidden');
-            bookTitleHeader.innerHTML = '';
-        };
 
         const showFileLoaderView = () => {
             libraryView.classList.add('hidden');
             fileLoaderSection.classList.remove('hidden');
             typingAppSection.classList.add('hidden');
             typingAppSection.classList.remove('flex');
+			mainFooter.classList.add('hidden');
         };
         
-        const showTypingView = () => {
-            libraryView.classList.add('hidden');
-            fileLoaderSection.classList.add('hidden');
-            typingAppSection.classList.remove('hidden');
-            typingAppSection.classList.add('flex');
-            appTitleHeader.classList.add('hidden');
-            bookTitleHeader.classList.remove('hidden');
-        };
+		const showLibraryView = () => {
+			libraryView.classList.remove('hidden');
+			fileLoaderSection.classList.add('hidden');
+			typingAppSection.classList.add('hidden');
+			typingAppSection.classList.remove('flex');
+			reportsView.classList.add('hidden');
+			reportsView.classList.remove('flex');
+			mainNavBar.classList.add('hidden');
+			mainNavBar.classList.remove('flex');
+			legacyHeader.classList.remove('hidden');
+			welcomeMessage.classList.remove('hidden');
+			mainFooter.classList.remove('hidden');
+		};
+
+		const showTypingView = (book) => {
+			libraryView.classList.add('hidden');
+			fileLoaderSection.classList.add('hidden');
+			typingAppSection.classList.remove('hidden');
+			typingAppSection.classList.add('flex');
+			reportsView.classList.add('hidden');
+			reportsView.classList.remove('flex');
+			mainNavBar.classList.remove('hidden');
+			mainNavBar.classList.add('flex');
+			legacyHeader.classList.add('hidden');
+			welcomeMessage.classList.add('hidden');
+			mainFooter.classList.add('hidden');
+
+			// Populate nav bar
+			navUsername.textContent = `Hi ${currentUsername}!`;
+			navBookTitle.textContent = book.bookName;
+
+			// Set active button
+			[navTypingBtn, navReportsBtn, navLibraryBtn].forEach(btn => btn.classList.remove('nav-btn-active'));
+			navTypingBtn.classList.add('nav-btn-active');
+		};
+
+		const showReportsView = (book) => {
+			libraryView.classList.add('hidden');
+			fileLoaderSection.classList.add('hidden');
+			typingAppSection.classList.add('hidden');
+			typingAppSection.classList.remove('flex');
+			reportsView.classList.remove('hidden');
+			reportsView.classList.add('flex');
+			mainNavBar.classList.remove('hidden');
+			mainNavBar.classList.add('flex');
+			legacyHeader.classList.add('hidden');
+			welcomeMessage.classList.add('hidden');
+			mainFooter.classList.add('hidden');
+
+			// Populate nav bar
+			navUsername.textContent = `Hi ${currentUsername}!`;
+			navBookTitle.textContent = book.bookName;
+
+			// Set active button
+			[navTypingBtn, navReportsBtn, navLibraryBtn].forEach(btn => btn.classList.remove('nav-btn-active'));
+			navReportsBtn.classList.add('nav-btn-active');
+		};
+		
+		function stopDailyProgressTimer() {
+			if (dailyProgressTimer) {
+				clearInterval(dailyProgressTimer); // Stop the interval
+				dailyProgressTimer = null;
+
+				// Calculate how much time passed in the paragraph we just stopped
+				const paragraphElapsedTime = (Date.now() - paragraphStartTime) / 1000;
+
+				// Add that time to our main in-memory counter
+				const today = new Date().toISOString().split('T')[0];
+				const progress = loadDailyProgress();
+				const timeBeforeUpdate = progress[today] || 0;
+
+				secondsPracticedToday += paragraphElapsedTime;
+				const newTime = secondsPracticedToday;
+
+				// Check if the goal was just crossed
+				const dailyGoalSeconds = (loadSettings().dailyGoalInMinutes || 30) * 60;
+				if (timeBeforeUpdate < dailyGoalSeconds && newTime >= dailyGoalSeconds) {
+					console.log("Daily goal reached!");
+					triggerFullscreenConfetti();
+				}
+				
+				// Now save the new, accurate total to localStorage
+				progress[today] = newTime;
+				saveDailyProgress(progress);
+			}
+		}
+		function updateLiveTimer() {
+			// Calculate how long this paragraph has been active
+			const paragraphElapsedTime = (Date.now() - paragraphStartTime) / 1000;
+			
+			// Get the total time from before this paragraph started
+			const baseTime = secondsPracticedToday;
+
+			// Update the display with the combined time
+			updateDailyGoalDisplay(baseTime + paragraphElapsedTime);
+		}
+		
+		function processHistoricalData() {
+			// This object will hold all our calculated stats.
+			const report = {
+				stats: {
+					currentStreak: 0,
+					longestStreak: 0,
+					avgWpmLast30d: 0,
+					avgAccLast30d: 0,
+				},
+				heatmapData: {},
+				wpmTrendData: {
+					labels: Array.from({ length: 52 }, (_, i) => `Week ${i + 1}`),
+					wpm: Array(52).fill(null)
+				}
+			};
+
+			// --- 1. Process daily practice time for streaks and heatmap ---
+			const dailyProgress = loadDailyProgress();
+			const validStreakDates = Object.keys(dailyProgress).filter(date => dailyProgress[date] >= 300);
+			const sortedDates = validStreakDates.sort();
+			
+			if (sortedDates.length > 0) {
+				let currentStreak = 0;
+				let longestStreak = 0;
+				let lastDate = new Date(sortedDates[0]);
+				
+				const today = new Date();
+				const yesterday = new Date();
+				yesterday.setDate(today.getDate() - 1);
+				
+				const todayStr = today.toISOString().split('T')[0];
+				const yesterdayStr = yesterday.toISOString().split('T')[0];
+
+				if (dailyProgress[todayStr] || dailyProgress[yesterdayStr]) {
+					 lastDate = today;
+					 if (!dailyProgress[todayStr] && !dailyProgress[yesterdayStr]) {
+						 currentStreak = 0;
+					 }
+				}
+
+				for (let i = sortedDates.length - 1; i >= 0; i--) {
+					const dateStr = sortedDates[i];
+					const currentDate = new Date(dateStr + "T00:00:00");
+
+					const diffDays = (lastDate - currentDate) / (1000 * 60 * 60 * 24);
+
+					if (diffDays <= 1) {
+						currentStreak++;
+					} else {
+						currentStreak = 1;
+					}
+					if (currentStreak > longestStreak) {
+						longestStreak = currentStreak;
+					}
+					lastDate = currentDate;
+				}
+				for (const dateStr in dailyProgress) {
+					report.heatmapData[dateStr] = dailyProgress[dateStr];
+				}
+				
+				report.stats.currentStreak = currentStreak;
+				report.stats.longestStreak = longestStreak;
+			}
+
+
+			// --- 2. Process all paragraphs for WPM/Acc trends and averages ---
+			const allHistory = [];
+			const library = getLibrary();
+			library.forEach(book => {
+				const progress = JSON.parse(localStorage.getItem(`typingProgress_${currentUsername}_${book.identifier}`));
+				if (progress && progress.history && progress.history.wpm) {
+					progress.history.wpm.forEach((wpm, i) => {
+						if (wpm === null) return;
+						const paragraphTimestamp = (progress.history.timestamps && progress.history.timestamps[i])
+							? progress.history.timestamps[i]
+							: progress.history.lastUpdated - (progress.history.rawTimes.slice(i + 1).reduce((a, b) => a + b, 0) * 1000);
+
+						allHistory.push({
+							timestamp: paragraphTimestamp,
+							wpm: wpm,
+							acc: progress.history.accuracy[i],
+							time: progress.history.rawTimes[i],
+							chars: progress.history.rawTypedChars[i]
+						});
+					});
+				}
+			});
+
+			if (allHistory.length > 0) {
+				// Calculate 30-day averages
+				const thirtyDaysAgo = Date.now() - 30 * 24 * 60 * 60 * 1000;
+				const recentHistory = allHistory.filter(p => p.timestamp > thirtyDaysAgo);
+				if(recentHistory.length > 0) {
+					report.stats.avgWpmLast30d = recentHistory.reduce((sum, p) => sum + p.wpm, 0) / recentHistory.length;
+					report.stats.avgAccLast30d = recentHistory.reduce((sum, p) => sum + p.acc, 0) / recentHistory.length;
+				}
+
+				// --- WPM TREND LOGIC ---
+				allHistory.sort((a, b) => a.timestamp - b.timestamp);
+				const firstPracticeDate = new Date(allHistory[0].timestamp);
+				firstPracticeDate.setHours(0, 0, 0, 0);
+
+				const dayOfWeek = firstPracticeDate.getDay();
+				const diff = firstPracticeDate.getDate() - dayOfWeek + (dayOfWeek === 0 ? -6 : 1); 
+				const startOfWeek1 = new Date(firstPracticeDate.setDate(diff));
+
+				const weeklyData = {};
+				allHistory.forEach(p => {
+					const practiceDate = new Date(p.timestamp);
+					const timeDifference = practiceDate - startOfWeek1;
+					const weekIndex = Math.floor(timeDifference / (1000 * 60 * 60 * 24 * 7));
+
+					if (weekIndex >= 0 && weekIndex < 52) {
+						if (!weeklyData[weekIndex]) {
+							weeklyData[weekIndex] = [];
+						}
+						weeklyData[weekIndex].push({ time: p.time, chars: p.chars });
+					}
+				});
+
+				for (const weekIndex in weeklyData) {
+					const weekData = weeklyData[weekIndex];
+					const totalChars = weekData.reduce((sum, entry) => sum + entry.chars, 0);
+					const totalTime = weekData.reduce((sum, entry) => sum + entry.time, 0);
+
+					if (totalTime > 0) {
+						const aggregateWpm = (totalChars / CHARS_PER_WORD) / (totalTime / 60);
+						report.wpmTrendData.wpm[weekIndex] = aggregateWpm;
+					}
+				}
+			}
+			
+			return report;
+		}
 		
 		const showDrillView = () => {
 			libraryView.classList.add('hidden');
@@ -1271,6 +1847,7 @@
 			drillAccuracyDisplay.textContent = `${finalAccuracy.toFixed(0)}%`;
 			
 			drillWordCount.textContent = `${drillTotalWords} / ${drillTotalWords}`;
+			triggerFullscreenConfetti();
 
 			isDrillActive = false;
 			currentContentEl = bookContentEl;
@@ -1289,10 +1866,167 @@
 							<p class="text-sm ui-stat-label">Accuracy</p>
 							<div class="text-3xl font-bold ui-stat-value">${finalAccuracy.toFixed(0)}%</div>
 						</div>
+			
 					</div>
 				</div>
 			`;
 		};
+
+		// --- Global variable for the trend chart ---
+		let wpmTrendChart;
+
+		// --- A. Main function to show and populate the report ---
+		function displayFullReport() {
+			const reportData = processHistoricalData();
+			calculateAndDisplayLifetimeStats();
+
+			// Populate the stats
+			document.getElementById('stats-current-streak').textContent = `${reportData.stats.currentStreak} days`;
+			document.getElementById('stats-longest-streak').textContent = `${reportData.stats.longestStreak} days`;
+			document.getElementById('stats-avg-wpm').textContent = reportData.stats.avgWpmLast30d.toFixed(1);
+			document.getElementById('stats-avg-acc').textContent = `${reportData.stats.avgAccLast30d.toFixed(1)}%`;
+
+			// Render the default view (heatmap)
+			renderHeatmap(reportData.heatmapData);
+			// Prepare the WPM trend graph (it starts hidden)
+			renderWpmTrendGraph(reportData.wpmTrendData);
+		}
+
+		// --- B. Function to render the heatmap ---
+
+		function renderHeatmap(data) {
+			const container = document.getElementById('heatmap-container');
+			const monthsContainer = document.getElementById('heatmap-months-container');
+			container.innerHTML = '';
+			monthsContainer.innerHTML = '';
+
+			const dates = Object.keys(data);
+			if (dates.length === 0) {
+				container.innerHTML = '<p class="text-center ui-secondary-text col-span-full">No activity yet. Start typing to see your progress!</p>';
+				return;
+			}
+
+			dates.sort(); // Sort dates chronologically to find the first one
+			const firstPracticeDate = new Date(dates[0] + "T00:00:00");
+
+			const startDate = new Date(firstPracticeDate);
+			const endDate = new Date(startDate);
+			endDate.setDate(startDate.getDate() + 365); // Set the window to be 1 year from the start date
+
+			container.style.display = 'grid';
+			container.style.gridTemplateRows = 'repeat(7, 1fr)';
+			container.style.gridAutoFlow = 'column';
+			container.style.gap = '3px';
+
+			// Add blank days at the beginning to align the first day of practice correctly on the grid
+			for (let i = 0; i < startDate.getDay(); i++) {
+				const blankSquare = document.createElement('div');
+				blankSquare.style.width = '15px';
+				blankSquare.style.height = '15px';
+				container.appendChild(blankSquare);
+			}
+
+			// Loop from the first practice day for 365 days
+			for (let d = new Date(startDate); d <= endDate; d.setDate(d.getDate() + 1)) {
+				const daySquare = document.createElement('div');
+				daySquare.style.width = '15px';
+				daySquare.style.height = '15px';
+				daySquare.style.borderRadius = '2px';
+
+				const dateString = d.toISOString().split('T')[0];
+				const secondsTyped = data[dateString] || 0;
+
+				let color = getThemeColorWithOpacity('--theme-ui-bright', 0.05);
+				if (secondsTyped > 0) {
+					const minutesTyped = secondsTyped / 60;
+					const goalMinutes = (loadSettings().dailyGoalInMinutes || 30);
+					const percentageOfGoal = Math.min(1, minutesTyped / goalMinutes);
+					if (percentageOfGoal < 0.25) color = getThemeColorWithOpacity('--theme-ui-bright', 0.2);
+					else if (percentageOfGoal < 0.5) color = getThemeColorWithOpacity('--theme-ui-bright', 0.4);
+					else if (percentageOfGoal < 1) color = getThemeColorWithOpacity('--theme-ui-bright', 0.7);
+					else color = getThemeColorWithOpacity('--theme-ui-bright', 1.0);
+				}
+
+				daySquare.style.backgroundColor = color;
+				daySquare.title = `${dateString}: ${Math.round(secondsTyped / 60)} minutes typed`;
+				container.appendChild(daySquare);
+			}
+		}
+
+	
+		// --- C. Function to render the WPM trend graph ---
+
+		function renderWpmTrendGraph(data) {
+			const ctx = document.getElementById('wpm-trend-chart').getContext('2d');
+			if (wpmTrendChart) {
+				wpmTrendChart.destroy();
+			}
+			const themeStyles = getComputedStyle(document.body);
+			const brightTextColor = themeStyles.getPropertyValue('--theme-ui-bright').trim(); 
+			const wpmColor = themeStyles.getPropertyValue('--theme-ui-medium').trim();
+
+			wpmTrendChart = new Chart(ctx, {
+				type: 'bar',
+				data: {
+					labels: data.labels,
+					datasets: [{
+						label: 'Weekly Avg WPM',
+						data: data.wpm,
+						backgroundColor: wpmColor,
+					}]
+				},
+				options: {
+					aspectRatio: 4,
+					plugins: {
+						legend: { display: false }
+					},
+					scales: {
+						y: { // Simplified Y axis for WPM
+							beginAtZero: true,
+							title: { display: true, text: 'WPM', color: brightTextColor },
+							ticks: { color: brightTextColor },
+							grid: { color: 'rgba(255, 255, 255, 0.1)' }
+						},
+						x: {
+							ticks: { color: brightTextColor },
+							grid: { display: false }
+						}
+					}
+				}
+			});
+		}
+		
+		document.addEventListener('DOMContentLoaded', () => {
+			const fullReportBtn = document.getElementById('full-report-btn');
+			const historyChartContainer = document.getElementById('history-chart-container');
+			const fullReportViewEl = document.getElementById('full-report-view');
+			const heatmapContainer = document.getElementById('heatmap-container');
+			const wpmTrendChartEl = document.getElementById('wpm-trend-chart');
+			const historyTitle = document.querySelector('.ui-chart-container h3');
+
+			// Main toggle for the report
+
+			fullReportBtn.addEventListener('click', () => {
+				const isReportHidden = fullReportViewEl.classList.contains('hidden');
+				const chartToggleButton = document.getElementById('chart-toggle-btn');
+
+				if (isReportHidden) {
+					historyChartContainer.classList.add('hidden');
+					fullReportViewEl.classList.remove('hidden');
+					displayFullReport();
+					fullReportBtn.textContent = 'Back to History';
+					historyTitle.textContent = 'Typing Statistics';
+					chartToggleButton.style.visibility = 'hidden';
+				} else {
+					fullReportViewEl.classList.add('hidden');
+					historyChartContainer.classList.remove('hidden');
+					fullReportBtn.textContent = 'Full Report';
+					historyTitle.textContent = 'Performance History';
+					chartToggleButton.style.visibility = 'visible';
+				}
+			});
+
+		});
 		
         // --- HELPER FUNCTION TO CONVERT BLOB URL TO BASE64 ---
         const blobUrlToBase64 = (url) => {
@@ -1321,7 +2055,7 @@
 					await book.ready;
 					
 					const metadata = book.packaging.metadata;
-					let coverBase64 = null; // Default the cover to null
+					let coverBase64 = null;
 
 					try {
 						const coverUrl = await book.coverUrl();
@@ -1411,7 +2145,9 @@
                 .replace(/[\u2018\u2019]/g, "'")      // Curly Single Quotes: ‘ ’ → '
                 .replace(/[\u2013\u2014]/g, '-')      // En & Em Dashes: – — → -
                 .replace(/\u2026/g, '...')          // Ellipsis Character: … → ...
-                .replace(/\.\s\.\s\./g, '...');    // Spaced Ellipsis: . . . → ...
+                .replace(/\.\s\.\s\./g, '...')   // Spaced Ellipsis: . . . → ...
+				.replace(/\s+/g, ' ')              // Collapse multiple spaces into one
+				.replace(/\u00A0/g, ' ');           // Replace non-breaking spaces with regular spaces
         };
 
 		const startTypingBook = (book) => {
@@ -1422,19 +2158,15 @@
                 const choice = book.userChapterChoices[index];
                 return choice && choice.status === 'type';
             });
-    
-            chapterSelector.innerHTML = '';
-            chapterMarkers.forEach((marker, index) => {
-                const option = document.createElement('option');
-                option.value = index;
-                option.textContent = marker.title;
-                chapterSelector.appendChild(option);
-            });
-            chapterSelectorContainer.classList.remove('hidden');
             
-			showTypingView();
+			showTypingView(book);
 			
             applySettings();
+			
+			updateDailyGoalDisplay();
+			const today = new Date().toISOString().split('T')[0];
+			const progress = loadDailyProgress();
+			secondsPracticedToday = progress[today] || 0;
 
             const resumed = loadProgress();
 
@@ -1446,6 +2178,7 @@
     
             initializeChart();
             loadChapter(resumed ? currentChapterIndex : 0, resumed);
+			populateChapterNavMenu();
         };
 
 		const loadChapter = (chapterIndex, isResuming = false) => {
@@ -1457,7 +2190,6 @@
 
 			const isNewChapter = currentChapterIndex !== chapterIndex;
 			currentChapterIndex = chapterIndex;
-			chapterSelector.value = chapterIndex;
 
 			const marker = chapterMarkers[currentChapterIndex];
 			const chapterHtml = marker.htmlContent;
@@ -1484,7 +2216,6 @@
 
 			const chapterWordCount = countWords(currentChapterParagraphs.map(p => p.text).join(' '));
 			currentChapterWordCount = chapterWordCount;
-			chapterStatsDisplay.innerHTML = `Current Chapter: <span class="font-bold text-white" style="font-family: 'Noto Sans', sans-serif;">${marker.title}</span> | Total Words: <span class="font-bold text-white">${chapterWordCount}</span>`;
 			
 			const paragraphsDone = history.chapterIndices.filter(i => i === currentChapterIndex).length;
 			paragraphCountDisplay.textContent = `${paragraphsDone} / ${currentChapterParagraphs.length}`;
@@ -1501,8 +2232,6 @@
 				activateNextParagraph(true);
 			}
 		};
-
-    // --- END OF LOGIC ---
 
 		const renderChapter = (isResuming) => {
 			let html = '';
@@ -1562,14 +2291,23 @@
 				const topPos = paragraphEl.getBoundingClientRect().top - currentContentEl.getBoundingClientRect().top + currentContentEl.scrollTop;
 				currentContentEl.scrollTop = topPos;
 
-				currentContentEl.focus({ preventScroll: true }); 
-				startTest();
-				setTimeout(updateCursor, 0);
+				// Query the DOM once and cache the spans
+				currentParagraphSpans = Array.from(paragraphEl.querySelectorAll('.char-span'));
+				
+				// Reset and set the initial cursor
+				if (currentCursorSpan) currentCursorSpan.classList.remove('cursor');
+				if (currentParagraphSpans.length > 0) {
+					currentCursorSpan = currentParagraphSpans[0];
+					currentCursorSpan.classList.add('cursor');
+				}
+
+				currentContentEl.focus({ preventScroll: true });
 			}
 		};
 
         const skipParagraph = () => {
-    // Highlight the skipped paragraph
+		    stopDailyProgressTimer();
+			// Highlight the skipped paragraph
             const paragraphEl = document.querySelector(`[data-paragraph-index="${currentParagraphIndexInChapter}"]`);
             if (paragraphEl) {
                 paragraphEl.querySelectorAll('.char-span').forEach(span => span.className = 'char-span skipped');
@@ -1587,19 +2325,24 @@
             history.overallWpmHistory.push(lastOverallWpm);
             history.cumulativeWords.push(overallStats.cumulativeWordCount); // Word count doesn't increase
 
-    // Record the location
+			// Record the location
             history.chapterIndices.push(currentChapterIndex);
     
             const lastCumulativeWordsInChapter = history.cumulativeWordsInChapter.length > 0 ? history.cumulativeWordsInChapter[history.cumulativeWordsInChapter.length-1] : 0;
             history.cumulativeWordsInChapter.push(lastCumulativeWordsInChapter);
             history.paragraphWordCounts.push(0); // 0 words were contributed
 
-    // Update the UI
+			// Update the UI
             const paragraphsDone = history.chapterIndices.filter(i => i === currentChapterIndex).length;
             paragraphCountDisplay.textContent = `${paragraphsDone} / ${currentChapterParagraphs.length}`;
             updateChart(); // This will register the "null" data point, creating a gap in the chart
 
-    // Move to the next paragraph
+			// Move to the next paragraph
+			if (currentParagraphIndexInChapter === currentChapterParagraphs.length - 1) {
+				// This was the last paragraph!
+				console.log("Chapter complete!");
+				triggerFullscreenConfetti();
+			}
             activateNextParagraph(true);
             saveProgress();
         };
@@ -1611,9 +2354,6 @@
             paragraphKeyPressLog = [];
             liveAccuracyLog = [];
             currentUserInput = '';
-            liveWpmDisplay.textContent = '0';
-            liveAccuracyDisplay.textContent = '100%';
-			// Clear the analysis for the new paragraph
 			currentParagraphAnalysis = {
 			    bigrams: {},
 				trigrams: {},
@@ -1641,7 +2381,7 @@
 					const rawBigram = `${prevChar}${key}`;
 					const bigram = rawBigram.toLowerCase();
 
-					if (!analysis.bigrams[bigram]) {
+					if (!analysis.bigrams[bigram] || !analysis.bigrams[bigram].events) {
 						analysis.bigrams[bigram] = { delays: [], errors: 0 };
 					}
 					// Only log the delay if no capital letters were involved
@@ -1676,7 +2416,7 @@
 					const rawTrigram = `${prevChar1}${prevChar2}${key}`;
 					const trigram = rawTrigram.toLowerCase();
 
-					if (!analysis.trigrams[trigram]) {
+					if (!analysis.trigrams[trigram] || !analysis.trigrams[trigram].events) {
 						analysis.trigrams[trigram] = { delays: [], errors: 0 };
 					}
 					// Only log the delay if no capital letters were involved
@@ -1693,6 +2433,10 @@
 
         const startTest = () => {
             isTestActive = true;
+			if (!dailyProgressTimer) { // Only start if it's not already running
+				paragraphStartTime = Date.now();
+				dailyProgressTimer = setInterval(updateLiveTimer, 1000);
+			}
         };
 
 		const handleKeyPress = (e) => {
@@ -1711,15 +2455,18 @@
 			if (e.key === 'Enter') {
 				if (isDrillActive) return; // Enter does nothing in drill mode
 				if (e.shiftKey) { skipParagraph(); return; }
+				console.log(`Comparing lengths: Input=${currentUserInput.length}, Source=${currentParagraphText.length}`);
 				if (currentUserInput.length === currentParagraphText.length && isTestActive) {
 					finishParagraph();
 				}
 				return;
 			} else if (e.key === 'Tab') {
 				if (e.shiftKey) {
+				    stopDailyProgressTimer(); 
 					if (currentUserInput.length === 0) goToPreviousParagraph();
 					return;
 				}
+				stopDailyProgressTimer();
 				resetParagraphState();
 				const paragraphEl = currentContentEl.querySelector(`[data-paragraph-index="${currentParagraphIndexInChapter}"]`);
 				if (paragraphEl) {
@@ -1728,14 +2475,22 @@
 				activateNextParagraph(false);
 			} else if (e.key === 'Backspace') {
 				if (currentUserInput.length > 0) {
-					currentUserInput = currentUserInput.slice(0, -1);
+					// If Ctrl key is pressed, delete the whole word
+					if (e.ctrlKey) {
+						// Find the last space before the current cursor position
+						const lastSpaceIndex = currentUserInput.trimEnd().lastIndexOf(' ');
+						// If a space is found, slice up to that space, otherwise delete everything
+						currentUserInput = (lastSpaceIndex !== -1) ? currentUserInput.slice(0, lastSpaceIndex + 1) : '';
+					} else {
+						// Otherwise, delete just one character (the original behavior)
+						currentUserInput = currentUserInput.slice(0, -1);
+					}
 					paragraphKeyPressLog.push({ char: 'Backspace', time: Date.now() });
 				}
 			} else if (e.key.length === 1) {
 				if (!isTestActive) startTest();
 				if (currentUserInput.length < currentParagraphText.length) {
 					const isCorrect = currentParagraphText[currentUserInput.length] === e.key;
-					logKeyPressAnalysis(e.key, isCorrect);
 					currentUserInput += e.key;
 					paragraphKeyPressLog.push({ char: e.key, time: Date.now() });
 					liveAccuracyLog.push(isCorrect);
@@ -1743,6 +2498,9 @@
 					// Auto-finish logic for drills
 					if (isDrillActive && currentUserInput.length === drillTargetLength) {
 						finishDrill();
+					}
+					if (e.key === ' ') {
+						checkAndScrollCursorIntoView();
 					}
 				}
 			}
@@ -1801,14 +2559,83 @@
 			}
 		};
 
+		let dailyGoalChart;
+
+		function updateDailyProgress(secondsToAdd) {
+			const today = new Date().toISOString().split('T')[0];
+			const progress = loadDailyProgress();
+			
+			// Get the time BEFORE adding the new value
+			const timeBeforeUpdate = progress[today] || 0;
+			const newTime = timeBeforeUpdate + secondsToAdd;
+			progress[today] = newTime;
+			saveDailyProgress(progress);
+
+			// Check if the goal was just crossed
+			const dailyGoalSeconds = (loadSettings().dailyGoalInMinutes || 30) * 60;
+			if (timeBeforeUpdate < dailyGoalSeconds && newTime >= dailyGoalSeconds) {
+				console.log("Daily goal reached!");
+				confetti();
+			}
+
+			// Now update the UI
+			updateDailyGoalDisplay();
+		}
+
+		function initializeDailyGoalChart() {
+			const ctx = document.getElementById('daily-goal-chart').getContext('2d');
+			const themeStyles = getComputedStyle(document.body);
+			const accentColor = themeStyles.getPropertyValue('--theme-ui-accent').trim();
+			const bgColor = themeStyles.getPropertyValue('--theme-ui-bg').trim();
+
+			dailyGoalChart = new Chart(ctx, {
+				type: 'doughnut',
+				data: {
+					datasets: [{
+						data: [0, 100], // [Progress, Remainder]
+						backgroundColor: [accentColor, bgColor],
+						borderWidth: 0
+					}]
+				},
+				options: {
+					responsive: true,
+					cutout: '70%',
+					plugins: { tooltip: { enabled: false } },
+					events: [] // Disable all events on the chart
+				}
+			});
+		}
+
+		function updateDailyGoalDisplay(liveSecondsPracticed) {
+			const settings = loadSettings(); 
+			const dailyGoalSeconds = (settings.dailyGoalInMinutes || 30) * 60;
+
+			// If liveSecondsPracticed is provided, use it. Otherwise, use the stored value.
+			const secondsPracticed = liveSecondsPracticed !== undefined ? liveSecondsPracticed : secondsPracticedToday;
+			
+			const minutesPracticed = Math.floor(secondsPracticed / 60);
+			const percentComplete = Math.min(100, (secondsPracticed / dailyGoalSeconds) * 100);
+
+			const progressBar = document.getElementById('daily-progress-bar');
+			const goalTextEl = document.getElementById('daily-goal-text');
+
+			if (progressBar) {
+				progressBar.style.width = `${percentComplete}%`;
+			}
+			if (goalTextEl) {
+				goalTextEl.textContent = `${minutesPracticed}/${settings.dailyGoalInMinutes || 30} min (${Math.floor(percentComplete)}%)`;
+			}
+		}
 		const finishParagraph = () => {
+		    stopDailyProgressTimer();
 			const sourceText = currentChapterParagraphs[currentParagraphIndexInChapter].text;
 			if (paragraphKeyPressLog.length < 2) {
 				activateNextParagraph();
 				return;
 			};
-			const timeElapsed = (paragraphKeyPressLog[paragraphKeyPressLog.length - 1].time - paragraphKeyPressLog[0].time) / 1000;
-
+			const timeElapsed = (paragraphKeyPressLog[paragraphKeyPressLog.length - 1].time - paragraphKeyPressLog[0].time) / 1000
+			;
+			
 			let correctChars = 0;
 			for (let i = 0; i < currentUserInput.length; i++) {
 				if (sourceText[i] === currentUserInput[i]) correctChars++;
@@ -1850,6 +2677,10 @@
 			history.rawTypedChars.push(typedChars);
 			history.paragraphWordCounts.push(paragraphWordCount);
 			history.chapterIndices.push(currentChapterIndex);
+            
+            // --- Add the precise timestamp ---
+            if (!history.timestamps) history.timestamps = [];
+            history.timestamps.push(Date.now());
 
 			let currentChapterCumulative = 0;
 			for (let i = 0; i < history.paragraphWordCounts.length; i++) {
@@ -1864,8 +2695,6 @@
 			overallStats.totalTime += timeElapsed;
 			const overallWPM = ((overallStats.totalTypedChars / CHARS_PER_WORD) / (overallStats.totalTime / 60)) || 0;
 			const overallAccuracy = Math.round((overallStats.totalCorrectChars / overallStats.totalTypedChars) * 100) || 0;
-			overallWpmDisplay.textContent = overallWPM.toFixed(1);
-			overallAccuracyDisplay.textContent = `${overallAccuracy}%`;
 			const newCount = history.labels.length + 1;
 			history.wpm.push(paragraphWPM);
 			history.accuracy.push(paragraphAccuracy);
@@ -1873,13 +2702,18 @@
 			history.cumulativeWords.push(overallStats.cumulativeWordCount);
 			history.labels.push(`P${newCount}`);
 			paragraphCountDisplay.textContent = `${history.chapterIndices.filter(i => i === currentChapterIndex).length} / ${currentChapterParagraphs.length}`;
+			performPostParagraphAnalysis();
 			analyzeAndSaveParagraphStats();
 			updateChart();
+			if (currentParagraphIndexInChapter === currentChapterParagraphs.length - 1) {
+				console.log("Chapter complete!");
+				triggerFullscreenConfetti();
+			}
 			activateNextParagraph();
 			saveProgress();
 		};
 
-        const goToPreviousParagraph = () => {
+		const goToPreviousParagraph = () => {
             // Check if there's any history to go back to.
             if (history.wpm.length === 0) return;
 
@@ -1908,6 +2742,7 @@
             history.rawTimes.pop();
             history.rawCorrectChars.pop();
             history.rawTypedChars.pop();
+            if (history.timestamps) history.timestamps.pop();
 
             // 5. Decrement overall stats.
             overallStats.totalTime -= lastTime;
@@ -1938,8 +2773,6 @@
             // 7. Update all stats displays.
             const overallWPM = overallStats.totalTime > 0 ? ((overallStats.totalTypedChars / CHARS_PER_WORD) / (overallStats.totalTime / 60)) : 0;
             const overallAccuracy = overallStats.totalTypedChars > 0 ? Math.round((overallStats.totalCorrectChars / overallStats.totalTypedChars) * 100) : 100;
-            overallWpmDisplay.textContent = overallWPM.toFixed(1);
-            overallAccuracyDisplay.textContent = `${overallAccuracy}%`;
             
             const paragraphsDone = history.chapterIndices.filter(i => i === currentChapterIndex).length;
             paragraphCountDisplay.textContent = `${paragraphsDone} / ${currentChapterParagraphs.length}`;
@@ -1949,51 +2782,42 @@
         };
 
 		const updateHighlighting = () => {
-			const paragraphEl = currentContentEl.querySelector(`[data-paragraph-index="${currentParagraphIndexInChapter}"]`);
-			if (!paragraphEl) return;
-
-			const spans = paragraphEl.querySelectorAll('.char-span');
 			const sourceText = currentChapterParagraphs[currentParagraphIndexInChapter].text;
+			const inputLength = currentUserInput.length;
 
-			for (let i = 0; i < sourceText.length; i++) {
-				if (i < currentUserInput.length) {
-					spans[i].className = currentUserInput[i] === sourceText[i] ? 'char-span correct' : 'char-span incorrect-char';
-				} else {
-					spans[i].className = 'char-span untyped';
+			if (inputLength > 0) {
+				const lastTypedIndex = inputLength - 1;
+				if (lastTypedIndex < currentParagraphSpans.length) {
+					currentParagraphSpans[lastTypedIndex].className = currentUserInput[lastTypedIndex] === sourceText[lastTypedIndex] 
+						? 'char-span correct' 
+						: 'char-span incorrect-char';
 				}
+			}
+			
+			// If user backspaced, reset the upcoming character to untyped
+			if (inputLength < currentParagraphSpans.length) {
+				currentParagraphSpans[inputLength].className = 'char-span untyped';
 			}
 		};
 
 		const updateCursor = () => {
-			const paragraphEl = currentContentEl.querySelector(`[data-paragraph-index="${currentParagraphIndexInChapter}"]`);
-			if (!paragraphEl) return;
+			if (currentCursorSpan) {
+				currentCursorSpan.classList.remove('cursor');
+			}
 
-			document.querySelectorAll('.cursor').forEach(el => el.classList.remove('cursor'));
-
-			const spans = paragraphEl.querySelectorAll('.char-span');
 			const cursorPosition = currentUserInput.length;
 
-			if (cursorPosition < spans.length) {
-				const cursorSpan = spans[cursorPosition];
-				cursorSpan.classList.add('cursor');
-
-				const container = currentContentEl;
-				const containerRect = container.getBoundingClientRect();
-				const cursorRect = cursorSpan.getBoundingClientRect();
-
-				const containerMidpoint = containerRect.top + (containerRect.height / 2);
-
-				if (cursorRect.top > containerMidpoint) {
-					const scrollOffset = cursorRect.top - containerMidpoint;
-					const newScrollTop = container.scrollTop + scrollOffset;
-					container.scrollTo({
-						top: newScrollTop,
-						behavior: 'smooth'
-					});
-				}
+			if (cursorPosition < currentParagraphSpans.length) {
+				currentCursorSpan = currentParagraphSpans[cursorPosition];
+				currentCursorSpan.classList.add('cursor');
 			} else {
-				const endTarget = paragraphEl.querySelector('.end-cursor-target');
-				if (endTarget) endTarget.classList.add('cursor');
+				// Handle cursor at the end of the paragraph
+				currentCursorSpan = null; 
+				const paragraphEl = currentContentEl.querySelector(`[data-paragraph-index="${currentParagraphIndexInChapter}"]`);
+				if (paragraphEl) { // Added a check to prevent errors
+					const endTarget = paragraphEl.querySelector('.end-cursor-target');
+					if (endTarget) endTarget.classList.add('cursor');
+				}
 			}
 		};
 
@@ -2009,7 +2833,6 @@
 				historyChart.destroy();
 			}
 
-			// Read the theme colors from the CSS variables
 			const themeStyles = getComputedStyle(document.body);
 			const textColor = themeStyles.getPropertyValue('--theme-ui-medium').trim() || '#d1d5db';
 			const gridColor = 'rgba(255, 255, 255, 0.1)';
@@ -2020,13 +2843,37 @@
 					responsive: true,
 					interaction: { mode: 'index', intersect: false },
 					scales: {
-						x: { title: { display: true, text: 'Words Typed', color: textColor }, grid: { color: gridColor }, ticks: { color: textColor } },
-						y: { type: 'linear', display: true, position: 'left', title: { display: true, text: 'WPM', color: textColor }, grid: { color: gridColor }, ticks: { color: textColor }, beginAtZero: false }
+						x: { type: 'category', title: { display: true, text: 'Words Typed in Chapter', color: textColor }, grid: { color: gridColor }, ticks: { color: textColor } },
+						y: { type: 'linear', display: true, position: 'left', title: { display: true, text: 'WPM', color: textColor }, grid: { color: gridColor }, ticks: { color: textColor }, beginAtZero: true }
 					},
 					plugins: { 
 						legend: { labels: { color: textColor }},
-						tooltip: { callbacks: { label: function(context) {
-						}}}
+						tooltip: {
+							callbacks: {
+								title: function(context) {
+									// Use the custom label like "P1", "P2", etc. as the title
+									const index = context[0].dataIndex;
+									return `Paragraph ${history.labels[index].replace('P', '')}`;
+								},
+								label: function(context) {
+									// Get the index of the paragraph being hovered
+									const index = context.dataIndex;
+									const wpm = history.wpm[index];
+									const accuracy = history.accuracy[index];
+
+									// Handle case where paragraph was skipped
+									if (wpm === null) {
+										return '  Skipped';
+									}
+									
+									// Return an array of strings, where each string is a new line
+									return [
+										`  WPM: ${wpm.toFixed(1)}`,
+										`  Accuracy: ${accuracy.toFixed(0)}%`
+									];
+								}
+							}
+						}
 					}
 				}
 			});
@@ -2037,7 +2884,7 @@
 
 			const themeStyles = getComputedStyle(document.body);
 			const barColor = themeStyles.getPropertyValue('--theme-ui-medium').trim() || '#60a5fa';
-			const textColor = themeStyles.getPropertyValue('--theme-ui-medium').trim() || '#d1d5db';
+			const textColor = themeStyles.getPropertyValue('--theme-ui-bright').trim() || '#d1d5db';
 
 			historyChart.options.scales.x.title.color = textColor;
 			historyChart.options.scales.x.ticks.color = textColor;
@@ -2071,14 +2918,14 @@
 						dataIndices.push(i);
 					}
 				}
-				const barData = dataIndices.map(i => ({ x: history.cumulativeWordsInChapter[i], y: history.wpm[i] }));
-				historyChart.data.datasets[0].data = barData;
-				historyChart.data.datasets[0].backgroundColor = barColor;
-				historyChart.data.datasets[0].label = 'Paragraph WPM';
-				historyChart.options.scales.x.type = 'linear';
-				historyChart.options.scales.x.title.text = 'Words Typed in Chapter';
-				historyChart.options.scales.x.min = 0;
-				historyChart.options.scales.x.max = currentChapterWordCount;
+				const chapterData = dataIndices.map(i => history.wpm[i]);
+				const chapterLabels = dataIndices.map(i => history.labels[i]);
+				historyChart.data.labels = chapterLabels;
+				historyChart.data.datasets[0].data = chapterData;
+				historyChart.data.datasets[0].backgroundColor = barColor; 
+				historyChart.data.datasets[0].label = 'Paragraph WPM'; 
+				historyChart.options.scales.x.type = 'category'; 
+				historyChart.options.scales.x.title.text = 'Paragraphs in Chapter';
 			}
 
 			const allWpms = isShowingAllHistory ? historyChart.data.datasets[0].data.filter(w => w > 0) : history.wpm.filter((w, i) => w !== null && dataIndices.includes(i));
@@ -2094,30 +2941,145 @@
 			historyChart.update();
 		};
 
-        function wrapCharsInSpans(htmlString) {
-            const tempDiv = document.createElement('div');
-            tempDiv.innerHTML = htmlString;
+		function performPostParagraphAnalysis() {
+			// Reset the analysis object for the new paragraph
+			currentParagraphAnalysis = { bigrams: {}, trigrams: {}, entryDelays: {} };
 
-            function wrapNode(node) {
-                if (node.nodeType === Node.TEXT_NODE) {
-                    const text = node.textContent;
-                    const fragment = document.createDocumentFragment();
-                    for (const char of text) {
-                        const span = document.createElement('span');
-                        span.className = 'char-span untyped';
-                        span.textContent = char;
-                        fragment.appendChild(span);
-                    }
-                    node.parentNode.replaceChild(fragment, node);
-                } else if (node.nodeType === Node.ELEMENT_NODE) {
-                    const children = Array.from(node.childNodes);
-                    children.forEach(wrapNode);
-                }
-            }
+			// Loop through the entire keypress log once, after the paragraph is done
+			for (let i = 1; i < paragraphKeyPressLog.length; i++) {
+				const currentEvent = paragraphKeyPressLog[i];
+				const prevEvent = paragraphKeyPressLog[i - 1];
+				
+				// Ensure we are only analyzing typed characters
+				if (currentEvent.char.length > 1 || prevEvent.char.length > 1) continue;
 
-            wrapNode(tempDiv);
-            return tempDiv.innerHTML;
-        }
+				const key = currentEvent.char;
+				const isLetter = /^[a-zA-Z]$/.test(key);
+				if (!isLetter) continue;
+
+				const delay = currentEvent.time - prevEvent.time;
+				const sourceText = currentChapterParagraphs[currentParagraphIndexInChapter].text;
+				
+				// We need to determine the position in the source text to check for correctness
+				let currentInput = '';
+				for(let j=0; j<=i; j++) {
+					if (paragraphKeyPressLog[j].char.length === 1) {
+						currentInput += paragraphKeyPressLog[j].char;
+					} else if (paragraphKeyPressLog[j].char === 'Backspace') {
+						currentInput = currentInput.slice(0, -1);
+					}
+				}
+				const charIndex = currentInput.length - 1;
+				const isCorrect = sourceText[charIndex] === key;
+
+				// --- Bigram Analysis ---
+				const prevChar = prevEvent.char;
+				if (/^[a-zA-Z]$/.test(prevChar)) {
+					const rawBigram = `${prevChar}${key}`;
+					const bigram = rawBigram.toLowerCase();
+					if (!currentParagraphAnalysis.bigrams[bigram]) {
+						currentParagraphAnalysis.bigrams[bigram] = { delays: [], errors: 0 };
+					}
+					if (!/[A-Z]/.test(rawBigram)) {
+						currentParagraphAnalysis.bigrams[bigram].delays.push(delay);
+					}
+					if (!isCorrect) {
+						currentParagraphAnalysis.bigrams[bigram].errors++;
+					}
+				}
+
+				// --- Trigram Analysis ---
+				if (i >= 2) {
+					const prevEvent2 = paragraphKeyPressLog[i - 2];
+					const prevChar1 = prevEvent2.char;
+					const prevChar2 = prevEvent.char;
+					if (/^[a-zA-Z]$/.test(prevChar1) && /^[a-zA-Z]$/.test(prevChar2)) {
+						const rawTrigram = `${prevChar1}${prevChar2}${key}`;
+						const trigram = rawTrigram.toLowerCase();
+						if (!currentParagraphAnalysis.trigrams[trigram]) {
+							currentParagraphAnalysis.trigrams[trigram] = { delays: [], errors: 0 };
+						}
+						if (!/[A-Z]/.test(rawTrigram)) {
+							const delay2 = prevEvent.time - prevEvent2.time;
+							currentParagraphAnalysis.trigrams[trigram].delays.push(delay + delay2);
+						}
+						if (!isCorrect) {
+							currentParagraphAnalysis.trigrams[trigram].errors++;
+						}
+					}
+				}
+			}
+		}
+
+		function wrapCharsInSpans(htmlString) {
+			const tempDiv = document.createElement('div');
+			tempDiv.innerHTML = htmlString;
+
+			function processNode(node) {
+				// If it's an element (like <i> or <em>), we process its children
+				if (node.nodeType === Node.ELEMENT_NODE) {
+					// Create a copy of the children array because the collection is live
+					const children = Array.from(node.childNodes);
+					children.forEach(processNode);
+				}
+				// If it's a text node, we wrap its characters in spans
+				else if (node.nodeType === Node.TEXT_NODE) {
+					const text = node.textContent;
+					const fragment = document.createDocumentFragment();
+					for (const char of text) {
+						const span = document.createElement('span');
+						span.className = 'char-span untyped';
+						span.textContent = char;
+						fragment.appendChild(span);
+					}
+					node.parentNode.replaceChild(fragment, node);
+				}
+			}
+
+			processNode(tempDiv);
+			return tempDiv.innerHTML;
+		}
+		
+		// --- Chapter Navigation Menu Logic ---
+
+		function populateChapterNavMenu() {
+			navChapterMenu.innerHTML = '';
+			chapterMarkers.forEach((marker, index) => {
+				const chapterItem = document.createElement('button');
+				chapterItem.className = 'block w-full text-left p-2 rounded-md ui-secondary-text hover:ui-bright-text';
+				chapterItem.textContent = marker.title;
+				chapterItem.dataset.index = index;
+				if (index === currentChapterIndex) {
+					chapterItem.classList.add('ui-bright-text');
+					chapterItem.classList.remove('ui-secondary-text');
+				}
+				navChapterMenu.appendChild(chapterItem);
+			});
+		}
+
+		navBookTitleBtn.addEventListener('click', (e) => {
+			e.stopPropagation(); // Prevents the window click listener from firing immediately
+			navChapterMenu.classList.toggle('hidden');
+		});
+
+		navChapterMenu.addEventListener('click', (e) => {
+			const target = e.target.closest('button');
+			if (target && target.dataset.index) {
+				const newChapterIndex = parseInt(target.dataset.index);
+				if (newChapterIndex !== currentChapterIndex) {
+					loadChapter(newChapterIndex);
+					populateChapterNavMenu(); // Re-populate to update the highlight
+				}
+				navChapterMenu.classList.add('hidden');
+			}
+		});
+
+		// Hide the menu if clicking outside of it
+		window.addEventListener('click', () => {
+			if (!navChapterMenu.classList.contains('hidden')) {
+				navChapterMenu.classList.add('hidden');
+			}
+		});
 
         // --- EVENT LISTENERS ---
         document.addEventListener('DOMContentLoaded', setupUser);
@@ -2133,6 +3095,48 @@
                 }
             });
         }
+		
+		// --- Navigation Bar Listeners ---
+		navTypingBtn.addEventListener('click', () => {
+			const library = getLibrary();
+			const currentBook = library.find(b => b.identifier === currentBookIdentifier);
+			if (currentBook) {
+				showTypingView(currentBook);
+			}
+		});
+		
+        navLibraryBtn.addEventListener('click', () => {
+            if (isTestActive) {
+                saveProgress();
+            }
+            stopDailyProgressTimer();
+            showLibraryView();
+        });
+
+		navReportsBtn.addEventListener('click', () => {
+            // Find the current book from the library to pass its data
+            const library = getLibrary();
+            const currentBook = library.find(b => b.identifier === currentBookIdentifier);
+            if (currentBook) {
+                showReportsView(currentBook);
+                const fullReportViewEl = document.getElementById('full-report-view');
+                // If the user is navigating here and the full report is what's showing,
+                // then force it to refresh its data.
+                if (!fullReportViewEl.classList.contains('hidden')) {
+                    displayFullReport();
+                }
+            }
+			
+        });
+        navSettingsBtn.addEventListener('click', () => {
+            populateSettingsModal();
+            settingsModal.classList.remove('hidden');
+        });
+
+        navChangeUserBtn.addEventListener('click', () => {
+            showLibraryView();
+            showProfileSwitcher();
+        });
         
         // Profile Switcher Listeners
         profileSwitcherModal.addEventListener('click', (e) => {
@@ -2153,7 +3157,7 @@
         cancelAddBookBtn.addEventListener('click', () => { tempBookData = {}; chapterSelectionModal.classList.add('hidden'); showFileLoaderView(); });
 
         // Typing View Listeners
-        exitToLibraryBtn.addEventListener('click', () => { saveProgress(); showLibraryView(); });
+
         document.addEventListener('keydown', handleKeyPress);
         chartToggleButton.addEventListener('click', () => { isShowingAllHistory = !isShowingAllHistory; chartToggleButton.textContent = isShowingAllHistory ? 'Show Current Chapter' : 'Show Entire Book'; updateChart(); });
         libraryList.addEventListener('click', (e) => {
@@ -2178,14 +3182,6 @@
             dropZone.classList.remove('drag-over');
             if (e.dataTransfer.files.length > 0) {
                 handleFile(e.dataTransfer.files[0]);
-            }
-        });
-
-
-        chapterSelector.addEventListener('change', (e) => {
-            const newChapterIndex = parseInt(e.target.value);
-            if (newChapterIndex !== currentChapterIndex) {
-                loadChapter(newChapterIndex);
             }
         });
 
@@ -2255,11 +3251,6 @@
             showFileLoaderView();
         });
 
-        settingsBtn.addEventListener('click', () => {
-            populateSettingsModal();
-            settingsModal.classList.remove('hidden');
-        });
-
         closeSettingsBtn.addEventListener('click', () => {
             settingsModal.classList.add('hidden');
         });
@@ -2285,8 +3276,6 @@
 			drillModeSection.classList.remove('flex');
 			showTypingView();
 			chapterSelectorContainer.classList.remove('hidden');
-
-			// Just tell the app to resume the chapter you were on
 			loadChapter(currentChapterIndex, true);
 		});
 
@@ -2296,15 +3285,6 @@
 		});
 
     </script>
-	<footer class="text-center py-8 text-sm ui-secondary-text">
-        <a href="https://asilver.github.io/Typing_Tomes/" target="_blank" rel="noopener noreferrer" 
-       class="hover:text-indigo-400 transition-colors">
-        View on GitHub
-        </a>
-        <span class="mx-2">|</span>
-        <span>
-        Released under the <a href="https://github.com/asilver/Typing_Tomes/blob/main/LICENSE" target="_blank" rel="noopener noreferrer" class="underline hover:text-indigo-400 transition-colors">MIT License</a>.
-        </span>
-    </footer>
+
 </body>
 </html>
