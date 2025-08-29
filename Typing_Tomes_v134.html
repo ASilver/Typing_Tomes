@@ -1585,19 +1585,15 @@
 			updateDailyGoalDisplay(baseTime + paragraphElapsedTime);
 		}
 		
-		/**
-		 * Checks if a paragraph is legitimate for typing based on its content and length.
-		 * @param {number} index The index of the paragraph in currentChapterParagraphs.
-		 * @returns {boolean} True if the paragraph is legitimate, false otherwise.
-		 */
 		function isParagraphLegitimate(index) {
 			const p = currentChapterParagraphs[index];
 			// Rule: Paragraph must exist and have text.
 			if (!p || !p.text) return false;
 			// Rule: Text must be longer than 10 characters.
 			if (p.text.length <= 10) return false;
-			// Rule: Text must contain at least one letter or number.
-			if (!/[a-zA-Z0-9]/.test(p.text)) return false;
+			
+			// Rule: Text must contain at least one letter or number from ANY language.
+			if (!/[\p{L}\p{N}]/u.test(p.text)) return false;
 			
 			// If all rules pass, it's a legitimate paragraph.
 			return true;
