@@ -20,12 +20,12 @@ To use it you can simply click on this link: **_[Typing Tomes](https://asilver.g
 # Creating a profile and adding books
 It is really pretty self-explanatory. When you first start it, you are asked to create a profile. Just enter a name and press *Save and Start*. 
 
-<img width="571" height="406" alt="image" src="https://github.com/user-attachments/assets/ddb8519d-805c-4627-b531-06b9f4fc3bec" />
+<img width="562" height="391" alt="image" src="https://github.com/user-attachments/assets/bbdb0886-1bc3-46d2-acd6-eae0cf7ef245" />
 
 You will start in the *My Library* area. Press *Add Book* and it will open a dialogue to let you add an ePub, which you can select from the folder on your computer or just drag and drop on the space. 
 Once you do this it will open your ePub and a dialogue for you to choose what you want to practice typing on or not. Books will have all manner of extras like an *Introduction*, an *Author's Note*, *Table of Contents*, and so on. 
 
-<img width="534" height="355" alt="image" src="https://github.com/user-attachments/assets/5fa691df-7320-464a-900b-1dbec556a32c" />
+<img width="501" height="357" alt="image" src="https://github.com/user-attachments/assets/d5e3eed9-b8ab-472a-9652-a550c2b7bd9a" />
 
 Select the ones you want and when done, press *Save Book to Library*. Note that this also works well for short story collections. Your ebook will now appear in the library.
 
@@ -36,15 +36,14 @@ A book is attached to a profile so if you create more than one profile, each per
 # Typing a book
 Once you open a book to start typing you will see a screen like this:
 
-<img width="869" height="278" alt="image" src="https://github.com/user-attachments/assets/285ee759-25a0-4277-af93-0c19105b849a" />
+<img width="853" height="268" alt="image" src="https://github.com/user-attachments/assets/cbb51b6b-6c3a-4b1c-9ce3-6e90aa4e31e6" />
 
 The app will track your live typing speed aandaccuracy while you type, and has a Daily Goal bar that fills in as you practice. The default is 30 minutes but you can change that in the settings. The text starts dark and become bright as you proceed, but you can also invert that to light text becoming dark in the settings.
 
-<img width="851" height="310" alt="image" src="https://github.com/user-attachments/assets/d6e86fd7-16e8-4bae-ad7e-b1fca5a5e135" />
-
 Just type and when you reach the end of the paragraph press Enter to start the next one. The clock only starts once you start typing a paragraph, so when you press Enter, the clock is stopped until you begin the new one. There is a drop-down menu to change chapters/sections.
 
-<img width="699" height="337" alt="image" src="https://github.com/user-attachments/assets/8707c819-50ec-4d1d-b040-312f3241ed4f" />
+<img width="828" height="35" alt="image" src="https://github.com/user-attachments/assets/3b994b99-53f2-40cb-a016-5c34c2da54f6" />
+
 
 There are shortcuts for the typing experience. To end a paragraph and go to the next one, press *Enter* at the end. If you want to start over midway, just press *Tab*, and if you want to skip a paragraph, just press *Shift+Enter*. Lastly, if you want to go back and redo a previous paragraph again then press *Shift+Tab*.
 
@@ -54,7 +53,8 @@ As you finish, your performance and time spent will be measured and entered into
 
 At the top there is a navigation bar to switch between areas: Library - Typing - Reports - Settings. 
 
-<img width="599" height="75" alt="image" src="https://github.com/user-attachments/assets/fdd44913-b8ae-4bfc-b97d-ae520ed0713e" />
+<img width="603" height="68" alt="image" src="https://github.com/user-attachments/assets/a7ff77a0-c4a0-4fee-8d7c-ec8c9418e775" />
+
 
 To access the reports, click on Reports.
 
