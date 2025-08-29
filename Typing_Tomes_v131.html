@@ -1585,6 +1585,24 @@
 			updateDailyGoalDisplay(baseTime + paragraphElapsedTime);
 		}
 		
+		/**
+		 * Checks if a paragraph is legitimate for typing based on its content and length.
+		 * @param {number} index The index of the paragraph in currentChapterParagraphs.
+		 * @returns {boolean} True if the paragraph is legitimate, false otherwise.
+		 */
+		function isParagraphLegitimate(index) {
+			const p = currentChapterParagraphs[index];
+			// Rule: Paragraph must exist and have text.
+			if (!p || !p.text) return false;
+			// Rule: Text must be longer than 10 characters.
+			if (p.text.length <= 10) return false;
+			// Rule: Text must contain at least one letter or number.
+			if (!/[a-zA-Z0-9]/.test(p.text)) return false;
+			
+			// If all rules pass, it's a legitimate paragraph.
+			return true;
+		}
+		
 		function processHistoricalData() {
 			// This object will hold all our calculated stats.
 			const report = {
@@ -2314,26 +2332,47 @@
             });
         };
 
+		function resetParagraphHighlight(index) {
+			const paragraphEl = currentContentEl.querySelector(`[data-paragraph-index="${index}"]`);
+			if (paragraphEl) {
+				paragraphEl.querySelectorAll('.char-span').forEach(span => span.className = 'char-span untyped');
+			}
+		}
+
 		const activateNextParagraph = (shouldIncrement = true) => {
 			resetParagraphState();
+
 			if (shouldIncrement) {
 				currentParagraphIndexInChapter++;
 			}
 
+			// Loop to skip any non-legitimate paragraphs (like dividers)
+			while (
+				currentParagraphIndexInChapter < currentChapterParagraphs.length &&
+				!isParagraphLegitimate(currentParagraphIndexInChapter)
+			) {
+				// While skipping, find the paragraph on the screen and highlight it as correct.
+				const paragraphToSkipEl = currentContentEl.querySelector(`[data-paragraph-index="${currentParagraphIndexInChapter}"]`);
+				if (paragraphToSkipEl) {
+					paragraphToSkipEl.querySelectorAll('.char-span').forEach(span => span.className = 'char-span correct');
+				}
+				currentParagraphIndexInChapter++; // Move to the next one to check
+			}
+
+			// After the loop, check if we've reached the end of the chapter
 			if (currentParagraphIndexInChapter >= currentChapterParagraphs.length) {
 				loadChapter(currentChapterIndex + 1);
 				return;
 			}
 
+			// If we've found a legitimate paragraph, activate it for typing
 			const paragraphEl = currentContentEl.querySelector(`[data-paragraph-index="${currentParagraphIndexInChapter}"]`);
 			if (paragraphEl) {
 				const topPos = paragraphEl.getBoundingClientRect().top - currentContentEl.getBoundingClientRect().top + currentContentEl.scrollTop;
 				currentContentEl.scrollTop = topPos;
 
-				// Query the DOM once and cache the spans
 				currentParagraphSpans = Array.from(paragraphEl.querySelectorAll('.char-span'));
 				
-				// Reset and set the initial cursor
 				if (currentCursorSpan) currentCursorSpan.classList.remove('cursor');
 				if (currentParagraphSpans.length > 0) {
 					currentCursorSpan = currentParagraphSpans[0];
@@ -2762,6 +2801,12 @@
             // 2. Calculate the index (within its chapter) of the paragraph we want to redo.
             // This is the number of paragraphs from that chapter already in the history, minus one.
             const paragraphIndexToGoTo = history.chapterIndices.filter(i => i === chapterOfLastParagraph).length - 1;
+
+			for (let i = currentParagraphIndexInChapter - 1; i > paragraphIndexToGoTo; i--) {
+				if (!isParagraphLegitimate(i)) {
+					resetParagraphHighlight(i);
+				}
+			}
 
             // 3. Get the raw stats for the paragraph to be "undone".
             const lastWordCount = history.paragraphWordCounts[history.paragraphWordCounts.length - 1];
