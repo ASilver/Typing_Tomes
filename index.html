@@ -2531,10 +2531,10 @@
 			if (!currentParagraphText) return;
 
 			if (e.key === 'Enter') {
+				e.stopPropagation(); // Add this line to stop the event from bubbling
 				if (isDrillActive) return; // Enter does nothing in drill mode
 				if (e.shiftKey) { skipParagraph(); return; }
-				console.log(`Comparing lengths: Input=${currentUserInput.length}, Source=${currentParagraphText.length}`);
-				if (currentUserInput.length === currentParagraphText.length && isTestActive) {
+				if (isTestActive) {
 					finishParagraph();
 				}
 				return;
