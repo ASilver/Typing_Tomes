@@ -7,6 +7,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.5/jszip.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/idb@7/build/umd.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/epubjs/dist/epub.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com">
@@ -447,7 +448,7 @@
             <button id="nav-change-user-btn" class="text-sm ui-secondary-text">(change)</button>
         </div>
 		<div class="flex items-center space-x-6 text-lg">
-			<button id="nav-library-btn" class="flex items-center gap-1 font-semibold ui-secondary-text hover:text-[--theme-ui-accent]">
+			<button id="nav-library-btn" class="flex items-center gap-1 font-semibold ui-secondary-text hover:text-[--theme-ui-accent] focus:outline-none">
 				<svg xmlns="http://www.w3.org/2000/svg"
 					 viewBox="0 0 24 24"
 					 class="w-6 h-6 fill-current" aria-hidden="true">
@@ -480,7 +481,7 @@
 				</svg>
 				<span>Library</span>
 			</button>
-			<button id="nav-typing-btn" class="flex items-center gap-2 font-semibold ui-secondary-text hover:text-[--theme-ui-accent]">
+			<button id="nav-typing-btn" class="flex items-center gap-2 font-semibold ui-secondary-text hover:text-[--theme-ui-accent] focus:outline-none">
 				<svg xmlns="http://www.w3.org/2000/svg"
 					 viewBox="0 0 24 24"
 					 class="w-6 h-6 fill-current">
@@ -503,7 +504,7 @@
 				</svg>
 				<span>Typing</span>
 			</button>
-			<button id="nav-reports-btn" class="flex items-center gap-1 font-semibold ui-secondary-text hover:text-[--theme-ui-accent]">
+			<button id="nav-reports-btn" class="flex items-center gap-1 font-semibold ui-secondary-text hover:text-[--theme-ui-accent] focus:outline-none">
 				<svg xmlns="http://www.w3.org/2000/svg"
 					 viewBox="0 0 24 24"
 					 class="w-6 h-6 fill-current" aria-hidden="true">
@@ -519,7 +520,7 @@
 
 				<span>Reports</span>
 			</button>
-			<button id="nav-settings-btn" class="flex items-center gap-1 font-semibold ui-secondary-text hover:text-[--theme-ui-accent]">
+			<button id="nav-settings-btn" class="flex items-center gap-1 font-semibold ui-secondary-text hover:text-[--theme-ui-accent] focus:outline-none">
 			<svg xmlns="http://www.w3.org/2000/svg" 
 				 viewBox="0 0 24 24" 
 				 class="w-6 h-6 fill-current">
@@ -604,7 +605,8 @@
 			</div>
 
                 <div class="pt-6 px-6 pb-2 rounded-lg shadow-lg relative typing-area-background mt-2">
-                     <div id="book-content" class="select-none overflow-y-auto focus:outline-none">
+                     <input type="text" id="hidden-input" style="position: absolute; top: -9999px; left: -9999px; opacity: 0; width: 1px; height: 1px;">
+					 <div id="book-content" class="select-none overflow-y-auto focus:outline-none">
                          </div>
                      <div class="text-right text-sm mt-4 ui-bright-text">
                          <span>Press <kbd class="font-bold rounded px-2 py-1 rounded-md text-sm ui-action-button-secondary">Tab</kbd> to restart paragraph.</span>
@@ -801,6 +803,7 @@
         const appTitleHeader = document.getElementById('app-title-header');
         const bookTitleHeader = document.getElementById('book-title-header');
 		const bookContentEl = document.getElementById('book-content');
+		const hiddenInput = document.getElementById('hidden-input');
 		let currentContentEl = bookContentEl; // This will track the active typing area
         const liveWpmDisplay = document.getElementById('live-wpm-display');
         const liveAccuracyDisplay = document.getElementById('live-accuracy-display');
@@ -830,15 +833,18 @@
         const cancelAddBookBtn = document.getElementById('cancel-add-book-btn');
 
         // App State
-        const CHARS_PER_WORD = 5; // Use industry standard of 5
+        const CHARS_PER_WORD = 5;
+		const DB_NAME = 'TypingTomesDB';
+		const DB_VERSION = 1;     
+		const STORE_NAME = 'books';
         let currentUsername = '';
 		let currentParagraphAnalysis = {};
-        let currentBookIdentifier = ''; // Use a unique ID for the book
+        let currentBookIdentifier = '';
         let fullBookText = '';
         let chapterMarkers = [];
         let currentChapterIndex = -1;
         let currentChapterWordCount = 0; 
-		let isDrillActive = false; // To track when we are in drill mode
+		let isDrillActive = false;
 		let drillTargetLength = 0;
 		let drillTotalWords = 0;
         
@@ -853,6 +859,7 @@
 		let paragraphStartTime = 0;
 		let dailyProgressTimer = null;
 		let secondsPracticedToday = 0;
+		let isUpdateScheduled = false;
         
         // Temporary state for book being added
         let tempBookData = {};
@@ -1109,12 +1116,11 @@
 			const paragraphData = currentParagraphAnalysis;
 			const currentWordCount = overallStats.cumulativeWordCount;
 
-			// Ensure main analysis object has the right structure
 			if (!analysis.bigrams) analysis.bigrams = {};
 			if (!analysis.trigrams) analysis.trigrams = {};
 			if (!analysis.metadata) analysis.metadata = {};
 
-			// 1. Add new events from the just-completed paragraph
+			// Save bigram data (as before)
 			if (paragraphData.bigrams) {
 				for (const bigram in paragraphData.bigrams) {
 					if (MASTER_BIGRAMS_200.includes(bigram)) {
@@ -1130,6 +1136,8 @@
 					}
 				}
 			}
+			
+			// --- ADDED: Save trigram data ---
 			if (paragraphData.trigrams) {	
 				for (const trigram in paragraphData.trigrams) {
 					if (MASTER_TRIGRAMS_200.includes(trigram)) {
@@ -1146,27 +1154,17 @@
 				}
 			}
 
-			// 2. Perform Garbage Collection on the entire dataset
+			// Garbage Collection (now includes trigrams)
 			const cutoffWordCount = Math.max(0, currentWordCount - 200);
-
 			for (const bigram in analysis.bigrams) {
-				analysis.bigrams[bigram].events = analysis.bigrams[bigram].events.filter(
-					event => event.wordCount > cutoffWordCount
-				);
-				if (analysis.bigrams[bigram].events.length === 0) {
-					delete analysis.bigrams[bigram];
-				}
+				analysis.bigrams[bigram].events = analysis.bigrams[bigram].events.filter(e => e.wordCount > cutoffWordCount);
+				if (analysis.bigrams[bigram].events.length === 0) delete analysis.bigrams[bigram];
 			}
 			for (const trigram in analysis.trigrams) {
-				analysis.trigrams[trigram].events = analysis.trigrams[trigram].events.filter(
-					event => event.wordCount > cutoffWordCount
-				);
-				if (analysis.trigrams[trigram].events.length === 0) {
-					delete analysis.trigrams[trigram];
-				}
+				analysis.trigrams[trigram].events = analysis.trigrams[trigram].events.filter(e => e.wordCount > cutoffWordCount);
+				if (analysis.trigrams[trigram].events.length === 0) delete analysis.trigrams[trigram];
 			}
 			
-			// 3. Update metadata and save
 			analysis.metadata = { totalWordsTyped: currentWordCount };
 			saveAnalysis(analysis);
 		};
@@ -1199,12 +1197,15 @@
 
 						const errorPenalty = recentErrors * (avgCorrectDelay * 2);
 						const totalTimeCost = recentDelays.reduce((a, b) => a + b, 0) + errorPenalty;
-						const weaknessScore = totalTimeCost / totalOccurrences;
+						
+						// Calculate both the raw delay and the normalized score
+						const rawAverageDelay = totalTimeCost / totalOccurrences;
+						const normalizedScore = rawAverageDelay / (ngram.length > 1 ? ngram.length - 1 : 1);
 
-						return { ngram, averageDelay: weaknessScore, errors: recentErrors };
+						return { ngram, rawAverageDelay, normalizedScore, errors: recentErrors };
 					})
 					.filter(item => item !== null)
-					.sort((a, b) => b.averageDelay - a.averageDelay)
+					.sort((a, b) => b.normalizedScore - a.normalizedScore) // Sort by the NORMALIZED score
 					.slice(0, 5);
 			};
 
@@ -1219,8 +1220,8 @@
 						el.className = 'ui-panel-bg p-2 rounded-md flex justify-between items-center text-sm';
 						el.innerHTML = `
 							<span class="font-bold ui-bright-text">${item.ngram}</span>
-							<span class="ui-secondary-text">${Math.round(item.averageDelay)}ms score, ${item.errors} err</span>
-						`;
+							<span class="ui-secondary-text">${Math.round(item.rawAverageDelay)}ms, ${item.errors} err</span>
+						`; // Display the RAW average delay
 						element.appendChild(el);
 					});
 				} else {
@@ -1266,18 +1267,20 @@
             }
         };
 
-		const loadProfile = (username) => {
-            currentUsername = username;
-            localStorage.setItem(LAST_USER_KEY, username);
-            usernameDisplay.textContent = currentUsername;
-            welcomeMessage.classList.remove('hidden');
-            profileModal.classList.add('hidden');
-            profileSwitcherModal.classList.add('hidden');
-            
-            applySettings(); 
-            
-            renderLibrary();
-        };
+		const loadProfile = async (username) => {
+			currentUsername = username;
+			localStorage.setItem(LAST_USER_KEY, username);
+			usernameDisplay.textContent = currentUsername;
+			welcomeMessage.classList.remove('hidden');
+			profileModal.classList.add('hidden');
+			profileSwitcherModal.classList.add('hidden');
+			
+			// Run the migration script. It will only do work if needed.
+			await runMigrationIfNeeded();
+			
+			applySettings(); 
+			await renderLibrary();
+		};
 
         const saveNewProfile = () => {
             const newUsername = usernameInput.value.trim();
@@ -1386,33 +1389,109 @@
         const getLibrary = () => JSON.parse(localStorage.getItem(getLibrarySaveKey())) || [];
         const saveLibrary = (library) => localStorage.setItem(getLibrarySaveKey(), JSON.stringify(library));
 
-		const renderLibrary = () => {
+		async function initDB() {
+			const db = await idb.openDB(DB_NAME, DB_VERSION, {
+				upgrade(db) {
+					if (!db.objectStoreNames.contains(STORE_NAME)) {
+						db.createObjectStore(STORE_NAME, { keyPath: 'id' });
+					}
+				},
+			});
+			return db;
+		}
+
+		async function saveBookData(bookData) {
+			const db = await initDB();
+			await db.put(STORE_NAME, bookData);
+		}
+		
+		async function getBookData(bookId) {
+			const db = await initDB();
+			return await db.get(STORE_NAME, bookId);
+		}
+		
+		async function runMigrationIfNeeded() {
+			const library = getLibrary();
+
+			if (!library || library.length === 0 || !library[0].chapterMarkers) {
+				return; // No migration needed.
+			}
+
+			console.log("Old library format detected. Starting one-time migration to IndexedDB...");
+
+			try {
+				const newLibraryMetadata = [];
+				for (const oldBook of library) {
+					// 2. Prepare the large data object for IndexedDB
+					const bookFileForDB = {
+						id: oldBook.identifier,
+						cover: oldBook.cover,
+						chapterMarkers: oldBook.chapterMarkers
+					};
+					// 3. Move the large data
+					await saveBookData(bookFileForDB);
+
+					// 4. Create the small metadata object for the new library
+					const bookMetadataForLocal = {
+						bookName: oldBook.bookName,
+						author: oldBook.author,
+						identifier: oldBook.identifier,
+						userChapterChoices: oldBook.userChapterChoices
+					};
+					newLibraryMetadata.push(bookMetadataForLocal);
+				}
+
+				saveLibrary(newLibraryMetadata);
+				
+				console.log("Library migration complete!");
+
+			} catch (error) {
+				console.error("Migration failed:", error);
+				alert("There was an error upgrading your library. Some books may not work correctly. Please consider re-adding them.");
+			}
+		}
+
+		const renderLibrary = async () => {
 			const library = getLibrary();
 			libraryList.innerHTML = '';
+
 			if (library.length === 0) {
 				libraryList.className = 'text-center col-span-full';
 				libraryList.innerHTML = `<p class="text-gray-400">Your library is empty. Add a book to get started!</p>`;
 			} else {
 				libraryList.className = 'grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6';
-				library.forEach((book, index) => {
+				
+				for (const [index, book] of library.entries()) {
+					let coverSrc = null;
+					const bookDataFromDB = await getBookData(book.identifier);
+					
+					if (bookDataFromDB && bookDataFromDB.cover) {
+						coverSrc = bookDataFromDB.cover;
+					} else if (book.cover) {
+						coverSrc = book.cover;
+					}
+
 					const bookElement = document.createElement('div');
 					bookElement.className = 'library-book-card rounded-lg flex flex-col text-center shadow-lg overflow-hidden';
 					
 					bookElement.innerHTML = `
-						<img src="${book.cover || 'https://via.placeholder.com/300x450.png?text=No+Cover'}" alt="Cover for ${book.bookName}" class="w-full h-auto">
-						
+						<img src="${coverSrc || 'https://via.placeholder.com/300x450.png?text=No+Cover'}" alt="Cover for ${book.bookName}" class="w-full h-auto">
 						<div class="p-4 flex flex-col flex-grow w-full">
 							<h3 class="font-bold text-md leading-tight mb-1 truncate" title="${book.bookName}">${book.bookName}</h3>
 							<p class="text-sm mb-4 truncate" title="${book.author}">${book.author}</p>
-							
 							<div class="mt-auto space-y-2 w-full">
-								<button data-index="${index}" class="start-typing-btn w-full font-bold py-2 px-3 rounded-md text-sm ui-action-button-primary">Type</button>
-								<button data-index="${index}" class="delete-book-btn w-full font-bold py-2 px-3 rounded-md text-sm ui-action-button-danger">Delete</button>
+								<button class="start-typing-btn w-full font-bold py-2 px-3 rounded-md text-sm ui-action-button-primary">Type</button>
+								<button class="delete-book-btn w-full font-bold py-2 px-3 rounded-md text-sm ui-action-button-danger">Delete</button>
 							</div>
 						</div>
 					`;
+
+					// Add event listeners directly to the new buttons
+					bookElement.querySelector('.start-typing-btn').addEventListener('click', () => startTypingBook(book));
+					bookElement.querySelector('.delete-book-btn').addEventListener('click', () => deleteBook(index));
+
 					libraryList.appendChild(bookElement);
-				});
+				};
 			}
 		};
 		
@@ -1516,7 +1595,7 @@
 
 			// Populate nav bar
 			navUsername.textContent = `Hi ${currentUsername}!`;
-			navBookTitle.textContent = book.bookName;
+			navBookTitle.textContent = formatNavTitle(book.bookName);
 
 			// Set active button
 			[navTypingBtn, navReportsBtn, navLibraryBtn].forEach(btn => btn.classList.remove('nav-btn-active'));
@@ -1539,7 +1618,7 @@
 
 			// Populate nav bar
 			navUsername.textContent = `Hi ${currentUsername}!`;
-			navBookTitle.textContent = book.bookName;
+			navBookTitle.textContent = formatNavTitle(book.bookName);
 
 			// Set active button
 			[navTypingBtn, navReportsBtn, navLibraryBtn].forEach(btn => btn.classList.remove('nav-btn-active'));
@@ -1600,7 +1679,6 @@
 		}
 		
 		function processHistoricalData() {
-			// This object will hold all our calculated stats.
 			const report = {
 				stats: {
 					currentStreak: 0,
@@ -1615,56 +1693,72 @@
 				}
 			};
 
-			// --- 1. Process daily practice time for streaks and heatmap ---
 			const dailyProgress = loadDailyProgress();
+
+			for (const dateStr in dailyProgress) {
+				report.heatmapData[dateStr] = dailyProgress[dateStr];
+			}
+
+			// Streak logic now only calculates streaks and no longer affects the heatmap.
 			const validStreakDates = Object.keys(dailyProgress).filter(date => dailyProgress[date] >= 300);
 			const sortedDates = validStreakDates.sort();
 			
 			if (sortedDates.length > 0) {
 				let currentStreak = 0;
 				let longestStreak = 0;
-				let lastDate = new Date(sortedDates[0]);
+				let lastDate = new Date(sortedDates[sortedDates.length - 1] + "T00:00:00");
 				
 				const today = new Date();
+				today.setHours(0,0,0,0);
 				const yesterday = new Date();
 				yesterday.setDate(today.getDate() - 1);
-				
-				const todayStr = today.toISOString().split('T')[0];
-				const yesterdayStr = yesterday.toISOString().split('T')[0];
 
-				if (dailyProgress[todayStr] || dailyProgress[yesterdayStr]) {
-					 lastDate = today;
-					 if (!dailyProgress[todayStr] && !dailyProgress[yesterdayStr]) {
-						 currentStreak = 0;
-					 }
-				}
+				// Check if the most recent practice day is today or yesterday to anchor the streak
+				if (lastDate.getTime() !== today.getTime() && lastDate.getTime() !== yesterday.getTime()) {
+					 currentStreak = 0;
+				} else {
+					// Start streak calculation from the last valid day
+					for (let i = sortedDates.length - 1; i >= 0; i--) {
+						const currentDate = new Date(sortedDates[i] + "T00:00:00");
+						const diffDays = (lastDate - currentDate) / (1000 * 60 * 60 * 24);
 
-				for (let i = sortedDates.length - 1; i >= 0; i--) {
-					const dateStr = sortedDates[i];
-					const currentDate = new Date(dateStr + "T00:00:00");
-
-					const diffDays = (lastDate - currentDate) / (1000 * 60 * 60 * 24);
-
-					if (diffDays <= 1) {
-						currentStreak++;
-					} else {
-						currentStreak = 1;
+						if (diffDays <= 1) {
+							currentStreak++;
+						} else {
+							break; // Streak is broken
+						}
+						if (currentStreak > longestStreak) {
+							longestStreak = currentStreak;
+						}
+						lastDate = currentDate;
 					}
-					if (currentStreak > longestStreak) {
-						longestStreak = currentStreak;
-					}
-					lastDate = currentDate;
-				}
-				for (const dateStr in dailyProgress) {
-					report.heatmapData[dateStr] = dailyProgress[dateStr];
 				}
 				
+				// Calculate the longest streak overall by re-iterating
+				longestStreak = 0;
+				if(sortedDates.length > 0) {
+					let tempStreak = 1;
+					longestStreak = 1;
+					let tempLastDate = new Date(sortedDates[0] + "T00:00:00");
+					for(let i=1; i < sortedDates.length; i++) {
+						const currentDate = new Date(sortedDates[i] + "T00:00:00");
+						const diffDays = (currentDate - tempLastDate) / (1000 * 60 * 60 * 24);
+						if(diffDays === 1) {
+							tempStreak++;
+						} else {
+							tempStreak = 1;
+						}
+						if(tempStreak > longestStreak) {
+							longestStreak = tempStreak;
+						}
+						tempLastDate = currentDate;
+					}
+				}
+
 				report.stats.currentStreak = currentStreak;
 				report.stats.longestStreak = longestStreak;
 			}
 
-
-			// --- 2. Process all paragraphs for WPM/Acc trends and averages ---
 			const allHistory = [];
 			const library = getLibrary();
 			library.forEach(book => {
@@ -1688,7 +1782,6 @@
 			});
 
 			if (allHistory.length > 0) {
-				// Calculate 30-day averages
 				const thirtyDaysAgo = Date.now() - 30 * 24 * 60 * 60 * 1000;
 				const recentHistory = allHistory.filter(p => p.timestamp > thirtyDaysAgo);
 				if(recentHistory.length > 0) {
@@ -1696,7 +1789,6 @@
 					report.stats.avgAccLast30d = recentHistory.reduce((sum, p) => sum + p.acc, 0) / recentHistory.length;
 				}
 
-				// --- WPM TREND LOGIC ---
 				allHistory.sort((a, b) => a.timestamp - b.timestamp);
 				const firstPracticeDate = new Date(allHistory[0].timestamp);
 				firstPracticeDate.setHours(0, 0, 0, 0);
@@ -2190,49 +2282,77 @@
             return text.split(/[\s-]+/).filter(w => w.length > 0).length;
         };
 
-        const normalizeText = (text) => {
-            if (!text) return '';
-            return text
-			    .replace(/[\u201C\u201D]/g, '"')      // Curly Double Quotes: “ ” → "
-                .replace(/[«»]/g, '"')             // French Guillemets: « » → "
-                .replace(/[\u2018\u2019]/g, "'")      // Curly Single Quotes: ‘ ’ → '
-                .replace(/[\u2013\u2014]/g, '-')      // En & Em Dashes: – — → -
-                .replace(/\u2026/g, '...')          // Ellipsis Character: … → ...
-                .replace(/\.\s\.\s\./g, '...')   // Spaced Ellipsis: . . . → ...
+		function normalizeText(text, preserveDashes = false) {
+			if (!text) return '';
+			
+			let normalized = text
+				// ADD THIS NEW RULE to remove the specific invisible character (BOM/ZWNBSP)
+				.replace(/\uFEFF/g, '')
+				.replace(/[\u201C\u201D]/g, '"')      // Curly Double Quotes: “ ” → "
+				.replace(/[«»]/g, '"')             // French Guillemets: « » → "
+				.replace(/[\u2018\u2019]/g, "'")      // Curly Single Quotes: ‘ ’ → '
+				.replace(/\u2026/g, '...')          // Ellipsis Character: … → ...
+				.replace(/\.\s\.\s\./g, '...')   // Spaced Ellipsis: . . . → ...
 				.replace(/\s+/g, ' ')              // Collapse multiple spaces into one
 				.replace(/\u00A0/g, ' ');           // Replace non-breaking spaces with regular spaces
-        };
 
-		const startTypingBook = (book) => {
-            currentBookIdentifier = book.identifier;
-            bookTitleHeader.innerHTML = `${book.bookName}<br><span class="text-3xl font-normal ui-accent-text" style="font-family: 'Cormorant Garamond', serif;">By ${book.author}</span>`;
-    
-            chapterMarkers = book.chapterMarkers.filter((marker, index) => {
-                const choice = book.userChapterChoices[index];
-                return choice && choice.status === 'type';
-            });
-            
-			showTypingView(book);
+			// Only convert dashes if we are NOT preserving them
+			if (!preserveDashes) {
+				normalized = normalized.replace(/[\u2013\u2014]/g, '-'); // En & Em Dashes: – — → -
+			}
+
+			return normalized;
+		}
+
+		const startTypingBook = async (book) => { // Function is still async
+			currentBookIdentifier = book.identifier;
+			let fullBookData = null;
+
+			// Try to fetch the full book data from IndexedDB (for new-format books)
+			const bookDataFromDB = await getBookData(book.identifier);
+
+			if (bookDataFromDB) {
+				// If found, it's a new-format book. Combine metadata with the DB data.
+				fullBookData = { ...book, ...bookDataFromDB };
+			} else if (book.chapterMarkers) {
+				// If not in the DB, it must be an old-format book with content still in localStorage.
+				fullBookData = book;
+			}
+
+			// If content is not found in either place, then show an error.
+			if (!fullBookData) {
+				alert("Error: Could not find the book's content. Please try removing and re-adding the book.");
+				return;
+			}
+
+			bookTitleHeader.innerHTML = `${fullBookData.bookName}<br><span class="text-3xl font-normal ui-accent-text" style="font-family: 'Cormorant Garamond', serif;">By ${fullBookData.author}</span>`;
+
+			chapterMarkers = fullBookData.chapterMarkers.filter((marker, index) => {
+				const choice = fullBookData.userChapterChoices[index];
+				return choice && choice.status === 'type';
+			});
+
+			showTypingView(fullBookData);
 			
-            applySettings();
+			applySettings();
 			
 			updateDailyGoalDisplay();
 			const today = new Date().toISOString().split('T')[0];
 			const progress = loadDailyProgress();
 			secondsPracticedToday = progress[today] || 0;
 
-            const resumed = loadProgress();
+			const resumed = loadProgress();
 
-            if (!resumed) {
-                currentChapterIndex = 0;
-                currentParagraphIndexInChapter = -1;
-                bookContentEl.scrollTop = 0;
-            }
-    
-            initializeChart();
-            loadChapter(resumed ? currentChapterIndex : 0, resumed);
+			if (!resumed) {
+				currentChapterIndex = 0;
+				currentParagraphIndexInChapter = -1;
+				bookContentEl.scrollTop = 0;
+			}
+
+			initializeChart();
+			loadChapter(resumed ? currentChapterIndex : 0, resumed);
 			populateChapterNavMenu();
-        };
+		};
 
 		const loadChapter = (chapterIndex, isResuming = false) => {
 			if (chapterIndex >= chapterMarkers.length) {
@@ -2245,9 +2365,11 @@
 			currentChapterIndex = chapterIndex;
 
 			const marker = chapterMarkers[currentChapterIndex];
+			
 			const chapterHtml = marker.htmlContent;
+			const chapterHtmlCleaned = chapterHtml.replace(/<img[^>]*>/g, "");
 			const tempDiv = document.createElement('div');
-			tempDiv.innerHTML = chapterHtml;
+			tempDiv.innerHTML = chapterHtmlCleaned;
 
 			let paragraphElements = Array.from(tempDiv.querySelectorAll('p'));
 			if (paragraphElements.filter(p => (p.textContent || "").trim()).length < 3) {
@@ -2261,9 +2383,21 @@
 					});
 			} else {
 				currentChapterParagraphs = paragraphElements.map(p_el => {
-					const rawText = p_el.textContent || "";
-					const cleanText = normalizeText(rawText.replace(/\s+/g, ' ').trim());
-					return { html: cleanText, text: cleanText };
+					// 1. Get the inner HTML to preserve formatting tags like <i> and <em> for display.
+					const paragraphHtml = p_el.innerHTML;
+					// 2. Get the plain text for the typing comparison logic.
+					const paragraphText = p_el.textContent || "";
+
+					// 3. Normalize both versions, but handle dashes differently.
+					// PRESERVE the em dash for the visual HTML version.
+					const normalizedHtml = normalizeText(paragraphHtml, true); 
+					// CONVERT the em dash to a simple hyphen for the typing logic version.
+					const normalizedChars = normalizeText(paragraphText);
+					// THEN, collapse any remaining/regular whitespace.
+					const normalizedText = normalizedChars.replace(/\s+/g, ' ').trim();
+
+					// 4. Store both the HTML (for display) and plain text (for logic) versions.
+					return { html: normalizedHtml, text: normalizedText };
 				}).filter(p => p.text.length > 0);
 			}
 
@@ -2374,8 +2508,8 @@
 					currentCursorSpan = currentParagraphSpans[0];
 					currentCursorSpan.classList.add('cursor');
 				}
-
-				currentContentEl.focus({ preventScroll: true });
+				
+				hiddenInput.focus();
 			}
 		};
 
@@ -2428,6 +2562,7 @@
             paragraphKeyPressLog = [];
             liveAccuracyLog = [];
             currentUserInput = '';
+			hiddenInput.value = '';
 			currentParagraphAnalysis = {
 			    bigrams: {},
 				trigrams: {},
@@ -2514,127 +2649,146 @@
         };
 
 		const handleKeyPress = (e) => {
+			
 			const activeEl = document.activeElement;
-			if (!profileModal.classList.contains('hidden') || !profileSwitcherModal.classList.contains('hidden') || !settingsModal.classList.contains('hidden')) { return; }
-			if (activeEl && (activeEl.tagName === 'INPUT' || activeEl.tagName === 'TEXTAREA' || activeEl.isContentEditable)) { return; }
-			if (isBookLoading || !typingAppSection.classList.contains('hidden') || !drillModeSection.classList.contains('hidden')) e.preventDefault();
-			if (isBookLoading) return;
+			if (activeEl && (activeEl.tagName === 'INPUT' && activeEl.id !== 'hidden-input') || activeEl.tagName === 'TEXTAREA' || activeEl.isContentEditable) {
+				return; // Ignore keypresses in other input fields
+			}
+			
+			paragraphKeyPressLog.push({ key: e.key, time: Date.now() });
+
+			if (isBookLoading) {
+				e.preventDefault();
+				return;
+			}
+
 			if (currentParagraphIndexInChapter < 0 || currentParagraphIndexInChapter >= currentChapterParagraphs.length) return;
 
-			const paragraphObject = currentChapterParagraphs[currentParagraphIndexInChapter];
-			if (!paragraphObject) return;
-			const currentParagraphText = paragraphObject.text;
-			if (!currentParagraphText) return;
-
+			// --- Control Key Logic ---
 			if (e.key === 'Enter') {
-				e.stopPropagation(); // Add this line to stop the event from bubbling
-				if (isDrillActive) return; // Enter does nothing in drill mode
+				e.stopPropagation();
+				if (isDrillActive) return;
 				if (e.shiftKey) { skipParagraph(); return; }
 				if (isTestActive) {
 					finishParagraph();
 				}
 				return;
-			} else if (e.key === 'Tab') {
+			} 
+			
+			if (e.key === 'Tab') {
+				e.preventDefault();
 				if (e.shiftKey) {
-				    stopDailyProgressTimer(); 
-					if (currentUserInput.length === 0) goToPreviousParagraph();
+					stopDailyProgressTimer();
+					resetParagraphHighlight(currentParagraphIndexInChapter);
+					goToPreviousParagraph();
+
 					return;
 				}
 				stopDailyProgressTimer();
 				resetParagraphState();
-				const paragraphEl = currentContentEl.querySelector(`[data-paragraph-index="${currentParagraphIndexInChapter}"]`);
-				if (paragraphEl) {
-					paragraphEl.querySelectorAll('.char-span').forEach(span => span.className = 'char-span untyped');
-				}
+				resetParagraphHighlight(currentParagraphIndexInChapter);
 				activateNextParagraph(false);
-			} else if (e.key === 'Backspace') {
-				if (currentUserInput.length > 0) {
-					// If Ctrl key is pressed, delete the whole word
-					if (e.ctrlKey) {
-						// Find the last space before the current cursor position
-						const lastSpaceIndex = currentUserInput.trimEnd().lastIndexOf(' ');
-						// If a space is found, slice up to that space, otherwise delete everything
-						currentUserInput = (lastSpaceIndex !== -1) ? currentUserInput.slice(0, lastSpaceIndex + 1) : '';
-					} else {
-						// Otherwise, delete just one character (the original behavior)
-						currentUserInput = currentUserInput.slice(0, -1);
+			}
+		};
+
+        // --- UI & STATS UPDATES ---
+		
+		function formatNavTitle(title) {
+			const maxLength = 25;
+			if (title.length > maxLength) {
+				return title.substring(0, 22) + '...';
+			}
+			return title;
+		}
+
+		function handleInput(e) {
+			if (!isTestActive && hiddenInput.value.length > 0) {
+				startTest();
+			}
+
+			const newText = hiddenInput.value;
+			const sourceText = currentChapterParagraphs[currentParagraphIndexInChapter].text;
+
+			if (newText.length > sourceText.length) {
+				hiddenInput.value = newText.substring(0, sourceText.length);
+				return;
+			}
+
+			currentUserInput = hiddenInput.value;
+
+			// Schedule a single, efficient update instead of updating on every keystroke
+			if (!isUpdateScheduled) {
+				isUpdateScheduled = true;
+				requestAnimationFrame(() => {
+					updateHighlighting();
+					updateCursor();
+					updateLiveStats();
+					
+					// Auto-finish logic for drills
+					const sourceText = currentChapterParagraphs[currentParagraphIndexInChapter].text;
+
+					if (currentUserInput.slice(-1) === ' ' || currentUserInput.length === sourceText.length) {
+						checkAndScrollCursorIntoView();
 					}
-					paragraphKeyPressLog.push({ char: 'Backspace', time: Date.now() });
-				}
-			} else if (e.key.length === 1) {
-				if (!isTestActive) startTest();
-				if (currentUserInput.length < currentParagraphText.length) {
-					const isCorrect = currentParagraphText[currentUserInput.length] === e.key;
-					currentUserInput += e.key;
-					paragraphKeyPressLog.push({ char: e.key, time: Date.now() });
-					liveAccuracyLog.push(isCorrect);
 
 					// Auto-finish logic for drills
 					if (isDrillActive && currentUserInput.length === drillTargetLength) {
 						finishDrill();
 					}
-					if (e.key === ' ') {
-						checkAndScrollCursorIntoView();
-					}
-				}
+
+					isUpdateScheduled = false; // Allow the next update to be scheduled
+				});
 			}
-
-			updateHighlighting();
-			updateCursor();
-			updateLiveStats();
-		};
-
-        // --- UI & STATS UPDATES ---
-
-		const updateLiveStats = () => {
-			if (!isTestActive) return;
-
-			const now = Date.now();
-			const recentKeyPresses = paragraphKeyPressLog.slice(-40);
-			let wpm = 0;
-			let accuracy = 100;
-
-			if (recentKeyPresses.length > 5) {
-				const timeSpan = (now - recentKeyPresses[0].time) / 1000;
-				if (timeSpan > 0) {
-					wpm = (recentKeyPresses.length / CHARS_PER_WORD) / (timeSpan / 60);
-				}
-			}
-
-			if (liveAccuracyLog.length > 0) {
-				const recentAccuracyLog = liveAccuracyLog.slice(-40);
-				const correctCount = recentAccuracyLog.filter(Boolean).length;
-				accuracy = (correctCount / recentAccuracyLog.length) * 100;
-			}
-
-			if (isDrillActive) {
-				drillWpmDisplay.textContent = wpm > 0 ? Math.round(wpm) : '0';
-				drillAccuracyDisplay.textContent = `${Math.round(accuracy)}%`;
-				
-				let wordsTyped = 0;
-				const sourceText = currentChapterParagraphs[0].text;
-				
-				if (currentUserInput.length > 0) {
-					// Get the slice of the source text that the cursor has passed
-					const progressText = sourceText.substring(0, currentUserInput.length);
-					// The number of completed words is the number of spaces they have passed
-					wordsTyped = (progressText.match(/ /g) || []).length;
-				}
+		}
 		
-				// When the user has typed all characters, set the count to the known total
-				if (currentUserInput.length === sourceText.length) {
-					wordsTyped = drillTotalWords;
-				}
-				
-				drillWordCount.textContent = `${wordsTyped} / ${drillTotalWords}`;
+		const updateLiveStats = () => {
+			if (!isTestActive || !paragraphStartTime) return;
+
+			const timeElapsed = (Date.now() - paragraphStartTime) / 1000;
+			if (timeElapsed <= 0) return;
+
+			const typedChars = currentUserInput.length;
+
+			// Calculate WPM
+			const wpm = (typedChars / CHARS_PER_WORD) / (timeElapsed / 60);
+
+			// Calculate Accuracy
+			const sourceText = currentChapterParagraphs[currentParagraphIndexInChapter].text;
+			let correctChars = 0;
+			for (let i = 0; i < typedChars; i++) {
+				if (currentUserInput[i] === sourceText[i]) correctChars++;
+			}
+			const accuracy = typedChars > 0 ? (correctChars / typedChars) * 100 : 100;
+
+			// Update the displays for the current mode (book or drill)
+			if (isDrillActive) {
+				drillWpmDisplay.textContent = Math.round(wpm);
+				drillAccuracyDisplay.textContent = `${Math.round(accuracy)}%`;
 			} else {
-				liveWpmDisplay.textContent = wpm > 0 ? Math.round(wpm) : '0';
+				liveWpmDisplay.textContent = Math.round(wpm);
 				liveAccuracyDisplay.textContent = `${Math.round(accuracy)}%`;
 			}
 		};
 
 		let dailyGoalChart;
 
+		function getFinalTimingLog(rawLog) {
+			const finalLog = [];
+			for (const event of rawLog) {
+				if (event.key.length === 1) {
+					// Add single-character key presses to our final log
+					finalLog.push(event);
+				} else if (event.key === 'Backspace') {
+					// If backspace is pressed, remove the last character from our final log
+					if (finalLog.length > 0) {
+						finalLog.pop();
+					}
+				}
+				// This process ignores other keys like Shift, Enter, etc.
+			}
+			return finalLog;
+		}
+		
 		function updateDailyProgress(secondsToAdd) {
 			const today = new Date().toISOString().split('T')[0];
 			const progress = loadDailyProgress();
@@ -2700,15 +2854,18 @@
 				goalTextEl.textContent = `${minutesPracticed}/${settings.dailyGoalInMinutes || 30} min (${Math.floor(percentComplete)}%)`;
 			}
 		}
+		
 		const finishParagraph = () => {
-		    stopDailyProgressTimer();
+			stopDailyProgressTimer();
 			const sourceText = currentChapterParagraphs[currentParagraphIndexInChapter].text;
-			if (paragraphKeyPressLog.length < 2) {
+
+			// Guard clause: Only finish if the test was actually active and a start time was recorded.
+			if (!isTestActive || !paragraphStartTime) {
 				activateNextParagraph();
 				return;
 			};
-			const timeElapsed = (paragraphKeyPressLog[paragraphKeyPressLog.length - 1].time - paragraphKeyPressLog[0].time) / 1000
-			;
+
+			const timeElapsed = (Date.now() - paragraphStartTime) / 1000;
 			
 			let correctChars = 0;
 			for (let i = 0; i < currentUserInput.length; i++) {
@@ -2716,45 +2873,17 @@
 			}
 			const typedChars = currentUserInput.length;
 			const paragraphWPM = ((typedChars / CHARS_PER_WORD) / (timeElapsed / 60)) || 0;
-			const paragraphAccuracy = Math.round((correctChars / sourceText.length) * 100) || 0;
+			const paragraphAccuracy = typedChars > 0 ? (correctChars / typedChars) * 100 : 0;
 
-			// --- LOGIC FOR DRILL MODE ---
-			if (isDrillActive) {
-				// Update the drill-specific stat displays
-				drillWpmDisplay.textContent = paragraphWPM.toFixed(1);
-				drillAccuracyDisplay.textContent = `${paragraphAccuracy}%`;
-
-				// Display the completion message in the content area
-				currentContentEl.innerHTML = `
-					<div class="text-center p-8">
-						<h2 class="text-3xl font-bold text-green-400 mb-4 ui-subheading">Drill Complete!</h2>
-						<p class="text-xl text-gray-300">Your stats for that set:</p>
-						<div class="flex justify-center space-x-8 mt-4">
-							<div>
-								<p class="text-sm text-gray-400">WPM</p>
-								<div class="text-3xl font-bold text-green-400">${paragraphWPM.toFixed(1)}</div>
-							</div>
-							<div>
-								<p class="text-sm text-gray-400">Accuracy</p>
-								<div class="text-3xl font-bold text-sky-400">${paragraphAccuracy}%</div>
-							</div>
-						</div>
-					</div>
-				`;
-				return; // Stop the function here to prevent loading a new paragraph
-			}
-
-			// This part below only runs for normal book typing
 			const paragraphWordCount = countWords(sourceText);
 			history.rawTimes.push(timeElapsed);
 			history.rawCorrectChars.push(correctChars);
 			history.rawTypedChars.push(typedChars);
 			history.paragraphWordCounts.push(paragraphWordCount);
 			history.chapterIndices.push(currentChapterIndex);
-            
-            // --- Add the precise timestamp ---
-            if (!history.timestamps) history.timestamps = [];
-            history.timestamps.push(Date.now());
+			
+			if (!history.timestamps) history.timestamps = [];
+			history.timestamps.push(Date.now());
 
 			let currentChapterCumulative = 0;
 			for (let i = 0; i < history.paragraphWordCounts.length; i++) {
@@ -2768,7 +2897,6 @@
 			overallStats.totalTypedChars += typedChars;
 			overallStats.totalTime += timeElapsed;
 			const overallWPM = ((overallStats.totalTypedChars / CHARS_PER_WORD) / (overallStats.totalTime / 60)) || 0;
-			const overallAccuracy = Math.round((overallStats.totalCorrectChars / overallStats.totalTypedChars) * 100) || 0;
 			const newCount = history.labels.length + 1;
 			history.wpm.push(paragraphWPM);
 			history.accuracy.push(paragraphAccuracy);
@@ -2862,22 +2990,30 @@
         };
 
 		const updateHighlighting = () => {
+			if (currentParagraphIndexInChapter < 0 || !currentChapterParagraphs[currentParagraphIndexInChapter]) {
+				return; // Do nothing if the state isn't ready.
+			}
+
 			const sourceText = currentChapterParagraphs[currentParagraphIndexInChapter].text;
 			const inputLength = currentUserInput.length;
 
-			if (inputLength > 0) {
-				const lastTypedIndex = inputLength - 1;
-				if (lastTypedIndex < currentParagraphSpans.length) {
-					currentParagraphSpans[lastTypedIndex].className = currentUserInput[lastTypedIndex] === sourceText[lastTypedIndex] 
+			currentParagraphSpans.forEach((span, i) => {
+				let newClassName;
+
+				// Determine what the new class SHOULD be
+				if (i < inputLength) {
+					newClassName = currentUserInput[i] === sourceText[i] 
 						? 'char-span correct' 
 						: 'char-span incorrect-char';
+				} else {
+					newClassName = 'char-span untyped';
 				}
-			}
-			
-			// If user backspaced, reset the upcoming character to untyped
-			if (inputLength < currentParagraphSpans.length) {
-				currentParagraphSpans[inputLength].className = 'char-span untyped';
-			}
+
+				// The performance optimization: Only update the DOM if the class has changed.
+				if (span.className !== newClassName) {
+					span.className = newClassName;
+				}
+			});
 		};
 
 		const updateCursor = () => {
@@ -2933,23 +3069,29 @@
 								title: function(context) {
 									// Use the custom label like "P1", "P2", etc. as the title
 									const index = context[0].dataIndex;
-									return `Paragraph ${history.labels[index].replace('P', '')}`;
+									return `Paragraph ${context[0].label.replace('P', '')}`;
 								},
 								label: function(context) {
-									// Get the index of the paragraph being hovered
+									// Get the WPM value for the hovered bar directly from the chart's dataset.
+									const wpm = context.raw;
 									const index = context.dataIndex;
-									const wpm = history.wpm[index];
+
+									// Check if the bar has data. If wpm is null, it's an untyped or skipped paragraph.
+									if (wpm === null) {
+										// Check our history array to see if it was explicitly skipped.
+										if (history.wpm[index] === null) {
+											return '  Skipped';
+										}
+										return ''; // Otherwise, it's just an untyped paragraph, so show no label body.
+									}
+
+									// If we have a WPM value, get the corresponding accuracy from our history array.
 									const accuracy = history.accuracy[index];
 
-									// Handle case where paragraph was skipped
-									if (wpm === null) {
-										return '  Skipped';
-									}
-									
-									// Return an array of strings, where each string is a new line
+									// Format the output. The toFixed() call is now safe.
 									return [
 										`  WPM: ${wpm.toFixed(1)}`,
-										`  Accuracy: ${accuracy.toFixed(0)}%`
+										`  Accuracy: ${accuracy !== undefined ? accuracy.toFixed(0) : '--'}%`
 									];
 								}
 							}
@@ -2966,49 +3108,70 @@
 			const barColor = themeStyles.getPropertyValue('--theme-ui-medium').trim() || '#60a5fa';
 			const textColor = themeStyles.getPropertyValue('--theme-ui-bright').trim() || '#d1d5db';
 
+			// Update chart colors based on theme
 			historyChart.options.scales.x.title.color = textColor;
 			historyChart.options.scales.x.ticks.color = textColor;
 			historyChart.options.scales.y.title.color = textColor;
 			historyChart.options.scales.y.ticks.color = textColor;
 			historyChart.options.plugins.legend.labels.color = textColor;
 
-			let dataIndices = [];
 			if (isShowingAllHistory) {
-				const chapterAggregates = [];
-				for (let i = 0; i < chapterMarkers.length; i++) {
-					const chapterHistory = history.wpm.map((wpm, j) => ({ wpm, chapter: history.chapterIndices[j] })).filter(h => h.chapter === i && h.wpm !== null);
-					if (chapterHistory.length > 0) {
-						const avgWpm = chapterHistory.reduce((sum, h) => sum + h.wpm, 0) / chapterHistory.length;
-						chapterAggregates.push(avgWpm);
-					} else {
-						chapterAggregates.push(0);
+				// --- "Entire Book" View Logic ---
+				const totalChapters = chapterMarkers.length;
+				
+				// 1. Create placeholder arrays for all chapters in the book.
+				historyChart.data.labels = chapterMarkers.map((cm, i) => `Ch. ${i + 1}`);
+				const chapterWpmData = Array(totalChapters).fill(null);
+
+				// 2. Group all history entries by the chapter they belong to.
+				const historyByChapter = history.wpm.reduce((acc, wpm, i) => {
+					const chapIdx = history.chapterIndices[i];
+					if (wpm !== null) { // Only count typed paragraphs, not skipped ones
+						if (!acc[chapIdx]) acc[chapIdx] = [];
+						acc[chapIdx].push(wpm);
+					}
+					return acc;
+				}, {});
+				
+				// 3. Calculate the average WPM for each chapter and populate the data array.
+				for (const chapIdx in historyByChapter) {
+					const chapterWpms = historyByChapter[chapIdx];
+					if (chapterWpms.length > 0) {
+						const avgWpm = chapterWpms.reduce((sum, wpm) => sum + wpm, 0) / chapterWpms.length;
+						chapterWpmData[chapIdx] = avgWpm;
 					}
 				}
-				historyChart.data.labels = chapterMarkers.map((cm, i) => `Chapter ${i + 1}`);
-				historyChart.data.datasets[0].data = chapterAggregates;
+				
+				historyChart.data.datasets[0].data = chapterWpmData;
 				historyChart.data.datasets[0].backgroundColor = barColor;
-				historyChart.data.datasets[0].label = 'Chapter WPM';
-				historyChart.options.scales.x.type = 'category';
-				historyChart.options.scales.x.title.text = 'Chapters';
-				dataIndices = chapterAggregates.map((_, i) => i);
+				historyChart.data.datasets[0].label = 'Chapter Avg. WPM';
+				historyChart.options.scales.x.title.text = 'Chapters in Book';
 
 			} else {
+				// --- "Current Chapter" View Logic ---
+				const totalParagraphs = currentChapterParagraphs.length;
+
+				// 1. Create placeholder arrays for all paragraphs in the current chapter.
+				historyChart.data.labels = Array.from({ length: totalParagraphs }, (_, i) => `P${i + 1}`);
+				const paragraphWpmData = Array(totalParagraphs).fill(null);
+
+				// 2. Find all the history entries that belong to this chapter.
+				let paragraphInChapterCounter = 0;
 				for (let i = 0; i < history.chapterIndices.length; i++) {
 					if (history.chapterIndices[i] === currentChapterIndex) {
-						dataIndices.push(i);
+						// 3. Fill in the data for the completed paragraphs at the correct index.
+						paragraphWpmData[paragraphInChapterCounter] = history.wpm[i];
+						paragraphInChapterCounter++;
 					}
 				}
-				const chapterData = dataIndices.map(i => history.wpm[i]);
-				const chapterLabels = dataIndices.map(i => history.labels[i]);
-				historyChart.data.labels = chapterLabels;
-				historyChart.data.datasets[0].data = chapterData;
-				historyChart.data.datasets[0].backgroundColor = barColor; 
-				historyChart.data.datasets[0].label = 'Paragraph WPM'; 
-				historyChart.options.scales.x.type = 'category'; 
+				
+				historyChart.data.datasets[0].data = paragraphWpmData;
+				historyChart.data.datasets[0].backgroundColor = barColor;
+				historyChart.data.datasets[0].label = 'Paragraph WPM';
 				historyChart.options.scales.x.title.text = 'Paragraphs in Chapter';
 			}
 
-			const allWpms = isShowingAllHistory ? historyChart.data.datasets[0].data.filter(w => w > 0) : history.wpm.filter((w, i) => w !== null && dataIndices.includes(i));
+			const allWpms = history.wpm.filter(w => w !== null);
 			if (allWpms.length > 0) {
 				const maxWpm = Math.max(...allWpms);
 				historyChart.options.scales.y.min = 0;
@@ -3022,67 +3185,42 @@
 		};
 
 		function performPostParagraphAnalysis() {
-			// Reset the analysis object for the new paragraph
-			currentParagraphAnalysis = { bigrams: {}, trigrams: {}, entryDelays: {} };
+			currentParagraphAnalysis = { bigrams: {}, trigrams: {} };
+			const sourceText = currentChapterParagraphs[currentParagraphIndexInChapter].text;
 
-			// Loop through the entire keypress log once, after the paragraph is done
-			for (let i = 1; i < paragraphKeyPressLog.length; i++) {
-				const currentEvent = paragraphKeyPressLog[i];
-				const prevEvent = paragraphKeyPressLog[i - 1];
+			const timingLog = getFinalTimingLog(paragraphKeyPressLog);
+
+			if (timingLog.length < 2) return;
+
+			for (let i = 1; i < timingLog.length; i++) {
+				const char = timingLog[i].key;
+				const prevChar = timingLog[i-1].key;
+				// Check accuracy against the source text at the correct position
+				const isCorrect = char === sourceText[i];
 				
-				// Ensure we are only analyzing typed characters
-				if (currentEvent.char.length > 1 || prevEvent.char.length > 1) continue;
-
-				const key = currentEvent.char;
-				const isLetter = /^[a-zA-Z]$/.test(key);
-				if (!isLetter) continue;
-
-				const delay = currentEvent.time - prevEvent.time;
-				const sourceText = currentChapterParagraphs[currentParagraphIndexInChapter].text;
-				
-				// We need to determine the position in the source text to check for correctness
-				let currentInput = '';
-				for(let j=0; j<=i; j++) {
-					if (paragraphKeyPressLog[j].char.length === 1) {
-						currentInput += paragraphKeyPressLog[j].char;
-					} else if (paragraphKeyPressLog[j].char === 'Backspace') {
-						currentInput = currentInput.slice(0, -1);
-					}
-				}
-				const charIndex = currentInput.length - 1;
-				const isCorrect = sourceText[charIndex] === key;
-
-				// --- Bigram Analysis ---
-				const prevChar = prevEvent.char;
-				if (/^[a-zA-Z]$/.test(prevChar)) {
-					const rawBigram = `${prevChar}${key}`;
-					const bigram = rawBigram.toLowerCase();
+				// Analyze Bigrams
+				const bigram = (prevChar + char).toLowerCase();
+				if (MASTER_BIGRAMS_200.includes(bigram)) {
 					if (!currentParagraphAnalysis.bigrams[bigram]) {
 						currentParagraphAnalysis.bigrams[bigram] = { delays: [], errors: 0 };
 					}
-					if (!/[A-Z]/.test(rawBigram)) {
-						currentParagraphAnalysis.bigrams[bigram].delays.push(delay);
-					}
+					const delay = timingLog[i].time - timingLog[i-1].time;
+					currentParagraphAnalysis.bigrams[bigram].delays.push(delay);
 					if (!isCorrect) {
 						currentParagraphAnalysis.bigrams[bigram].errors++;
 					}
 				}
-
-				// --- Trigram Analysis ---
-				if (i >= 2) {
-					const prevEvent2 = paragraphKeyPressLog[i - 2];
-					const prevChar1 = prevEvent2.char;
-					const prevChar2 = prevEvent.char;
-					if (/^[a-zA-Z]$/.test(prevChar1) && /^[a-zA-Z]$/.test(prevChar2)) {
-						const rawTrigram = `${prevChar1}${prevChar2}${key}`;
-						const trigram = rawTrigram.toLowerCase();
+				
+				// Analyze Trigrams
+				if (i > 1) {
+					const prevChar2 = timingLog[i-2].key;
+					const trigram = (prevChar2 + prevChar + char).toLowerCase();
+					if (MASTER_TRIGRAMS_200.includes(trigram)) {
 						if (!currentParagraphAnalysis.trigrams[trigram]) {
 							currentParagraphAnalysis.trigrams[trigram] = { delays: [], errors: 0 };
 						}
-						if (!/[A-Z]/.test(rawTrigram)) {
-							const delay2 = prevEvent.time - prevEvent2.time;
-							currentParagraphAnalysis.trigrams[trigram].delays.push(delay + delay2);
-						}
+						const delay = timingLog[i].time - timingLog[i-2].time;
+						currentParagraphAnalysis.trigrams[trigram].delays.push(delay);
 						if (!isCorrect) {
 							currentParagraphAnalysis.trigrams[trigram].errors++;
 						}
@@ -3183,6 +3321,7 @@
 			const currentBook = library.find(b => b.identifier === currentBookIdentifier);
 			if (currentBook) {
 				showTypingView(currentBook);
+				loadChapter(currentChapterIndex, true); 
 			}
 		});
 		
@@ -3239,15 +3378,11 @@
         cancelAddBookBtn.addEventListener('click', () => { tempBookData = {}; chapterSelectionModal.classList.add('hidden'); showFileLoaderView(); });
 
         // Typing View Listeners
-
+		
+		hiddenInput.addEventListener('input', handleInput);
+		bookContentEl.addEventListener('click', () => hiddenInput.focus());
         document.addEventListener('keydown', handleKeyPress);
         chartToggleButton.addEventListener('click', () => { isShowingAllHistory = !isShowingAllHistory; chartToggleButton.textContent = isShowingAllHistory ? 'Show Current Chapter' : 'Show Entire Book'; updateChart(); });
-        libraryList.addEventListener('click', (e) => {
-            const startBtn = e.target.closest('.start-typing-btn');
-            const deleteBtn = e.target.closest('.delete-book-btn');
-            if (startBtn) { startTypingBook(getLibrary()[startBtn.dataset.index]); }
-            if (deleteBtn) { deleteBook(deleteBtn.dataset.index); }
-        }); 
 
         // --- Drag and Drop Event Listeners ---
         dropZone.addEventListener('dragover', (e) => {
@@ -3264,21 +3399,6 @@
             dropZone.classList.remove('drag-over');
             if (e.dataTransfer.files.length > 0) {
                 handleFile(e.dataTransfer.files[0]);
-            }
-        });
-
-        libraryList.addEventListener('click', (e) => {
-            const startBtn = e.target.closest('.start-typing-btn');
-            const deleteBtn = e.target.closest('.delete-book-btn');
-
-            if (startBtn) {
-                const index = startBtn.dataset.index;
-                const library = getLibrary();
-                startTypingBook(library[index]);
-            }
-            if (deleteBtn) {
-                const index = deleteBtn.dataset.index;
-                deleteBook(index);
             }
         });
 
@@ -3299,33 +3419,50 @@
             }
         });
 
-        saveChaptersBtn.addEventListener('click', () => {
-            const choices = [];
-            chapterListContainer.querySelectorAll('.flex.space-x-2').forEach(group => {
-                const index = group.dataset.index;
-                const activeButton = group.querySelector('.choice-btn-active');
-                const status = activeButton ? activeButton.dataset.choice : 'type';
-                choices[index] = { status };
-            });
+		saveChaptersBtn.addEventListener('click', async () => {
+			const choices = [];
+			chapterListContainer.querySelectorAll('.flex.space-x-2').forEach(group => {
+				const index = group.dataset.index;
+				const activeButton = group.querySelector('.choice-btn-active');
+				const status = activeButton ? activeButton.dataset.choice : 'type';
+				choices[index] = { status };
+			});
 
-            const newBook = {
-                bookName: tempBookData.title,
-                author: tempBookData.author,
-                cover: tempBookData.cover,
-                identifier: tempBookData.identifier,
-                chapterMarkers: tempBookData.chapterMarkers,
-                userChapterChoices: choices
-            };
+			// 1. Prepare the large book file for IndexedDB
+			const bookFileForDB = {
+				id: tempBookData.identifier,
+				cover: tempBookData.cover,
+				chapterMarkers: tempBookData.chapterMarkers
+			};
 
-            const library = getLibrary();
-            library.push(newBook);
-            saveLibrary(library);
+			// 2. Prepare the small metadata object for localStorage
+			const bookMetadataForLocal = {
+				bookName: tempBookData.title,
+				author: tempBookData.author,
+				identifier: tempBookData.identifier,
+				userChapterChoices: choices
+			};
 
-            tempBookData = {};
-            chapterSelectionModal.classList.add('hidden');
-            showLibraryView();
-            renderLibrary();
-        });
+			try {
+				// 3. Save the large file to our new database
+				await saveBookData(bookFileForDB);
+
+				// 4. If successful, update and save the metadata library to localStorage
+				const library = getLibrary();
+				library.push(bookMetadataForLocal);
+				saveLibrary(library);
+
+				// 5. Clean up the UI
+				tempBookData = {};
+				chapterSelectionModal.classList.add('hidden');
+				showLibraryView();
+				renderLibrary();
+
+			} catch (error) {
+				console.error("Failed to save book to IndexedDB:", error);
+				alert("There was an error saving the book's content. Please try again.");
+			}
+		});
         
         cancelAddBookBtn.addEventListener('click', () => {
             tempBookData = {};
