@@ -1137,7 +1137,7 @@
 				}
 			}
 			
-			// --- Save trigram data ---
+			// --- ADDED: Save trigram data ---
 			if (paragraphData.trigrams) {	
 				for (const trigram in paragraphData.trigrams) {
 					if (MASTER_TRIGRAMS_200.includes(trigram)) {
@@ -2771,23 +2771,6 @@
 		};
 
 		let dailyGoalChart;
-
-		function getFinalTimingLog(rawLog) {
-			const finalLog = [];
-			for (const event of rawLog) {
-				if (event.key.length === 1) {
-					// Add single-character key presses to our final log
-					finalLog.push(event);
-				} else if (event.key === 'Backspace') {
-					// If backspace is pressed, remove the last character from our final log
-					if (finalLog.length > 0) {
-						finalLog.pop();
-					}
-				}
-				// This process ignores other keys like Shift, Enter, etc.
-			}
-			return finalLog;
-		}
 		
 		function updateDailyProgress(secondsToAdd) {
 			const today = new Date().toISOString().split('T')[0];
@@ -3187,42 +3170,74 @@
 		function performPostParagraphAnalysis() {
 			currentParagraphAnalysis = { bigrams: {}, trigrams: {} };
 			const sourceText = currentChapterParagraphs[currentParagraphIndexInChapter].text;
+			const rawLog = paragraphKeyPressLog;
 
-			const timingLog = getFinalTimingLog(paragraphKeyPressLog);
+			let virtualCursorPos = 0;
+			const correctTimings = []; // Log of {key, time} for only the final, correct keypresses
 
-			if (timingLog.length < 2) return;
-
-			for (let i = 1; i < timingLog.length; i++) {
-				const char = timingLog[i].key;
-				const prevChar = timingLog[i-1].key;
-				// Check accuracy against the source text at the correct position
-				const isCorrect = char === sourceText[i];
-				
-				// Analyze Bigrams
-				const bigram = (prevChar + char).toLowerCase();
-				if (MASTER_BIGRAMS_200.includes(bigram)) {
-					if (!currentParagraphAnalysis.bigrams[bigram]) {
-						currentParagraphAnalysis.bigrams[bigram] = { delays: [], errors: 0 };
-					}
-					const delay = timingLog[i].time - timingLog[i-1].time;
-					currentParagraphAnalysis.bigrams[bigram].delays.push(delay);
-					if (!isCorrect) {
-						currentParagraphAnalysis.bigrams[bigram].errors++;
-					}
-				}
-				
-				// Analyze Trigrams
-				if (i > 1) {
-					const prevChar2 = timingLog[i-2].key;
-					const trigram = (prevChar2 + prevChar + char).toLowerCase();
-					if (MASTER_TRIGRAMS_200.includes(trigram)) {
-						if (!currentParagraphAnalysis.trigrams[trigram]) {
-							currentParagraphAnalysis.trigrams[trigram] = { delays: [], errors: 0 };
-						}
-						const delay = timingLog[i].time - timingLog[i-2].time;
-						currentParagraphAnalysis.trigrams[trigram].delays.push(delay);
+			// --- Part 1: Analyze the full journey for ERRORS ---
+			for (const event of rawLog) {
+				if (event.key.length === 1) { // A character was typed
+					if (virtualCursorPos < sourceText.length) {
+						const isCorrect = event.key === sourceText[virtualCursorPos];
 						if (!isCorrect) {
-							currentParagraphAnalysis.trigrams[trigram].errors++;
+							// An error occurred! Log it against the n-gram that SHOULD have been typed.
+							// Log bigram error
+							if (virtualCursorPos > 0) {
+								const bigram = (sourceText[virtualCursorPos - 1] + sourceText[virtualCursorPos]).toLowerCase();
+								if (MASTER_BIGRAMS_200.includes(bigram)) {
+									if (!currentParagraphAnalysis.bigrams[bigram]) currentParagraphAnalysis.bigrams[bigram] = { delays: [], errors: 0 };
+									currentParagraphAnalysis.bigrams[bigram].errors++;
+								}
+							}
+							// Log trigram error
+							if (virtualCursorPos > 1) {
+								const trigram = (sourceText[virtualCursorPos - 2] + sourceText[virtualCursorPos - 1] + sourceText[virtualCursorPos]).toLowerCase();
+								if (MASTER_TRIGRAMS_200.includes(trigram)) {
+									if (!currentParagraphAnalysis.trigrams[trigram]) currentParagraphAnalysis.trigrams[trigram] = { delays: [], errors: 0 };
+									currentParagraphAnalysis.trigrams[trigram].errors++;
+								}
+							}
+						}
+					}
+					virtualCursorPos++;
+				} else if (event.key === 'Backspace') {
+					virtualCursorPos = Math.max(0, virtualCursorPos - 1);
+				}
+			}
+
+			// --- Part 2: Analyze the final, correct keystrokes for SPEED ---
+			// First, build a clean log of the final keypresses by simulating the typing journey
+			for (const event of rawLog) {
+				if (event.key.length === 1) {
+					correctTimings.push(event);
+				} else if (event.key === 'Backspace') {
+					if (correctTimings.length > 0) correctTimings.pop();
+				}
+			}
+
+			// Now, calculate delays from the clean timing log
+			if (correctTimings.length >= 2) {
+				for (let i = 1; i < correctTimings.length; i++) {
+					const char = correctTimings[i].key;
+					const prevChar = correctTimings[i-1].key;
+					
+					// Bigram Speed
+					const bigram = (prevChar + char).toLowerCase();
+					if (MASTER_BIGRAMS_200.includes(bigram)) {
+						if (!currentParagraphAnalysis.bigrams[bigram]) currentParagraphAnalysis.bigrams[bigram] = { delays: [], errors: 0 };
+						const delay = correctTimings[i].time - correctTimings[i-1].time;
+						currentParagraphAnalysis.bigrams[bigram].delays.push(delay);
+					}
+
+					// Trigram Speed
+					if (i > 1) {
+						const prevChar2 = correctTimings[i-2].key;
+						const trigram = (prevChar2 + prevChar + char).toLowerCase();
+						 if (MASTER_TRIGRAMS_200.includes(trigram)) {
+							if (!currentParagraphAnalysis.trigrams[trigram]) currentParagraphAnalysis.trigrams[trigram] = { delays: [], errors: 0 };
+							const delay = correctTimings[i].time - correctTimings[i-2].time;
+							currentParagraphAnalysis.trigrams[trigram].delays.push(delay);
 						}
 					}
 				}
