@@ -336,9 +336,23 @@
 			border-bottom-color: var(--theme-ui-bright) !important;
 		  }
 		}
-
+		/* Mirror Firefox fix, but for Safari via a class */
+		.safari .cursor {
+		  animation: none !important;               /* stop the blink */
+		  border-bottom-color: var(--theme-ui-bright) !important;
+		}
 
 	</style>
+<script>
+		// Attempted Safari lag fix
+		const ua = navigator.userAgent;
+		const isMacSafari =
+		  /Safari/i.test(ua) &&
+		  /Mac OS X/.test(ua) &&
+		  !/(Chrome|Chromium|Edg|OPR)/i.test(ua);
+
+		if (isMacSafari) document.documentElement.classList.add('safari');
+</script>
 </head>
 <body class="text-gray-200 flex flex-col items-center min-h-screen p-2 md:p-4">
 
@@ -729,7 +743,6 @@
         Released under the <a href="https://github.com/asilver/Typing_Tomes/blob/main/LICENSE" target="_blank" rel="noopener noreferrer" class="underline hover:text-indigo-400 transition-colors">MIT License</a>.
         </span>
     </footer>
-
     <script>
         // DOM Elements
 		const drillModeSection = document.getElementById('drill-mode');
