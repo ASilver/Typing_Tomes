@@ -3409,6 +3409,7 @@
 		
 		hiddenInput.addEventListener('input', handleInput);
 		bookContentEl.addEventListener('click', () => hiddenInput.focus());
+		drillContentEl.addEventListener('click', () => hiddenInput.focus());
         document.addEventListener('keydown', handleKeyPress);
         chartToggleButton.addEventListener('click', () => { isShowingAllHistory = !isShowingAllHistory; chartToggleButton.textContent = isShowingAllHistory ? 'Show Current Chapter' : 'Show Entire Book'; updateChart(); });
 
